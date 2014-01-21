@@ -23,9 +23,9 @@ import java.util.Map;
 public class AppacitiveHttp {
 
     public static final String UTF8_BOM = "\uFEFF";
-    private final static String baseURL = "https://apis.appacitive.com/v1.0";
 
-    public Map<String, Object> Get(String url, Map<String, String> headers) throws IOException
+
+    public static Map<String, Object> Get(String url, Map<String, String> headers) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
@@ -36,10 +36,10 @@ public class AppacitiveHttp {
         }
         HttpResponse response = null;
         response = client.execute(request);
-        return this.GetMap(response);
+        return GetMap(response);
     }
 
-    public Map<String, Object> Delete(String url, Map<String, String> headers) throws IOException
+    public static Map<String, Object> Delete(String url, Map<String, String> headers) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpDelete request = new HttpDelete(url);
@@ -50,10 +50,10 @@ public class AppacitiveHttp {
         }
         HttpResponse response = null;
         response = client.execute(request);
-        return this.GetMap(response);
+        return GetMap(response);
     }
 
-    public Map<String, Object> Put(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
+    public static Map<String, Object> Put(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpPut request = new HttpPut(url);
@@ -62,16 +62,16 @@ public class AppacitiveHttp {
 
             request.addHeader(header.getKey(), header.getValue());
         }
-        String PUTText = this.GetJson(payload);
+        String PUTText = GetJson(payload);
         StringEntity entity = new StringEntity(PUTText, "UTF-8");
         entity.setContentType("application/json");
         request.setEntity(entity);
         HttpResponse response = null;
         response = client.execute(request);
-        return this.GetMap(response);
+        return GetMap(response);
     }
 
-    public Map<String, Object> Post(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
+    public static Map<String, Object> Post(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(url);
@@ -80,16 +80,16 @@ public class AppacitiveHttp {
         {
             request.addHeader(header.getKey(), header.getValue());
         }
-        String PUTText = this.GetJson(payload);
+        String PUTText = GetJson(payload);
         StringEntity entity = new StringEntity(PUTText, "UTF-8");
         entity.setContentType("application/json");
         request.setEntity(entity);
         HttpResponse response = null;
         response = client.execute(request);
-        return this.GetMap(response);
+        return GetMap(response);
     }
 
-    private Map<String, Object> GetMap(HttpResponse response) throws IOException
+    private static Map<String, Object> GetMap(HttpResponse response) throws IOException
     {
         BufferedReader rd = null;
         rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF8"));
@@ -110,7 +110,7 @@ public class AppacitiveHttp {
         return map;
     }
 
-    private String GetJson(Map<String, Object> request) throws IOException
+    private static String GetJson(Map<String, Object> request) throws IOException
     {
         Writer writer = new StringWriter();
         JsonGenerator jsonGenerator = new JsonFactory().createJsonGenerator(writer);
