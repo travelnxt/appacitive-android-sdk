@@ -1,4 +1,4 @@
 appacitive-android-sdk
 ======================
 
-Android and java SDK for appacitive. 
+Official Android and Java SDK for Appacitive.
