@@ -19,6 +19,11 @@ public abstract class AppacitiveEntity {
 
     public AppacitiveEntity(Map<String, Object> entity)
     {
+        this.setSelf(entity);
+    }
+
+    protected void setSelf(Map<String, Object> entity)
+    {
         if(entity != null)
         {
             this.id = Long.parseLong(entity.get("__id").toString());
@@ -66,8 +71,8 @@ public abstract class AppacitiveEntity {
     {
         Map<String, Object> nativeMap = new HashMap<String, Object>();
 
-        nativeMap.put("__id", this.id);
-        nativeMap.put("__revision", this.revision);
+        nativeMap.put("__id", String.valueOf(this.id));
+        nativeMap.put("__revision", String.valueOf(this.revision));
         nativeMap.put("__createdby", this.createdBy);
         nativeMap.put("__lastmodifiedby", this.lastModifiedBy);
         nativeMap.put("__utcdatecreated", this.utcDateCreated);
@@ -125,6 +130,7 @@ public abstract class AppacitiveEntity {
 
     public void setProperty(String propertyName, Object propertyValue)
     {
+
         this.properties.put(propertyName, propertyValue);
         this.propertiesChanged.put(propertyName, propertyValue.toString());
     }
