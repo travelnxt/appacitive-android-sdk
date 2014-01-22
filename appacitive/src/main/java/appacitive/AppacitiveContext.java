@@ -1,6 +1,7 @@
 package appacitive;
 
 import appacitive.utilities.Environment;
+import appacitive.utilities.ExecutorServiceWrapper;
 
 /**
  * Created by sathley.
@@ -12,6 +13,8 @@ public class AppacitiveContext {
     public static String apiKey;
 
     public static String environment;
+
+    private static boolean isInitialized = false;
 
     public static String getLoggedInUserToken() {
         return loggedInUserToken;
@@ -25,10 +28,17 @@ public class AppacitiveContext {
     {
         AppacitiveContext.apiKey = apiKey;
         AppacitiveContext.environment = environment.name();
+        ExecutorServiceWrapper.init();
+        isInitialized = true;
     }
 
     public static boolean isInitialized()
     {
-        return AppacitiveContext.apiKey.isEmpty() == false && AppacitiveContext.environment.isEmpty() == false;
+        return isInitialized;
+    }
+
+    public static void shutdown()
+    {
+        ExecutorServiceWrapper.shutdown();
     }
 }

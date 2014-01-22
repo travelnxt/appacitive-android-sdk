@@ -13,48 +13,56 @@ public abstract class AppacitiveEntity {
             "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
             "__revision", "__endpointa", "__endpointb");
 
-    public final static List<String> ObjectSystemProperties = Arrays.asList("__type", "__id", "__id", "__createdby", "__lastmodifiedby",
+    public final static List<String> ObjectSystemProperties = Arrays.asList("__type", "__typeid", "__id", "__createdby", "__lastmodifiedby",
             "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
             "__revision");
 
     public AppacitiveEntity(Map<String, Object> entity)
     {
-        this.id = Long.parseLong(entity.get("__id").toString());
-        this.revision = Long.parseLong(entity.get("__revision").toString());
-        this.createdBy = entity.get("__createdby").toString();
-        this.lastModifiedBy = entity.get("__lastmodifiedby").toString();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        try{
-            this.utcDateCreated = format.parse(entity.get("__utcdatecreated").toString());
-        }
-        catch (ParseException e)
+        if(entity != null)
         {
-
-        }
-        try{
-            this.ucLastUpdated = format.parse(entity.get("__utclastupdateddate").toString());
-        }
-        catch (ParseException e)
-        {
-
-        }
-        this.tags = (List<String>)(entity.get("__tags"));
-        this.attributes = (Map<String, String>) (entity.get("__attributes"));
-
-        for (Map.Entry<String, Object> property : entity.entrySet())
-        {
-            if (ConnectionSystemProperties.contains(property.getKey()) == false && ObjectSystemProperties.contains(property.getKey()) == false)
+            this.id = Long.parseLong(entity.get("__id").toString());
+            this.revision = Long.parseLong(entity.get("__revision").toString());
+            this.createdBy = entity.get("__createdby").toString();
+            this.lastModifiedBy = entity.get("__lastmodifiedby").toString();
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+            try{
+                this.utcDateCreated = format.parse(entity.get("__utcdatecreated").toString());
+            }
+            catch (ParseException e)
             {
 
-                if(property.getValue().getClass().getCanonicalName() == this.tags.getClass().getCanonicalName())
-                    this.properties.put(property.getKey(), property.getValue());
-                else
-                    this.properties.put(property.getKey(), (String)property.getValue());
+            }
+            try{
+                this.ucLastUpdated = format.parse(entity.get("__utclastupdateddate").toString());
+            }
+            catch (ParseException e)
+            {
+
+            }
+            this.tags = (List<String>)(entity.get("__tags"));
+            this.attributes = (Map<String, String>) (entity.get("__attributes"));
+
+            for (Map.Entry<String, Object> property : entity.entrySet())
+            {
+                if (ConnectionSystemProperties.contains(property.getKey()) == false && ObjectSystemProperties.contains(property.getKey()) == false)
+                {
+
+                    if(property.getValue().getClass().getCanonicalName() == this.tags.getClass().getCanonicalName())
+                        this.properties.put(property.getKey(), property.getValue());
+                    else
+                        this.properties.put(property.getKey(), (String)property.getValue());
+                }
             }
         }
     }
 
-    protected Map<String, Object> GetMap()
+    public AppacitiveEntity()
+    {
+
+    }
+
+    protected Map<String, Object> getMap()
     {
         Map<String, Object> nativeMap = new HashMap<String, Object>();
 
@@ -115,10 +123,10 @@ public abstract class AppacitiveEntity {
         return this.tags;
     }
 
-    public void setProperty(String propertyName, String propertyValue)
+    public void setProperty(String propertyName, Object propertyValue)
     {
         this.properties.put(propertyName, propertyValue);
-        this.propertiesChanged.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue.toString());
     }
 
     public Object getProperty(String propertyName)

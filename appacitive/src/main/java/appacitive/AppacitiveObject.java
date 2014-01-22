@@ -1,29 +1,43 @@
 package appacitive;
 
-import appacitive.callbacks.GetCallBack;
+import appacitive.callbacks.Callback;
 import appacitive.exceptions.AppacitiveException;
 import appacitive.exceptions.ValidationError;
 import appacitive.utilities.AppacitiveHttp;
+import appacitive.utilities.ExecutorServiceWrapper;
 import appacitive.utilities.Headers;
 import appacitive.utilities.Urls;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveObject extends AppacitiveEntity {
+
     public AppacitiveObject(Map<String, Object> entity) {
         super(entity);
-        this.typeId = Long.parseLong(entity.get("__typeid").toString());
-        this.type = entity.get("__type").toString();
+        if(entity != null)
+        {
+            this.typeId = Long.parseLong(entity.get("__typeid").toString());
+            this.type = entity.get("__type").toString();
+        }
     }
 
-    protected Map<String, Object> GetMap()
+    public AppacitiveObject(String type)
     {
-        Map<String, Object> nativeMap = super.GetMap();
+        this.type = type;
+    }
+
+    protected Map<String, Object> getMap()
+    {
+        Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__type", this.type);
         nativeMap.put("__typeid", this.typeId);
 
@@ -41,71 +55,159 @@ public class AppacitiveObject extends AppacitiveEntity {
         return typeId;
     }
 
-    public void CreateInBackground() throws ValidationError
+    public void createInBackground(Callback<Void> callback) throws ValidationError
     {
-//        if((type == null || this.type.isEmpty()) && (typeId == 0))
-//        {
-//            throw new ValidationError("Type and TypeId both cannot be empty while creating an object.");
-//        }
-//
-//        final String url = Urls.ForObject.CreateObjectUrl(this.type);
-//        final Map<String, String> headers = Headers.assemble();
-//        final Map<String, Object> payload = this.GetMap();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try{
-//                    AppacitiveHttp.Put(url, headers, payload);
-//                }
-//                catch (AppacitiveException e)
-//                {
-//
-//                }
-//            }
-//        })
+        if((type == null || this.type.isEmpty()) && (typeId == 0))
+        {
+            throw new ValidationError("Type and TypeId both cannot be empty while creating an object.");
+        }
 
+        final String url = Urls.ForObject.createObjectUrl(this.type);
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = this.getMap();
+        Future<Void> future = ExecutorServiceWrapper.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                AppacitiveHttp.put(url, headers, payload);
+                return null;
+            }
+        });
+        try
+        {
+            future.get();
+            callback.success(null);
+        }
+        catch (ExecutionException e)
+        {
+            if(e.getCause() instanceof AppacitiveException)
+            {
+                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
+                callback.failure(null, appacitiveException);
+            }
+        }
+        catch (InterruptedException e)
+        {
+
+        }
     }
 
-    public static void GetAsync(String type, long id, List<String> fields, GetCallBack<AppacitiveObject> callBack) throws ValidationError
+    public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError
     {
         if(type.isEmpty())
             throw new ValidationError("Type cannot be empty.");
         if(id <= 0)
             throw new ValidationError("Object id should be greater than equal to 0.");
 
-        final String innerType = type;
-        final long innerId = id;
         final List<String> innerFields = fields;
-        final GetCallBack<AppacitiveObject> innerCallBack = callBack;
+        final String url = Urls.ForObject.getObjectUrl(type, id);
+        final Map<String, String> headers = Headers.assemble();
+        final Callback<AppacitiveObject> innerCallback = callback;
 
-        Thread t = new Thread(new Runnable() {
+        Future<AppacitiveObject> future = ExecutorServiceWrapper.submit(new Callable<AppacitiveObject>() {
+        @Override
+        public AppacitiveObject call() throws Exception {
+            Map<String, Object> response = AppacitiveHttp.get(url, headers);
+            AppacitiveObject obj = new AppacitiveObject((Map<String, Object>)response.get("object"));
+            return obj;
+            }
+        });
+
+        try
+        {
+            AppacitiveObject obj = future.get();
+            callback.success(obj);
+        }
+        catch (ExecutionException e)
+        {
+            if(e.getCause() instanceof AppacitiveException)
+            {
+                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
+                callback.failure(null, appacitiveException);
+            }
+            else
+            {
+
+            }
+        }
+        catch (InterruptedException e)
+        {
+
+        }
+    }
+
+    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback)
+    {
+        final String url = Urls.ForObject.deleteObjectUrl(this.type, this.getId(), deleteConnections);
+        final Map<String, String> headers = Headers.assemble();
+        final Callback<Void> innerCallback = callback;
+        ExecutorServiceWrapper.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AppacitiveHttp.delete(url, headers);
+                    innerCallback.success(null);
+                } catch (AppacitiveException e) {
+                    innerCallback.failure(null, e);
+                } catch (IOException e) {
+
+                }
+            }
+        });
+    }
+
+    public static void bulkDeleteInBackground(String type, long[] objectIds, Callback<Void> callback)
+    {
+        final String url = Urls.ForObject.bulkDeleteObjectUrl(type);
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        final Callback<Void> innerCallback = callback;
+        payload.put("idlist", objectIds);
+
+        // API should accept ids without quotes
+        ExecutorServiceWrapper.submit(new Runnable() {
             @Override
             public void run() {
                 try
                 {
-                    AppacitiveObject obj = AppacitiveObject.Get(innerType, innerId, innerFields);
-                    innerCallBack.Done(obj, null);
+                    AppacitiveHttp.post(url, headers, payload);
+                    innerCallback.success(null);
+                }
+                catch (AppacitiveException e) {
+                    innerCallback.failure(null, e);
+
+                } catch (IOException e) {
+
+                }
+
+            }
+        });
+
+    }
+
+    public void updateInBackground(boolean withRevision, Callback<Void> callback)
+    {
+        final String url = Urls.ForObject.updateObjectUrl(this.type, this.getId());
+        final Callback<Void> innerCallback = callback;
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        payload.putAll(super.getUpdateCommand());
+        ExecutorServiceWrapper.submit(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    AppacitiveHttp.post(url, headers, payload);
+                    innerCallback.success(null);
                 }
                 catch (AppacitiveException e)
                 {
-                    innerCallBack.Done(null, e);
+                    innerCallback.failure(null, e);
                 }
                 catch (IOException e)
                 {
-                    innerCallBack.Done(null, new AppacitiveException(e.getMessage()));
+
                 }
             }
         });
-        t.start();
     }
-
-    public static AppacitiveObject Get(String type, long id, List<String> fields) throws AppacitiveException, IOException
-    {
-        String url = Urls.ForObject.GetObjectUrl(type, id);
-        Map<String, String> headers = Headers.assemble();
-        Map<String, Object> response = AppacitiveHttp.Get(url, headers);
-        return new AppacitiveObject((Map<String, Object>)response.get("object"));
-    }
-
-
 }

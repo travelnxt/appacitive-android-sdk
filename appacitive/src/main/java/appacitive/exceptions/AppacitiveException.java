@@ -8,17 +8,6 @@ import java.util.List;
  */
 public class AppacitiveException extends Exception {
 
-//    self.code = None
-//    self.message = None
-//    self.additional_messages = None
-//    self.reference_id = None
-//    self.version = None
-
-    public AppacitiveException(String message)
-    {
-        this.message = message;
-    }
-
     public String code;
 
     public String message;
