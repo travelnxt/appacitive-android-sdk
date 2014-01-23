@@ -104,7 +104,7 @@ public class Urls {
             return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static Url multiGetConnectionUrl(String relationType, long[] connectionIds, List<String> fields)
+        public static Url multiGetConnectionUrl(String relationType, List<Long> connectionIds, List<String> fields)
         {
             StringBuilder sb = new StringBuilder();
             for (long id : connectionIds) {
@@ -130,10 +130,85 @@ public class Urls {
             return new Url(baseURL, endpoint, String.format("%s/bulkdelete", relationType), null);
         }
 
-        public static Url updateConnectionUrl(String relationType, long connectionId)
+        public static Url updateConnectionUrl(String relationType, long connectionId, boolean withRevision, long revision)
         {
             String suffix = String.format("%s/%s", relationType, connectionId);
-            return new Url(baseURL, endpoint, suffix, null);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(withRevision)
+            {
+                qsp.put("revision", String.valueOf(revision));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
+        }
+    }
+
+    public static class ForUser
+    {
+        private final static String endpoint = "user";
+
+        public static Url getUserUrl(String userId, UserIdType type, List<String> fields)
+        {
+            String suffix = String.valueOf(userId);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+            {
+                qsp.put("fields", join(fields, ","));
+            }
+
+            switch (type)
+            {
+                case id: suffix = String.valueOf(userId);
+                    qsp.put("useridtype", "id");
+                    break;
+                case username: suffix = String.valueOf(userId);
+                    qsp.put("useridtype", "username");
+                    break;
+                case token: suffix = "me";
+                    qsp.put("useridtype", "token");
+                    break;
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
+        }
+
+        public static Url multiGetUserUrl(List<Long> userIds, List<String> fields)
+        {
+            return Urls.ForObject.multiGetObjectUrl("user", userIds, fields);
+        }
+
+        public static Url createUserUrl()
+        {
+            return new Url(baseURL, endpoint, "create", null);
+        }
+
+        public static Url deleteObjectUrl(String userId, UserIdType type, boolean deleteConnections)
+        {
+            String suffix = null;
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("deleteconnections", String.valueOf(deleteConnections));
+            switch (type)
+            {
+                case id: suffix = userId;
+                    qsp.put("useridtype", "id");
+                    break;
+                case username: suffix = userId;
+                    qsp.put("useridtype", "username");
+                    break;
+                case token: suffix = "me";
+                    qsp.put("useridtype", "token");
+                    break;
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
+        }
+
+        public static Url updateUserUrl(long userId, boolean withRevision, long revision)
+        {
+            String suffix = String.valueOf(userId);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(withRevision)
+            {
+                qsp.put("revision", String.valueOf(revision));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
     }
 

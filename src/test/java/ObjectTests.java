@@ -1,5 +1,3 @@
-package com.appacitive.sdk;
-
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveObject;
 import com.appacitive.sdk.callbacks.Callback;

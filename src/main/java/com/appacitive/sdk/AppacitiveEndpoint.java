@@ -18,10 +18,13 @@ public class AppacitiveEndpoint {
     public Map<String, Object> getMap()
     {
         Map<String, Object> nativeMap = new HashMap<String, Object>();
+
         nativeMap.put("label", this.label);
         nativeMap.put("type", this.type);
-        nativeMap.put("objectid", this.objectId);
-        nativeMap.put("object", this.object.getMap());
+        nativeMap.put("objectid", String.valueOf(this.objectId));
+        if(this.object != null)
+            nativeMap.put("object", this.object.getMap());
+
         return nativeMap;
     }
 
@@ -35,12 +38,28 @@ public class AppacitiveEndpoint {
 
     public void setSelf(Map<String, Object> endpoint)
     {
-        this.label = (String)endpoint.get("label");
-        this.type = (String)endpoint.get("type");
-        this.objectId = Long.getLong((String)endpoint.get("objectid"));
-        if(this.object == null)
-            this.object = new AppacitiveObject((Map<String, Object>)endpoint.get("object"));
-        else
-            this.object.setSelf((Map<String, Object>)endpoint.get("object"));
+        if(endpoint != null)
+        {
+            Object object = endpoint.get("label");
+            if(object != null)
+                this.label = (String)object;
+
+            object = endpoint.get("type");
+            if(object != null)
+                this.type = (String)object;
+
+            object = endpoint.get("objectid");
+            if(object != null)
+                this.objectId = Long.parseLong(object.toString());
+
+            object = endpoint.get("object");
+            if(object != null)
+            {
+                if(this.object == null)
+                    this.object = new AppacitiveObject((Map<String, Object>)endpoint.get("object"));
+                else
+                    this.object.setSelf((Map<String, Object>)endpoint.get("object"));
+            }
+        }
     }
 }
