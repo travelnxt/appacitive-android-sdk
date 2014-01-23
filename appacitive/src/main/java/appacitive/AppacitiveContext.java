@@ -1,7 +1,7 @@
 package appacitive;
 
-import appacitive.utilities.Environment;
-import appacitive.utilities.ExecutorServiceWrapper;
+import appacitive.infra.Environment;
+import appacitive.infra.ExecutorServiceWrapper;
 
 /**
  * Created by sathley.

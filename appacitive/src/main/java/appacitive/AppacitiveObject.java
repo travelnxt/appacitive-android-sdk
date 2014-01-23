@@ -3,21 +3,23 @@ package appacitive;
 import appacitive.callbacks.Callback;
 import appacitive.exceptions.AppacitiveException;
 import appacitive.exceptions.ValidationError;
-import appacitive.utilities.AppacitiveHttp;
-import appacitive.utilities.ExecutorServiceWrapper;
-import appacitive.utilities.Headers;
-import appacitive.utilities.Urls;
+import appacitive.infra.AppacitiveHttp;
+import appacitive.infra.ExecutorServiceWrapper;
+import appacitive.infra.Headers;
+import appacitive.infra.Urls;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveObject extends AppacitiveEntity {
+
+    private final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
 
     public AppacitiveObject(Map<String, Object> entity) {
         this.setSelf(entity);
@@ -158,7 +160,6 @@ public class AppacitiveObject extends AppacitiveEntity {
         try
         {
             future.get();
-            return;
         }
         catch (ExecutionException e)
         {
@@ -193,7 +194,6 @@ public class AppacitiveObject extends AppacitiveEntity {
         try
         {
             future.get();
-            return;
         }
         catch (ExecutionException e)
         {
@@ -213,7 +213,6 @@ public class AppacitiveObject extends AppacitiveEntity {
     public void updateInBackground(boolean withRevision, Callback<Void> callback)
     {
         final String url = Urls.ForObject.updateObjectUrl(this.type, this.getId());
-        final Callback<Void> innerCallback = callback;
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
         payload.putAll(super.getUpdateCommand());
@@ -229,7 +228,6 @@ public class AppacitiveObject extends AppacitiveEntity {
         {
             future.get();
             this.resetUpdateCommands();
-            return;
         }
         catch (ExecutionException e)
         {
@@ -286,7 +284,6 @@ public class AppacitiveObject extends AppacitiveEntity {
     {
         if(type.isEmpty())
             throw new ValidationError("Type cannot be empty.");
-        final String[] innerFields = fields;
         final String url = Urls.ForObject.multiGetObjectUrl(type, ids);
         final Map<String, String> headers = Headers.assemble();
         Future<List<AppacitiveObject>> future = ExecutorServiceWrapper.submit(new Callable<List<AppacitiveObject>>() {

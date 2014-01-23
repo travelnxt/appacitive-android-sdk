@@ -3,10 +3,10 @@ package appacitive;
 import appacitive.callbacks.Callback;
 import appacitive.exceptions.AppacitiveException;
 import appacitive.exceptions.ValidationError;
-import appacitive.utilities.AppacitiveHttp;
-import appacitive.utilities.ExecutorServiceWrapper;
-import appacitive.utilities.Headers;
-import appacitive.utilities.Urls;
+import appacitive.infra.AppacitiveHttp;
+import appacitive.infra.ExecutorServiceWrapper;
+import appacitive.infra.Headers;
+import appacitive.infra.Urls;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +15,14 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveConnection extends AppacitiveEntity {
+
+    private final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
     public AppacitiveConnection(Map<String, Object> connection) {
         this.setSelf(connection);
@@ -115,7 +118,6 @@ public class AppacitiveConnection extends AppacitiveEntity {
         if(id <= 0)
             throw new ValidationError("Connection id should be greater than equal to 0.");
 
-        final List<String> innerFields = fields;
         final String url = Urls.ForConnection.getConnectionUrl(relationType, id);
         final Map<String, String> headers = Headers.assemble();
 
@@ -290,7 +292,6 @@ public class AppacitiveConnection extends AppacitiveEntity {
     {
         if(relationType.isEmpty())
             throw new ValidationError("Relation Type cannot be empty.");
-        final String[] innerFields = fields;
         final String url = Urls.ForConnection.multiGetConnectionUrl(relationType, connectionIds);
         final Map<String, String> headers = Headers.assemble();
 
