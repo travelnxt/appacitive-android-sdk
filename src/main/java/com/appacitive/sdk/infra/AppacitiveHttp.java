@@ -1,6 +1,5 @@
 package com.appacitive.sdk.infra;
 
-import com.appacitive.sdk.exceptions.AppacitiveException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -15,7 +14,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -30,7 +28,7 @@ public class AppacitiveHttp {
     public static final String UTF8_BOM = "\uFEFF";
 
 
-    public static Map<String, Object> get(String url, Map<String, String> headers) throws IOException, AppacitiveException
+    public static Map<String, Object> get(String url, Map<String, String> headers) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
@@ -44,7 +42,7 @@ public class AppacitiveHttp {
         return getMap(response);
     }
 
-    public static Map<String, Object> delete(String url, Map<String, String> headers) throws IOException, AppacitiveException
+    public static Map<String, Object> delete(String url, Map<String, String> headers) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpDelete request = new HttpDelete(url);
@@ -58,7 +56,7 @@ public class AppacitiveHttp {
         return getMap(response);
     }
 
-    public static Map<String, Object> put(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException, AppacitiveException
+    public static Map<String, Object> put(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpPut request = new HttpPut(url);
@@ -76,7 +74,7 @@ public class AppacitiveHttp {
         return getMap(response);
     }
 
-    public static Map<String, Object> post(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException, AppacitiveException
+    public static Map<String, Object> post(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost(url);
@@ -94,9 +92,8 @@ public class AppacitiveHttp {
         return getMap(response);
     }
 
-    private static Map<String, Object> getMap(HttpResponse response) throws IOException, AppacitiveException
+    private static Map<String, Object> getMap(HttpResponse response) throws IOException
     {
-
         BufferedReader rd = null;
         rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF8"));
         StringBuilder result = new StringBuilder();
@@ -106,25 +103,16 @@ public class AppacitiveHttp {
             result.append(line);
         }
         String strResponse = result.toString();
+
         if (strResponse.startsWith(UTF8_BOM)) {
             strResponse = strResponse.substring(1);
         }
+
         ObjectMapper mapper = new ObjectMapper();
-        Map<String,Object> map = new HashMap<String,Object>();
+
+        Map<String,Object> map;
             map = mapper.readValue(strResponse,
                     new TypeReference<HashMap<String,Object>>(){});
-        Map<String, Object> status = (Map<String, Object>)map.get("status");
-        if(((String) status.get("code")).equals("200") == false)
-        {
-            AppacitiveException e = new  AppacitiveException();
-            e.code = (String)status.get("code");
-            e.message = (String)status.get("message");
-            e.referenceId = (String)status.get("referenceid");
-            e.apiVersion = (String)status.get("version");
-            e.additionalMessages = (ArrayList<String>)status.get("additionalmessages");
-
-            throw e;
-        }
         return map;
     }
 

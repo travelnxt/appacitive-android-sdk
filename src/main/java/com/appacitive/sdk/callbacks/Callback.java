@@ -7,7 +7,7 @@ import com.appacitive.sdk.exceptions.AppacitiveException;
  */
 public abstract class Callback<T>
 {
-    public abstract void success(T result);
+    public void success(T result) throws Exception{}
 
-    public abstract void failure(T result, AppacitiveException e);
+    public void failure(T result, AppacitiveException e){}
 }

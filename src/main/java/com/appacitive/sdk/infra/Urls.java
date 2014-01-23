@@ -1,48 +1,86 @@
 package com.appacitive.sdk.infra;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by sathley.
  */
 public class Urls {
 
-    private final static String baseURL = "https://apis.appacitive.appacitive.appacitive/v1.0";
+    private final static String baseURL = "https://apis.appacitive.com/v1.0";
+
+    private static String join(List<String> lst, String prefix)
+    {
+        final StringBuilder sb = new StringBuilder();
+        String separator = "";
+        for(Object f : lst)
+        {
+            sb.append(separator);
+            separator = prefix;
+            sb.append(f);
+        }
+        return sb.toString();
+    }
+
     public static class ForObject
     {
         private final static String endpoint = "object";
 
-        public static String getObjectUrl(String type, long objectId)
+        public static Url getObjectUrl(String type, long objectId, List<String> fields)
         {
-            return String.format("%s/%s/%s/%s", baseURL, endpoint, type, objectId);
+            String suffix = String.format("%s/%s", type, objectId);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+            {
+                qsp.put("fields", join(fields, ","));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static String multiGetObjectUrl(String type, long[] objectIds)
+        public static Url multiGetObjectUrl(String type, List<Long> objectIds, List<String> fields)
         {
             StringBuilder sb = new StringBuilder();
             for (long id : objectIds) {
                 if (sb.length() > 0) sb.append(',');
                 sb.append(id);
             }
-            return String.format("%s/%s/%s/multiget/%s", baseURL, endpoint, type, sb.toString());
+            String suffix = String.format("%s/multiget/%s", type, sb.toString());
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+            {
+                qsp.put("fields", join(fields, ","));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static String createObjectUrl(String type)
+        public static Url createObjectUrl(String type)
         {
-            return String.format("%s/%s/%s", baseURL, endpoint, type);
+            return new Url(baseURL, endpoint, type, null);
         }
 
-        public static String deleteObjectUrl(String type, long id, boolean deleteConnections)
+        public static Url deleteObjectUrl(String type, long id, boolean deleteConnections)
         {
-            return String.format("%s/%s/%s/%s?deleteconnections=%s", baseURL, endpoint, type, id, deleteConnections);
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("deleteconnections", String.valueOf(deleteConnections));
+            return new Url(baseURL, endpoint, String.format("%s/%s", type, id), qsp);
         }
 
-        public static String bulkDeleteObjectUrl(String type)
+        public static Url bulkDeleteObjectUrl(String type)
         {
-            return String.format("%s/%s/%s/bulkdelete", baseURL, endpoint, type);
+            return new Url(baseURL, endpoint, String.format("%s/bulkdelete", type), null);
         }
 
-        public static String updateObjectUrl(String type, long objectId)
+        public static Url updateObjectUrl(String type, long objectId, boolean withRevision, long revision)
         {
-            return String.format("%s/%s/%s/%s", baseURL, endpoint, type, objectId);
+            String suffix = String.format("%s/%s", type, objectId);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(withRevision)
+            {
+                qsp.put("revision", String.valueOf(revision));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
     }
 
@@ -50,39 +88,52 @@ public class Urls {
     {
         private final static String endpoint = "connection";
 
-        public static String createConnectionUrl(String relationType)
+        public static Url createConnectionUrl(String relationType)
         {
-            return String.format("%s/%s/%s", baseURL, endpoint, relationType);
+            return new Url(baseURL, endpoint, relationType, null);
         }
 
-        public static String getConnectionUrl(String relationType, long connectionId)
+        public static Url getConnectionUrl(String relationType, long connectionId,  List<String> fields)
         {
-            return String.format("%s/%s/%s/%s", baseURL, endpoint, relationType, connectionId);
+            String suffix = String.format("%s/%s", relationType, connectionId);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+            {
+                qsp.put("fields", join(fields, ","));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static String multiGetConnectionUrl(String relationType, long[] connectionIds)
+        public static Url multiGetConnectionUrl(String relationType, long[] connectionIds, List<String> fields)
         {
             StringBuilder sb = new StringBuilder();
             for (long id : connectionIds) {
                 if (sb.length() > 0) sb.append(',');
                 sb.append(id);
             }
-            return String.format("%s/%s/%s/multiget/%s", baseURL, endpoint, relationType, sb.toString());
+            String suffix = String.format("%s/multiget/%s", relationType, sb.toString());
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+            {
+                qsp.put("fields", join(fields, ","));
+            }
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static String deleteConnectionUrl(String relationType, long connectionId)
+        public static Url deleteConnectionUrl(String relationType, long connectionId)
         {
-            return String.format("%s/%s/%s/%s", baseURL, endpoint, relationType, connectionId);
+            return new Url(baseURL, endpoint, String.format("%s/%s", relationType, connectionId), null);
         }
 
-        public static String bulkDeleteConnectionUrl(String relationType)
+        public static Url bulkDeleteConnectionUrl(String relationType)
         {
-            return String.format("%s/%s/%s/bulkdelete", baseURL, endpoint, relationType);
+            return new Url(baseURL, endpoint, String.format("%s/bulkdelete", relationType), null);
         }
 
-        public static String updateConnectionUrl(String relationType, long connectionId)
+        public static Url updateConnectionUrl(String relationType, long connectionId)
         {
-            return String.format("%s/%s/%s/%s", baseURL, endpoint, relationType, connectionId);
+            String suffix = String.format("%s/%s", relationType, connectionId);
+            return new Url(baseURL, endpoint, suffix, null);
         }
     }
 

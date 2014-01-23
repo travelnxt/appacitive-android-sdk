@@ -25,34 +25,39 @@ public class AppacitiveObject extends AppacitiveEntity {
         this.setSelf(entity);
     }
 
-    protected void setSelf(Map<String, Object> entity)
-    {
+    protected void setSelf(Map<String, Object> entity) {
+
         super.setSelf(entity);
-        if(entity != null)
-        {
-            this.typeId = Long.parseLong(entity.get("__typeid").toString());
-            this.type = entity.get("__type").toString();
+
+        if (entity != null) {
+
+            Object object = entity.get("__typeid");
+            if(object != null)
+                this.typeId = Long.parseLong(object.toString());
+
+            object = entity.get("__type");
+            if(object != null)
+                this.type = object.toString();
+
         }
     }
 
-    public AppacitiveObject(String type)
-    {
+    public AppacitiveObject(String type) {
         this.type = type;
     }
 
-    public AppacitiveObject(long typeId)
-    {
+    public AppacitiveObject(long typeId) {
         this.typeId = typeId;
     }
 
-    protected Map<String, Object> getMap()
-    {
+    protected Map<String, Object> getMap() {
         Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__type", this.type);
         nativeMap.put("__typeid", String.valueOf(this.typeId));
 
         return nativeMap;
     }
+
     private String type = null;
 
     private long typeId = 0;
@@ -65,187 +70,45 @@ public class AppacitiveObject extends AppacitiveEntity {
         return typeId;
     }
 
-    public void createInBackground(Callback<Void> callback) throws ValidationError
-    {
-        if((type == null || this.type.isEmpty()) && (typeId == 0))
-        {
+    public void createInBackground(Callback<AppacitiveObject> callback) throws ValidationError {
+        if ((type == null || this.type.isEmpty()) && (typeId <= 0)) {
             throw new ValidationError("Type and TypeId both cannot be empty while creating an object.");
         }
 
-        final String url = Urls.ForObject.createObjectUrl(this.type);
+        final String url = Urls.ForObject.createObjectUrl(this.type).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = this.getMap();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                Map<String, Object> map = AppacitiveHttp.put(url, headers, payload);
-                return (Map<String, Object>)map.get("object");
+                return AppacitiveHttp.put(url, headers, payload);
             }
         });
-        try
-        {
-            Map<String, Object> map = future.get();
-            this.setSelf(map);
-            this.resetUpdateCommands();
-            callback.success(null);
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                this.setSelf((Map<String, Object>) responseMap.get("object"));
+                this.resetUpdateCommands();
+                if (callback != null)
+                    callback.success(this);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
-        }
-        catch (InterruptedException e)
-        {
+
+        } catch (Exception e) {
 
         }
     }
 
-    public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError
-    {
-        if(type.isEmpty())
+    public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+        if (type == null || type.isEmpty())
             throw new ValidationError("Type cannot be empty.");
-        if(id <= 0)
+        if (id <= 0)
             throw new ValidationError("Object id should be greater than equal to 0.");
 
-        final List<String> innerFields = fields;
-        final String url = Urls.ForObject.getObjectUrl(type, id);
-        final Map<String, String> headers = Headers.assemble();
-
-        Future<AppacitiveObject> future = ExecutorServiceWrapper.submit(new Callable<AppacitiveObject>() {
-        @Override
-        public AppacitiveObject call() throws Exception {
-            Map<String, Object> response = AppacitiveHttp.get(url, headers);
-            return new AppacitiveObject((Map<String, Object>)response.get("object"));
-            }
-        });
-
-        try
-        {
-            AppacitiveObject obj = future.get();
-            callback.success(obj);
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
-            }
-            else
-            {
-
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-        }
-    }
-
-    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback)
-    {
-        final String url = Urls.ForObject.deleteObjectUrl(this.type, this.getId(), deleteConnections);
-        final Map<String, String> headers = Headers.assemble();
-        Future<Void> future = ExecutorServiceWrapper.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                AppacitiveHttp.delete(url, headers);
-                return null;
-            }
-        });
-
-        try
-        {
-            future.get();
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-        }
-    }
-
-    public static void bulkDeleteInBackground(String type, long[] objectIds, Callback<Void> callback)
-    {
-        final String url = Urls.ForObject.bulkDeleteObjectUrl(type);
-        final Map<String, String> headers = Headers.assemble();
-        final Map<String, Object> payload = new HashMap<String, Object>();
-        payload.put("idlist", objectIds);
-
-        // API should accept ids without quotes
-        Future<Void> future = ExecutorServiceWrapper.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                AppacitiveHttp.post(url, headers, payload);
-                return null;
-            }
-        });
-
-        try
-        {
-            future.get();
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-        }
-
-    }
-
-    public void updateInBackground(boolean withRevision, Callback<Void> callback)
-    {
-        final String url = Urls.ForObject.updateObjectUrl(this.type, this.getId());
-        final Map<String, String> headers = Headers.assemble();
-        final Map<String, Object> payload = new HashMap<String, Object>();
-        payload.putAll(super.getUpdateCommand());
-        Future<Void> future = ExecutorServiceWrapper.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                AppacitiveHttp.post(url, headers, payload);
-                return null;
-            }
-        });
-
-        try
-        {
-            future.get();
-            this.resetUpdateCommands();
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
-            }
-        }
-        catch (InterruptedException e)
-        {
-
-        }
-    }
-
-    public void fetchLatestInBackground(Callback<Void> callback)
-    {
-        final String url = Urls.ForObject.getObjectUrl(type, this.getId());
+        final String url = Urls.ForObject.getObjectUrl(type, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -255,70 +118,167 @@ public class AppacitiveObject extends AppacitiveEntity {
             }
         });
 
-        try
-        {
-            Map<String, Object> response = future.get();
-            this.setSelf((Map<String, Object>)response.get("object"));
-            this.resetUpdateCommands();
-            callback.success(null);
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("object")));
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
-            else
-            {
 
-            }
-        }
-        catch (InterruptedException e)
-        {
+        } catch (Exception e) {
 
         }
     }
 
-    public static void multiGetInBackground(String type, long[] ids, String[] fields, Callback<List<AppacitiveObject>> callback) throws ValidationError
-    {
-        if(type.isEmpty())
-            throw new ValidationError("Type cannot be empty.");
-        final String url = Urls.ForObject.multiGetObjectUrl(type, ids);
+    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) {
+        final String url = Urls.ForObject.deleteObjectUrl(this.type, this.getId(), deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
-        Future<List<AppacitiveObject>> future = ExecutorServiceWrapper.submit(new Callable<List<AppacitiveObject>>() {
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
-            public List<AppacitiveObject> call() throws Exception {
-                Map<String, Object> response = AppacitiveHttp.get(url, headers);
-                ArrayList<Object> objects = (ArrayList<Object>)response.get("objects");
-                List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
-                for(Object obj : objects)
-                {
-                    returnObjects.add(new AppacitiveObject((Map<String, Object>)obj));
-                }
-                return returnObjects;
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.delete(url, headers);
             }
         });
 
-        try
-        {
-            List<AppacitiveObject> objs = future.get();
-            callback.success(objs);
-        }
-        catch (ExecutionException e)
-        {
-            if(e.getCause() instanceof AppacitiveException)
-            {
-                AppacitiveException appacitiveException = (AppacitiveException) e.getCause();
-                callback.failure(null, appacitiveException);
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
-            else
-            {
+        } catch (Exception e) {
 
-            }
         }
-        catch (InterruptedException e)
+    }
+
+    public static void bulkDeleteInBackground(String type, List<Long> objectIds, Callback<Void> callback) {
+        final String url = Urls.ForObject.bulkDeleteObjectUrl(type).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        List<String> strIds = new ArrayList<String>();
+        for(long id:objectIds)
         {
+            strIds.add(String.valueOf(id));
+        }
+        payload.put("idlist", strIds);
+
+        // API should accept ids without quotes
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public void updateInBackground(boolean withRevision, Callback<AppacitiveObject> callback) {
+        final String url = Urls.ForObject.updateObjectUrl(this.type, this.getId(), withRevision, this.getRevision()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        payload.putAll(super.getUpdateCommand());
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                this.resetUpdateCommands();
+                this.setSelf((Map<String, Object>)responseMap.get("object"));
+                if (callback != null)
+                    callback.success(this);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void fetchLatestInBackground(Callback<Void> callback) {
+        final String url = Urls.ForObject.getObjectUrl(type, this.getId(), null).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                this.setSelf((Map<String, Object>) responseMap.get("object"));
+                this.resetUpdateCommands();
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, Callback<List<AppacitiveObject>> callback) throws ValidationError {
+        if (type.isEmpty())
+            throw new ValidationError("Type cannot be empty.");
+        final String url = Urls.ForObject.multiGetObjectUrl(type, ids, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
+                List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
+                for (Object obj : objects) {
+                    returnObjects.add(new AppacitiveObject((Map<String, Object>) obj));
+                }
+                callback.success(returnObjects);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
 
         }
     }
