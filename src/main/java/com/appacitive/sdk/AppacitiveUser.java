@@ -26,6 +26,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         this.setSelf(user);
     }
 
+    public AppacitiveUser()
+    {
+
+    }
+
     protected void setSelf(Map<String, Object> user) {
 
         super.setSelf(user);
@@ -152,7 +157,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         this.setProperty("location", location);
     }
 
-    public void createInBackground(Callback<AppacitiveUser> callback) throws ValidationError {
+    public void signupInBackground(Callback<AppacitiveUser> callback) throws ValidationError {
 
         List<String> mandatoryFields = new ArrayList<String>() {{
             add("username");
@@ -187,6 +192,37 @@ public class AppacitiveUser extends AppacitiveEntity {
                 this.resetUpdateCommands();
                 if (callback != null)
                     callback.success(this);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void signupWithFacebookInBackground(final String facebookAccessToken, Callback<AppacitiveUser> callback) throws ValidationError {
+
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>(){{
+            put("type", "facebook");
+            put("accesstoken", facebookAccessToken);
+            put("createnew", "true");
+        }};
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.put(url, headers, payload);
+            }
+        });
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
             } else {
                 if (callback != null)
                     callback.failure(null, new AppacitiveException(status));
@@ -281,7 +317,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void authenticateUserInBackground(final String username, final String password, long expiry, int attempts, Callback<AppacitiveUser> callback) {
+    public static void loginInBackground(final String username, final String password, long expiry, int attempts, Callback<AppacitiveUser> callback) {
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>() {{
@@ -322,7 +358,43 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void authenticateInBackground(final String password, Long expiry, int attempts, Callback<String> callback)
+    public static void loginWithFacebookInBackground(final String facebookAccessToken, Callback<AppacitiveUser> callback) {
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
+            put("type", "facebook");
+            put("accesstoken", facebookAccessToken);
+        }};
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                String token = (String)responseMap.get("token");
+                AppacitiveContext.setLoggedInUserToken(token);
+                if(callback != null)
+                {
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
+                }
+                else
+                {
+                    if(callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void loginInBackground(final String password, Long expiry, int attempts, Callback<String> callback)
     {
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
