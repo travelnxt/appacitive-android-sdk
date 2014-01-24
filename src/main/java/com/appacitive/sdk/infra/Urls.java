@@ -210,6 +210,67 @@ public class Urls {
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
+
+        public static Url authenticateUserUrl()
+        {
+            String suffix = "authenticate";
+            return new Url(baseURL, endpoint, suffix, null);
+        }
+
+        public static Url updatePasswordUrl(Long userId)
+        {
+            String suffix = String.format("%s/%s", String.valueOf(userId), "changepassword");
+            return new Url(baseURL, endpoint, suffix, null);
+        }
+
+        public static Url sendResetPasswordEmailUrl()
+        {
+            return new Url(baseURL, endpoint, "sendresetpasswordemail", null);
+        }
+
+        public static Url validateSessionUrl()
+        {
+            return new Url(baseURL, endpoint, "validate", null);
+        }
+
+        public static Url invalidateSessionUrl()
+        {
+            return new Url(baseURL, endpoint, "invalidate", null);
+        }
+
+        public static Url checkInUserUrl(long userId, double[] coordinates)
+        {
+            String suffix = String.format("%s/%s", String.valueOf(userId), "checkin");
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("lat", String.valueOf(coordinates[0]));
+            qsp.put("lon", String.valueOf(coordinates[1]));
+            return new Url(baseURL, endpoint, suffix, qsp);
+
+        }
+
+        public static Url linkAccountUrl(long userId)
+        {
+            String suffix = String.format("%s/%s", String.valueOf(userId), "link");
+            return new Url(baseURL, endpoint, suffix, null);
+        }
+
+        public static Url delinkAccountUrl(long userId, String linkName)
+        {
+            String suffix = String.format("%s/%s/%s", String.valueOf(userId), linkName, "delink");
+            return new Url(baseURL, endpoint, suffix, null);
+        }
+
+        public static Url getLinkAccountUrl(long userId, String linkName)
+        {
+            String suffix = String.format("%s/%s/%s", String.valueOf(userId),"linkedaccounts",  linkName);
+            return new Url(baseURL, endpoint, suffix, null);
+        }
+
+        public static Url getAllLinkAccountUrl(long userId)
+        {
+            String suffix = String.format("%s/%s", String.valueOf(userId),"linkedaccounts");
+            return new Url(baseURL, endpoint, suffix, null);
+        }
     }
 
 }

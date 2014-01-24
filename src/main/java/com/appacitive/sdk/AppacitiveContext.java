@@ -1,7 +1,6 @@
 package com.appacitive.sdk;
 
 import com.appacitive.sdk.infra.Environment;
-import com.appacitive.sdk.infra.ExecutorServiceWrapper;
 
 /**
  * Created by sathley.

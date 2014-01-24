@@ -1,7 +1,17 @@
 package com.appacitive.sdk;
 
+import com.appacitive.sdk.callbacks.Callback;
+import com.appacitive.sdk.exceptions.AppacitiveException;
+import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.infra.AppacitiveHttp;
+import com.appacitive.sdk.infra.Headers;
+import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.infra.UserIdType;
+
 import java.text.ParseException;
-import java.util.Date;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 /**
@@ -11,146 +21,807 @@ public class AppacitiveUser extends AppacitiveEntity {
 
     private final static Logger LOGGER = Logger.getLogger(AppacitiveUser.class.getName());
 
-//    @property
-//    def location(self):
-//            return self.get_property('location')
-//
-//    @location.setter
-//    def location(self, value):
-//            self.set_property('location', value)
-//
-//    @property
-//    def birthdate(self):
-//            return self.get_property('birthdate')
-//
-//    @birthdate.setter
-//    def birthdate(self, value):
-//            self.set_property('birthdate', value)
-//
-//    @property
-//    def isemailverified(self):
-//            return self.get_property('isemailverified')
-//
-//    @isemailverified.setter
-//    def isemailverified(self, value):
-//            self.set_property('isemailverified', value)
-//
-//    @property
-//    def isenabled(self):
-//            return self.get_property('isenabled')
-//
-//    @isenabled.setter
-//    def isenabled(self, value):
-//            self.set_property('isenabled', value)
-//
-
-
-    public String getPhone()
+    public AppacitiveUser(Map<String, Object> user)
     {
+        this.setSelf(user);
+    }
+
+    protected void setSelf(Map<String, Object> user) {
+
+        super.setSelf(user);
+
+        if (user != null) {
+
+            Object object = user.get("__typeid");
+            if(object != null)
+                this.typeId = Long.parseLong(object.toString());
+
+            object = user.get("__type");
+            if(object != null)
+                this.type = object.toString();
+
+        }
+    }
+
+    protected Map<String, Object> getMap() {
+        Map<String, Object> nativeMap = super.getMap();
+        nativeMap.put("__type", this.type);
+        nativeMap.put("__typeid", String.valueOf(this.typeId));
+
+        return nativeMap;
+    }
+
+    private String type = null;
+
+    private long typeId = 0;
+
+    public String getType() {
+        return type;
+    }
+
+    public long getTypeId() {
+        return typeId;
+    }
+
+    public String getPhone() {
         return this.getProperty("phone");
     }
 
-    public void setPhone(String phone)
-    {
+    public void setPhone(String phone) {
         this.setProperty("phone", phone);
 
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return this.getProperty("password");
     }
 
-    public void setPassword(String password)
-    {
+    public void setPassword(String password) {
         this.setProperty("password", password);
 
     }
 
-    public String getSecretQuestion()
-    {
+    public String getSecretQuestion() {
         return this.getProperty("secretquestion");
     }
 
-    public void setSecretQuestion(String secretQuestion)
-    {
+    public void setSecretQuestion(String secretQuestion) {
         this.setProperty("secretquestion", secretQuestion);
 
     }
 
-    public String getSecretAnswer()
-    {
+    public String getSecretAnswer() {
         return this.getProperty("secretanswer");
     }
 
-    public void setSecretAnswer(String secretAnswer)
-    {
+    public void setSecretAnswer(String secretAnswer) {
         this.setProperty("secretanswer", secretAnswer);
 
     }
 
-    public String getFirstname()
-    {
+    public String getFirstName() {
         return this.getProperty("firstname");
     }
 
-    public void setFirstname(String firstname)
-    {
-        this.setProperty("firstname", firstname);
+    public void setFirstName(String firstName) {
+        this.setProperty("firstname", firstName);
 
     }
 
-    public String getLastname()
-    {
+    public String getLastName() {
         return this.getProperty("lastname");
     }
 
-    public void setLastname(String lastname)
-    {
-        this.setProperty("lastname", lastname);
+    public void setLastName(String lastName) {
+        this.setProperty("lastname", lastName);
 
     }
 
-    public String getEmail()
-    {
+    public String getEmail() {
         return this.getProperty("email");
     }
 
-    public void setEmail(String email)
-    {
+    public void setEmail(String email) {
         this.setProperty("email", email);
 
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.getProperty("username");
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.setProperty("username", username);
 
     }
 
-    public Date getBirthDate() throws ParseException
-    {
+    public Date getBirthDate() throws ParseException {
         return this.getPropertyAsDate("birthdate");
     }
 
-    public void setBirthDate(Date birthdate)
-    {
+    public void setBirthDate(Date birthdate) {
         this.setProperty("birthdate", birthdate);
 
     }
 
-    public double[] getLocation()
-    {
+    public double[] getLocation() {
         return this.getPropertyAsGeo("location");
     }
 
-    public void setLocation(String location)
-    {
+    public void setLocation(String location) {
         this.setProperty("location", location);
+    }
+
+    public void createInBackground(Callback<AppacitiveUser> callback) throws ValidationError {
+
+        List<String> mandatoryFields = new ArrayList<String>() {{
+            add("username");
+            add("password");
+            add("email");
+            add("firstname");
+        }};
+        List<String> missingFields = new ArrayList<String>();
+        for (String field : mandatoryFields) {
+            if (this.getProperty(field) == null) {
+                missingFields.add(field);
+            }
+        }
+
+        if (missingFields.size() > 0)
+            throw new ValidationError("Following mandatory fields are missing. - " + missingFields);
+
+        final String url = Urls.ForUser.createUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = this.getMap();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.put(url, headers, payload);
+            }
+        });
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                this.setSelf((Map<String, Object>) responseMap.get("user"));
+                this.resetUpdateCommands();
+                if (callback != null)
+                    callback.success(this);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void getByIdInBackground(long userId, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+
+        final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+
+        final String url = Urls.ForUser.getUserUrl(username, UserIdType.username, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void getByTokenInBackground(List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+
+        final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void authenticateUserInBackground(final String username, final String password, long expiry, int attempts, Callback<AppacitiveUser> callback) {
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
+            put("username", username);
+            put("password", password);
+        }};
+        if (expiry > 0)
+            payload.put("expiry", expiry);
+
+        if (attempts > 0)
+            payload.put("attempts", attempts);
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                String token = (String)responseMap.get("token");
+                AppacitiveContext.setLoggedInUserToken(token);
+                if(callback != null)
+                {
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
+                }
+                else
+                {
+                    if(callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void authenticateInBackground(final String password, Long expiry, int attempts, Callback<String> callback)
+    {
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
+            put("username", getUsername());
+            put("password", password);
+        }};
+        if (expiry > 0)
+            payload.put("expiry", expiry);
+
+        if (attempts > 0)
+            payload.put("attempts", attempts);
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                String token = (String)responseMap.get("token");
+                AppacitiveContext.setLoggedInUserToken(token);
+                if(callback != null)
+                {
+                    callback.success(token);
+                }
+                else
+                {
+                    if(callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void multiGetInBackground(List<Long> ids, List<String> fields, Callback<List<AppacitiveUser>> callback) throws ValidationError {
+
+        final String url = Urls.ForUser.multiGetUserUrl(ids, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
+                List<AppacitiveUser> returnUsers = new ArrayList<AppacitiveUser>();
+                for (Object user : objects) {
+                    returnUsers.add(new AppacitiveUser((Map<String, Object>) user));
+                }
+                callback.success(returnUsers);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void deleteInBackground(long userId, boolean deleteConnections, Callback<Void> callback) {
+        final String url = Urls.ForUser.deleteObjectUrl(String.valueOf(userId), UserIdType.id, deleteConnections).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.delete(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void deleteInBackground(String username, boolean deleteConnections, Callback<Void> callback) {
+        final String url = Urls.ForUser.deleteObjectUrl(username, UserIdType.username, deleteConnections).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.delete(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void deleteLoggedInUserInBackground(boolean deleteConnections, Callback<Void> callback) {
+        final String url = Urls.ForUser.deleteObjectUrl("me", UserIdType.token, deleteConnections).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.delete(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) {
+        final String url = Urls.ForUser.deleteObjectUrl(this.getUsername(), UserIdType.username, deleteConnections).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.delete(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void updateInBackground(boolean withRevision, Callback<AppacitiveUser> callback) {
+        final String url = Urls.ForUser.updateUserUrl(this.typeId, withRevision, this.getRevision()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        payload.putAll(super.getUpdateCommand());
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                this.resetUpdateCommands();
+                this.setSelf((Map<String, Object>)responseMap.get("user"));
+                if (callback != null)
+                    callback.success(this);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.updatePasswordUrl(this.typeId).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>(){{
+            put("oldpassword", oldPassword);
+            put("newpassword", newPassword);
+        }};
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void sendResetPasswordEmailInBackground(final String username, final String subjectForEmail, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.sendResetPasswordEmailUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>(){{
+            put("username", username);
+            put("subject", subjectForEmail);
+        }};
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.validateSessionUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.invalidateSessionUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void checkInUserInBackground(double[] coordinates, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.checkInUserUrl(this.getId(), coordinates).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void linkFacebookAccountInBackground(String facebookAccessToken, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        payload.put("authtype", "facebook");
+        payload.put("accesstoken", facebookAccessToken);
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void linkTwitterAccountInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        payload.put("authtype", "twitter");
+        payload.put("oauthtoken", oauthToken);
+        payload.put("oauthtokensecret", oauthTokenSecret);
+
+        if(consumerKey != null && consumerKey.isEmpty() == false)
+            payload.put("consumerkey", consumerKey);
+
+        if(consumerSecret != null && consumerSecret.isEmpty() == false)
+            payload.put("consumersecret", consumerSecret);
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void delinkAccountInBackground(String linkName, Callback<Void> callback)
+    {
+        final String url = Urls.ForUser.delinkAccountUrl(this.getId(), linkName).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(null);
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void getLinkedAccountInBackground(String linkName, Callback<Link> callback)
+    {
+        final String url = Urls.ForUser.getLinkAccountUrl(this.getId(), linkName).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null){
+                    Map<String, Object> link = (Map<String, Object>) responseMap.get("identity");
+                    callback.success(new Link(link));
+                }
+
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void getAllLinkedAccountInBackground(Callback<List<Link>> callback)
+    {
+        final String url = Urls.ForUser.getAllLinkAccountUrl(this.getId()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null){
+                    ArrayList<Object> links = (ArrayList<Object>) responseMap.get("identities");
+                    List<Link> returnLinks = new ArrayList<Link>();
+                    for(Object link : links)
+                    {
+                        returnLinks.add(new Link((Map<String, Object>) link));
+                    }
+                    callback.success(returnLinks);
+                }
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+        } catch (Exception e) {
+
+        }
     }
 }

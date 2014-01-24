@@ -4,13 +4,11 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationError;
 import com.appacitive.sdk.infra.AppacitiveHttp;
-import com.appacitive.sdk.infra.ExecutorServiceWrapper;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
 
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
