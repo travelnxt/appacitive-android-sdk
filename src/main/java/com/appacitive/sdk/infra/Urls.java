@@ -273,4 +273,40 @@ public class Urls {
         }
     }
 
+    public static class Misc
+    {
+        public static Url sendPushUrl()
+        {
+            return new Url(baseURL, "push", null, null);
+        }
+
+        public static Url sendEmailUrl()
+        {
+            return new Url(baseURL, "email", "send", null);
+        }
+    }
+
+    public static class ForFile
+    {
+        private final static String endpoint = "file";
+
+        public static Url getUploadUrl(final String contentType)
+        {
+            return new Url(baseURL, endpoint, "uploadurl", new HashMap<String, String>(){{
+                put("contenttype", contentType);
+            }});
+
+        }
+
+        public static Url getDownloadUrl(final String fileId)
+        {
+            return new Url(baseURL, endpoint, "download/".concat(fileId), null);
+        }
+
+        public static Url getDeleteUrl(final String fileId)
+        {
+            return new Url(baseURL, endpoint, "delete/".concat(fileId), null);
+        }
+    }
+
 }

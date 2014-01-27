@@ -289,7 +289,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getByTokenInBackground(List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
 
         final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -713,7 +713,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void checkInUserInBackground(double[] coordinates, Callback<Void> callback)
+    public void checkinInBackground(double[] coordinates, Callback<Void> callback)
     {
         final String url = Urls.ForUser.checkInUserUrl(this.getId(), coordinates).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -741,7 +741,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void linkFacebookAccountInBackground(String facebookAccessToken, Callback<Void> callback)
+    public void linkFacebookInBackground(String facebookAccessToken, Callback<Void> callback)
     {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -770,7 +770,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void linkTwitterAccountInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback)
+    public void linkTwitterInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback)
     {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -864,7 +864,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void getAllLinkedAccountInBackground(Callback<List<Link>> callback)
+    public void getAllLinkedAccountsInBackground(Callback<List<Link>> callback)
     {
         final String url = Urls.ForUser.getAllLinkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
