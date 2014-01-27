@@ -121,7 +121,7 @@ public abstract class AppacitiveEntity {
 
     private List<String> tags = new ArrayList<String>();
 
-    private long id = 0;
+    public long id = 0;
 
     private long revision = 0;
 
@@ -195,6 +195,13 @@ public abstract class AppacitiveEntity {
     public double[] getPropertyAsGeo(String propertyName) {
         String[] strCoordinates = this.getProperty(propertyName).split(",");
         return new double[]{Double.parseDouble(strCoordinates[0]), Double.parseDouble(strCoordinates[1])};
+    }
+
+    public void setPropertyAsGeo(String propertyName, double[] coordinates)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(coordinates[0]).append(",").append(coordinates[1]);
+        this.properties.put(propertyName, sb.toString());
     }
 
     public List<String> getPropertyAsMultiValued(String propertyName) {

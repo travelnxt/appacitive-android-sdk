@@ -67,9 +67,9 @@ public class AppacitiveConnection extends AppacitiveEntity {
         return nativeMap;
     }
 
-    private String relationType = null;
+    public String relationType = null;
 
-    private long relationId = 0;
+    public long relationId = 0;
 
     public AppacitiveEndpoint endpointA = new AppacitiveEndpoint();
 

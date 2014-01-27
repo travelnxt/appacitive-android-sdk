@@ -75,7 +75,7 @@ public class Urls {
         public static Url updateObjectUrl(String type, long objectId, boolean withRevision, long revision)
         {
             String suffix = String.format("%s/%s", type, objectId);
-            Map<String, String> qsp = new HashMap<String, String>();
+            Map<String, String> qsp = new HashMap <String, String>();
             if(withRevision)
             {
                 qsp.put("revision", String.valueOf(revision));
@@ -284,6 +284,16 @@ public class Urls {
         {
             return new Url(baseURL, "email", "send", null);
         }
+
+        public static Url filterQueryUrl(String queryName)
+        {
+            return new Url(baseURL, "search", queryName+"/filter", null);
+        }
+
+        public static Url projectQueryUrl(String queryName)
+        {
+            return new Url(baseURL, "search", queryName+"/project", null);
+        }
     }
 
     public static class ForFile
@@ -306,6 +316,33 @@ public class Urls {
         public static Url getDeleteUrl(final String fileId)
         {
             return new Url(baseURL, endpoint, "delete/".concat(fileId), null);
+        }
+    }
+
+    public static class ForDevice
+    {
+        private final static String endpoint = "device";
+
+        public static Url getRegisterUrl()
+        {
+            return new Url(baseURL, endpoint, "register", null);
+        }
+
+        public static Url getDeviceUrl(String deviceId)
+        {
+            return new Url(baseURL, endpoint, deviceId, null);
+        }
+
+        public static Url updateDeviceUrl(long deviceId, boolean withRevision, long revision)
+        {
+            return ForObject.updateObjectUrl("device", deviceId,  withRevision, revision);
+        }
+
+        public static Url deleteDeviceUrl(long deviceId, boolean deleteConnections)
+        {
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("deleteconnections", String.valueOf(deleteConnections));
+            return new Url(baseURL, endpoint, String.valueOf(deviceId), qsp);
         }
     }
 
