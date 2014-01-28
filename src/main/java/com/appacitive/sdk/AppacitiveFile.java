@@ -9,6 +9,7 @@ import com.appacitive.sdk.infra.Urls;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class AppacitiveFile {
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitiveFile.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitiveFile.class.getName());
 
     public static void getUploadUrlInBackground(String contentType, String fileName, int expires, Callback<FileUploadUrlResponse> callback) {
         String url = Urls.ForFile.getUploadUrl(contentType).toString();
@@ -59,7 +60,7 @@ public class AppacitiveFile {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -94,7 +95,7 @@ public class AppacitiveFile {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -124,7 +125,7 @@ public class AppacitiveFile {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 }

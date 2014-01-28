@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 */
 public class AppacitiveConnection extends AppacitiveEntity {
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
     public AppacitiveConnection(Map<String, Object> connection) {
         this.setSelf(connection);
@@ -151,7 +152,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -185,7 +186,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -211,7 +212,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -246,7 +247,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -276,7 +277,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -306,7 +307,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -339,7 +340,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -377,7 +378,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -415,7 +416,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -444,7 +445,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -487,7 +488,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -525,7 +526,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 

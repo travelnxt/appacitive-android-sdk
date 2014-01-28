@@ -7,5 +7,5 @@ import java.util.logging.Logger;
  */
 public class AppacitiveEmail {
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitiveEmail.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitiveEmail.class.getName());
 }

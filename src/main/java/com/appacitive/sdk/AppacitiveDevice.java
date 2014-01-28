@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
  */
 public class AppacitiveDevice extends AppacitiveEntity{
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
 
     public AppacitiveDevice(Map<String, Object> device) {
         this.setSelf(device);
@@ -110,7 +111,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
 
     }
 
-    public boolean getisActive() {
+    public boolean getIsActive() {
         return this.getPropertyAsBoolean("isactive");
     }
 
@@ -158,7 +159,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -186,7 +187,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -215,7 +216,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -245,7 +246,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -275,7 +276,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 
@@ -300,7 +301,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 }

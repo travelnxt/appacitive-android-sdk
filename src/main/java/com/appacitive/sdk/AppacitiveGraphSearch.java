@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class AppacitiveGraphSearch {
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitiveGraphSearch.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitiveGraphSearch.class.getName());
 
     public static void filterQueryInBackground(String queryName, final Map<String, String> placeHolders, Callback<List<Long>> callback) {
         final String url = Urls.Misc.filterQueryUrl(queryName).toString();
@@ -55,7 +56,7 @@ public class AppacitiveGraphSearch {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
 
     }
@@ -94,7 +95,7 @@ public class AppacitiveGraphSearch {
                 }
             }
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 

@@ -9,6 +9,7 @@ import com.appacitive.sdk.infra.Urls;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class AppacitivePushNotification {
 
-    private final static Logger LOGGER = Logger.getLogger(AppacitivePushNotification.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(AppacitivePushNotification.class.getName());
 
     private Map<String, Object> getMap()
     {
@@ -101,7 +102,7 @@ public class AppacitivePushNotification {
             }
 
         } catch (Exception e) {
-
+            LOGGER.log(Level.ALL, e.getMessage());
         }
     }
 

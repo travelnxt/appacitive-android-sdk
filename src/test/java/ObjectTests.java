@@ -33,6 +33,7 @@ public class ObjectTests {
 
     @Test
     public void createFullObjectTest() throws ValidationError, ParseException {
+
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setProperty("intfield", 100);
         newObject.setProperty("decimalfield", 20.251100);
