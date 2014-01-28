@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-public class BooleanOperator extends Object implements Query {
+public class BooleanOperator implements Query {
 
     public BooleanOperator(String operator, List<Query> filters)
     {
@@ -20,25 +20,24 @@ public class BooleanOperator extends Object implements Query {
 
     private List<Query> filters = null;
 
-    public BooleanOperator and(List<Query> filters)
+    public static BooleanOperator and(List<Query> filters)
     {
         return new BooleanOperator("and", filters);
     }
 
-    public BooleanOperator or(List<Query> filters)
+    public static BooleanOperator or(List<Query> filters)
     {
         return new BooleanOperator("or", filters);
     }
 
     @Override
-    public String toString()
-    {
+    public String asString() {
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
         List<String> strFilters = new ArrayList<String>();
         for(Query qb : filters)
         {
-            strFilters.add(qb.toString());
+            strFilters.add(qb.asString());
         }
 
         sb.append(StringUtils.join(strFilters, String.format(" %s ", this.operator)));

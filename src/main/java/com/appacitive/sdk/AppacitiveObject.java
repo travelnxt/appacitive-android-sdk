@@ -6,6 +6,7 @@ import com.appacitive.sdk.exceptions.ValidationError;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.query.Query;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -280,4 +281,82 @@ public class AppacitiveObject extends AppacitiveEntity {
 
         }
     }
+
+    public static void findInBackground(String type, Query query, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
+    {
+        final String url = Urls.ForObject.findObjectsUrl(type, query, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
+                    List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
+                    for (Object obj : objects) {
+                        returnObjects.add(new AppacitiveObject((Map<String, Object>) obj));
+                    }
+                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnObjects;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void findInBetweenTwoObjectsInBackground(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
+    {
+        final String url = Urls.ForObject.findBetweenTwoObjectsUrl(type, objectAId, relationA, labelA, objectBId, relationB, labelB, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
+                    List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
+                    for (Object obj : objects) {
+                        returnObjects.add(new AppacitiveObject((Map<String, Object>) obj));
+                    }
+                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnObjects;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    // find connected objects
+
 }

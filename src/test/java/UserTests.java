@@ -39,7 +39,7 @@ public class UserTests {
         user.setPassword(getRandomString());
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
-            public void success(AppacitiveUser result) throws Exception {
+            public void success(AppacitiveUser result) {
                 assert result.getId() > 0;
             }
 

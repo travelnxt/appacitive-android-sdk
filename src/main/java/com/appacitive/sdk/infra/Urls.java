@@ -1,5 +1,7 @@
 package com.appacitive.sdk.infra;
 
+import com.appacitive.sdk.query.Query;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,19 +13,6 @@ public class Urls {
 
     private final static String baseURL = "https://apis.appacitive.com/v1.0";
 
-    private static String join(List<String> lst, String prefix)
-    {
-        final StringBuilder sb = new StringBuilder();
-        String separator = "";
-        for(Object f : lst)
-        {
-            sb.append(separator);
-            separator = prefix;
-            sb.append(f);
-        }
-        return sb.toString();
-    }
-
     public static class ForObject
     {
         private final static String endpoint = "object";
@@ -34,7 +23,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
             {
-                qsp.put("fields", join(fields, ","));
+                qsp.put("fields", StringUtils.join(fields, ","));
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
@@ -50,7 +39,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
             {
-                qsp.put("fields", join(fields, ","));
+                qsp.put("fields", StringUtils.join(fields, ","));
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
@@ -82,6 +71,24 @@ public class Urls {
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
+
+        public static Url findObjectsUrl(String type, final Query query, List<String> fields)
+        {
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("query", query.asString());
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+
+            return new Url(baseURL, endpoint, type + "/find/all", qsp);
+        }
+
+        public static Url findBetweenTwoObjectsUrl(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields) {
+
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+            return new Url(baseURL, endpoint, String.format("%s/%s/%s/%s/%s/%s/%s", type, String.valueOf(objectAId), relationA, labelA, String.valueOf(objectBId), relationB, labelB), qsp);
+        }
     }
 
     public static class ForConnection
@@ -99,7 +106,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
             {
-                qsp.put("fields", join(fields, ","));
+                qsp.put("fields", StringUtils.join(fields, ","));
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
@@ -115,7 +122,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
             {
-                qsp.put("fields", join(fields, ","));
+                qsp.put("fields", StringUtils.join(fields, ","));
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
@@ -140,6 +147,48 @@ public class Urls {
             }
             return new Url(baseURL, endpoint, suffix, qsp);
         }
+
+        public static Url findConnectionsUrl(String relationType, final Query query, final List<String> fields)
+        {
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("query", query.asString());
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+
+            return new Url(baseURL, endpoint, relationType + "/find/all", qsp);
+        }
+
+        public static Url findForObjectsUrl(long objectId1, long objectId2, List<String> fields) {
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+            return new Url(baseURL, endpoint, String.format("find/%s/%s", String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
+
+        }
+
+        public static Url findForObjectsAndRelationUrl(String relationType, long objectId1, long objectId2, List<String> fields) {
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+            return new Url(baseURL, endpoint, String.format("%s/find/%s/%s", relationType, String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
+        }
+
+        public static Url findInterconnectsUrl(List<String> fields) {
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+
+            return new Url(baseURL, endpoint, "interconnects", qsp);
+        }
+
+        public static Url findByObjectAndLabelUrl(String relationType, final long objectId, final String label, List<String> fields) {
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+            qsp.put("objectid", String.valueOf(objectId));
+            qsp.put("label", label);
+            return new Url(baseURL, endpoint, "find", qsp);
+        }
     }
 
     public static class ForUser
@@ -152,7 +201,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
             {
-                qsp.put("fields", join(fields, ","));
+                qsp.put("fields", StringUtils.join(fields, ","));
             }
 
             switch (type)

@@ -4,6 +4,7 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationError;
 import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.query.Query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -341,5 +342,193 @@ public class AppacitiveConnection extends AppacitiveEntity {
 
         }
     }
+
+    public static void findInBackground(String relationType, Query query, List<String> fields,  Callback<PagedList<AppacitiveConnection>> callback)
+    {
+        final String url = Urls.ForConnection.findConnectionsUrl(relationType, query, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
+                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
+                    for (Object conn : connections) {
+                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
+                    }
+                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnConnections;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void findByObjectsInBackground(long objectId1, long objectId2, List<String> fields,  Callback<PagedList<AppacitiveConnection>> callback)
+    {
+        final String url = Urls.ForConnection.findForObjectsUrl(objectId1, objectId2, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
+                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
+                    for (Object conn : connections) {
+                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
+                    }
+                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnConnections;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, Callback<AppacitiveConnection> callback) throws ValidationError
+    {
+        final String url = Urls.ForConnection.findForObjectsAndRelationUrl(relationType, objectId1, objectId2, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try
+        {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                    callback.success(new AppacitiveConnection((Map<String, Object>) responseMap.get("connection")));
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void findInterconnectsInBackground(Long object1Id, List<Long> object2Ids,  List<String> fields, Callback<PagedList<AppacitiveConnection>> callback)
+    {
+        final String url = Urls.ForConnection.findInterconnectsUrl(fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>();
+        List<String> strIds = new ArrayList<String>();
+        for(long id:object2Ids)
+            strIds.add(String.valueOf(id));
+        payload.put("object1id", String.valueOf(object1Id));
+        payload.put("object2ids", strIds);
+         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
+                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
+                    for (Object conn : connections) {
+                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
+                    }
+                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnConnections;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static void findByObjectAndLabelInBackground(String relationType, long objectId, String label , List<String> fields,  Callback<PagedList<AppacitiveConnection>> callback)
+    {
+        final String url = Urls.ForConnection.findByObjectAndLabelUrl(relationType, objectId, label, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null)
+                {
+                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
+                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
+                    for (Object conn : connections) {
+                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
+                    }
+                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
+                    pagedResult.results = returnConnections;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+
+        }
+    }
+
+
 
 }
