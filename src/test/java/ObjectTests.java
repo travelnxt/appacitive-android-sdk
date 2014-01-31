@@ -1,5 +1,6 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveObject;
+import com.appacitive.sdk.PagedList;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationError;
@@ -512,7 +513,7 @@ public class ObjectTests {
     }
 
     @Test
-    public void MultiGetObjectsTest() throws IOException, ValidationError, InterruptedException {
+    public void multiGetObjectsTest() throws IOException, ValidationError, InterruptedException {
         final ArrayList<Long> ids = new ArrayList<Long>();
         for(int i =0; i<3; i++)
         {
@@ -539,7 +540,7 @@ public class ObjectTests {
     }
 
     @Test
-    public void FieldsTest() throws ValidationError
+    public void fieldsTest() throws ValidationError
     {
         AppacitiveObject appacitiveObject = getRandomObject();
         appacitiveObject.setAttribute("aa", "vv");
@@ -646,5 +647,27 @@ public class ObjectTests {
             }
         });
 
+    }
+
+    @Test
+    public void findObjectsTest() throws ValidationError
+    {
+        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) throws Exception {
+                AppacitiveObject.findInBackground("object", null, null, new Callback<PagedList<AppacitiveObject>>() {
+                    @Override
+                    public void success(PagedList<AppacitiveObject> result) throws Exception {
+                        assert result.results.size() > 0;
+                    }
+
+                    @Override
+                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                        assert false;
+                    }
+                });
+            }
+        });
     }
 }

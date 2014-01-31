@@ -1,5 +1,6 @@
 package com.appacitive.sdk.infra;
 
+import com.appacitive.sdk.AppacitiveContext;
 import org.omg.CORBA.NameValuePair;
 
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class Url {
         this.suffix = suffix;
         if(queryStringParameters != null)
             this.queryStringParameters = queryStringParameters;
+        Double[] location = AppacitiveContext.getCurrentLocation();
+        if(location[0] != null && location[1] != null && endpoint.equals("user"))
+        {
+            this.queryStringParameters.put("lat", String.valueOf(location[0]));
+            this.queryStringParameters.put("long", String.valueOf(location[1]));
+        }
     }
 
     public String baseUrl = null;

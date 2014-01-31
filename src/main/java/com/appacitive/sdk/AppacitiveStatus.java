@@ -11,6 +11,7 @@ public class AppacitiveStatus {
 
     public AppacitiveStatus(Map<String, Object> status)
     {
+        additionalMessages = new ArrayList<String>();
         if(status != null)
         {
             code = (String)status.get("code");

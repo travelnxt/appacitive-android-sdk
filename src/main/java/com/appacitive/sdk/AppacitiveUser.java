@@ -234,7 +234,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getByIdInBackground(long userId, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+    public static void getByIdInBackground(long userId, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
 
         final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -251,7 +251,7 @@ public class AppacitiveUser extends AppacitiveEntity {
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
                 if (callback != null)
-                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
             } else {
                 if (callback != null)
                     callback.failure(null, new AppacitiveException(status));
@@ -262,7 +262,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
 
         final String url = Urls.ForUser.getUserUrl(username, UserIdType.username, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -279,7 +279,7 @@ public class AppacitiveUser extends AppacitiveEntity {
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
                 if (callback != null)
-                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
             } else {
                 if (callback != null)
                     callback.failure(null, new AppacitiveException(status));
@@ -290,7 +290,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
 
         final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -307,7 +307,7 @@ public class AppacitiveUser extends AppacitiveEntity {
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
                 if (callback != null)
-                    callback.success(new AppacitiveObject((Map<String, Object>) responseMap.get("user")));
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
             } else {
                 if (callback != null)
                     callback.failure(null, new AppacitiveException(status));
@@ -395,7 +395,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void loginInBackground(final String password, Long expiry, int attempts, Callback<String> callback)
+    public void loginInBackground(final String password, Callback<String> callback)
+    {
+        this.loginInBackground(password, Integer.MAX_VALUE, callback);
+    }
+
+    public void loginInBackground(final String password, int expiry, Callback<String> callback)
     {
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
@@ -405,9 +410,6 @@ public class AppacitiveUser extends AppacitiveEntity {
         }};
         if (expiry > 0)
             payload.put("expiry", expiry);
-
-        if (attempts > 0)
-            payload.put("attempts", attempts);
 
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
@@ -598,7 +600,7 @@ public class AppacitiveUser extends AppacitiveEntity {
 
     public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback)
     {
-        final String url = Urls.ForUser.updatePasswordUrl(this.typeId).toString();
+        final String url = Urls.ForUser.updatePasswordUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>(){{
             put("oldpassword", oldPassword);
@@ -731,6 +733,7 @@ public class AppacitiveUser extends AppacitiveEntity {
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
+                AppacitiveContext.setCurrentLocation(coordinates[0], coordinates[1]);
                 if (callback != null)
                     callback.success(null);
             } else {

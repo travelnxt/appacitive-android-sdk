@@ -37,4 +37,6 @@ public class SystemDefinedProperties {
     public final static String endpointA = "__endpointa";
 
     public final static String endpointB = "__endpointb";
+
+    public final static String label = "label";
 }

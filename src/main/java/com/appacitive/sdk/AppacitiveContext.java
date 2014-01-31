@@ -40,4 +40,15 @@ public class AppacitiveContext {
     {
         ExecutorServiceWrapper.shutdown();
     }
+
+    private static Double[] currentLocation = new Double[2];
+
+    public static Double[] getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public static void setCurrentLocation(Double latitude, Double longitude) {
+        AppacitiveContext.currentLocation[0] = latitude;
+        AppacitiveContext.currentLocation[1] = longitude;
+    }
 }

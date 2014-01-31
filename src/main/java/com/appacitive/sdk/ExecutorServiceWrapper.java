@@ -9,12 +9,10 @@ import java.util.concurrent.Future;
  */
 class ExecutorServiceWrapper {
 
-    private static ExecutorService executorService;
+    private final static ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void init()
-    {
-        executorService = Executors.newCachedThreadPool();
-    }
+    {}
 
     public static void submit(Runnable runnable)
     {
@@ -30,4 +28,11 @@ class ExecutorServiceWrapper {
     {
         executorService.shutdown();
     }
+
+    public static void shutdownNow()
+    {
+        executorService.shutdownNow();
+    }
+
+
 }

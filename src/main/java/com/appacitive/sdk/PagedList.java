@@ -14,23 +14,23 @@ public class PagedList<T> {
 
             Object object = pagingInfo.get("pagenumber");
             if (object != null)
-                this.pageNumber = (Long) object;
+                this.pageNumber = (Integer) object;
 
             object = pagingInfo.get("pagesize");
             if (object != null)
-                this.pageSize = (Long) object;
+                this.pageSize = (Integer) object;
 
             object = pagingInfo.get("totalrecords");
             if (object != null)
-                this.totalRecords = (Long) object;
+                this.totalRecords = (Integer) object;
         }
     }
 
     public List<T> results = new ArrayList<T>();
 
-    public long pageNumber = 0;
+    public int pageNumber = 0;
 
-    public long pageSize = 0;
+    public int pageSize = 0;
 
-    public long totalRecords = 0;
+    public int totalRecords = 0;
 }

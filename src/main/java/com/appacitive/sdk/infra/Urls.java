@@ -1,6 +1,7 @@
 package com.appacitive.sdk.infra;
 
 import com.appacitive.sdk.query.Query;
+import org.omg.DynamicAny._DynEnumStub;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,8 @@ public class Urls {
         public static Url findObjectsUrl(String type, final Query query, List<String> fields)
         {
             Map<String, String> qsp = new HashMap<String, String>();
-            qsp.put("query", query.asString());
+            if(query != null)
+                qsp.put("query", query.asString());
             if(fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
@@ -151,7 +153,8 @@ public class Urls {
         public static Url findConnectionsUrl(String relationType, final Query query, final List<String> fields)
         {
             Map<String, String> qsp = new HashMap<String, String>();
-            qsp.put("query", query.asString());
+            if(query != null)
+                qsp.put("query", query.asString());
             if(fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
@@ -269,7 +272,9 @@ public class Urls {
         public static Url updatePasswordUrl(Long userId)
         {
             String suffix = String.format("%s/%s", String.valueOf(userId), "changepassword");
-            return new Url(baseURL, endpoint, suffix, null);
+            Map<String, String> qsp = new HashMap<String, String>();
+            qsp.put("useridtype", "id");
+            return new Url(baseURL, endpoint, suffix, qsp);
         }
 
         public static Url sendResetPasswordEmailUrl()
@@ -292,7 +297,7 @@ public class Urls {
             String suffix = String.format("%s/%s", String.valueOf(userId), "checkin");
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("lat", String.valueOf(coordinates[0]));
-            qsp.put("lon", String.valueOf(coordinates[1]));
+            qsp.put("long", String.valueOf(coordinates[1]));
             return new Url(baseURL, endpoint, suffix, qsp);
 
         }
