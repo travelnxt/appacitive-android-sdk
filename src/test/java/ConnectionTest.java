@@ -8,6 +8,7 @@ import com.appacitive.sdk.infra.Environment;
 import com.appacitive.sdk.infra.ErrorCodes;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-
+@Ignore
 public class ConnectionTest {
 
     @BeforeClass

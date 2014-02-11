@@ -6,11 +6,13 @@ import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.infra.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
+@Ignore
 public class FileTest {
 
     @BeforeClass
