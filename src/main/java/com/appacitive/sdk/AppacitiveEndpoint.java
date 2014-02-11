@@ -1,12 +1,14 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by sathley.
  */
-public class AppacitiveEndpoint {
+public class AppacitiveEndpoint  implements Serializable {
+
     public AppacitiveEndpoint(Map<String, Object> endpoint)
     {
         this.setSelf(endpoint);

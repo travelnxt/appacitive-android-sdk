@@ -2,12 +2,12 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
-import com.appacitive.sdk.infra.UserIdType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveDevice extends AppacitiveEntity{
+public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
 
@@ -120,9 +120,9 @@ public class AppacitiveDevice extends AppacitiveEntity{
 
     }
 
-    public void registerInBackground(Callback<AppacitiveDevice> callback) throws ValidationError
+    public void registerInBackground(Callback<AppacitiveDevice> callback) throws ValidationException
     {
-        List<String> mandatoryFields = new ArrayList<String>() {{
+        final List<String> mandatoryFields = new ArrayList<String>() {{
             add("devicetype");
             add("devicetoken");
         }};
@@ -134,7 +134,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
         }
 
         if (missingFields.size() > 0)
-            throw new ValidationError("Following mandatory fields are missing. - " + missingFields);
+            throw new ValidationException("Following mandatory fields are missing. - " + missingFields);
 
         final String url = Urls.ForDevice.getRegisterUrl().toString();
         final Map<String, String> headers = Headers.assemble();
@@ -163,7 +163,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
         }
     }
 
-    public static void getInBackground(long deviceId, Callback<AppacitiveDevice> callback) throws ValidationError {
+    public static void getInBackground(long deviceId, Callback<AppacitiveDevice> callback) throws ValidationException {
 
         final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(deviceId)).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -220,7 +220,7 @@ public class AppacitiveDevice extends AppacitiveEntity{
         }
     }
 
-    public static void multiGetInBackground(List<Long> ids, List<String> fields, Callback<List<AppacitiveDevice>> callback) throws ValidationError {
+    public static void multiGetInBackground(List<Long> ids, List<String> fields, Callback<List<AppacitiveDevice>> callback) throws ValidationException {
 
         final String url = Urls.ForObject.multiGetObjectUrl("device", ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();

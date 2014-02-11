@@ -3,6 +3,7 @@ package com.appacitive.sdk.infra;
 import com.appacitive.sdk.AppacitiveContext;
 import org.omg.CORBA.NameValuePair;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class Url {
+public class Url  implements Serializable {
 
     public Url(String baseUrl, String endpoint, String suffix, Map<String, String> queryStringParameters)
     {

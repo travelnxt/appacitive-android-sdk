@@ -5,19 +5,13 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.infra.SystemDefinedProperties;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class AppacitiveEntity {
-    public final static List<String> ConnectionSystemProperties = Arrays.asList("__relationtype", "__relationid", "__id", "__createdby", "__lastmodifiedby",
-            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
-            "__revision", "__endpointa", "__endpointb");
-
-    public final static List<String> ObjectSystemProperties = Arrays.asList("__type", "__typeid", "__id", "__createdby", "__lastmodifiedby",
-            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
-            "__revision");
+public abstract class AppacitiveEntity  implements Serializable {
 
     public AppacitiveEntity(Map<String, Object> entity) {
         this.setSelf(entity);
@@ -48,7 +42,7 @@ public abstract class AppacitiveEntity {
             if (object != null)
                 this.lastModifiedBy = object.toString();
 
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
 
             try {
                 object = entity.get(SystemDefinedProperties.utcDateCreated);
@@ -72,9 +66,9 @@ public abstract class AppacitiveEntity {
                 this.attributes = (Map<String, String>) object;
 
             for (Map.Entry<String, Object> property : entity.entrySet()) {
-                if (ConnectionSystemProperties.contains(property.getKey()) == false && ObjectSystemProperties.contains(property.getKey()) == false) {
+                if (SystemDefinedProperties.ConnectionSystemProperties.contains(property.getKey()) == false && SystemDefinedProperties.ObjectSystemProperties.contains(property.getKey()) == false) {
 
-                    if (property.getValue().getClass().getCanonicalName() == this.tags.getClass().getCanonicalName())
+                    if (property.getValue().getClass().getCanonicalName().equals(this.tags.getClass().getCanonicalName()))
                         this.properties.put(property.getKey(), property.getValue());
                     else
                         this.properties.put(property.getKey(), property.getValue());

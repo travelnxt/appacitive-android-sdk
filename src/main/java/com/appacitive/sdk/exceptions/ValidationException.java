@@ -1,8 +1,8 @@
 package com.appacitive.sdk.exceptions;
 
-public class ValidationError extends Exception
+public class ValidationException extends Exception
 {
-    public ValidationError(String message)
+    public ValidationException(String message)
     {
         this.message = message;
     }

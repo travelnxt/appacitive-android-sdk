@@ -121,7 +121,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThan(Date value)
     {
         this.operator = ">";
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.value = dtf.format(value);
         return this;
     }
@@ -129,7 +128,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThanDate(Date value)
     {
         this.operator = ">";
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         this.value = df.format(value);
         return this;
     }
@@ -137,7 +135,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThanTime(Date value)
     {
         this.operator = ">";
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
         this.value = tf.format(value);
         return this;
     }
@@ -159,7 +156,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThanEqualTo(Date value)
     {
         this.operator = ">=";
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.value = dtf.format(value);
         return this;
     }
@@ -167,7 +163,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThanEqualToDate(Date value)
     {
         this.operator = ">=";
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         this.value = df.format(value);
         return this;
     }
@@ -175,7 +170,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isGreaterThanEqualToTime(Date value)
     {
         this.operator = ">=";
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
         this.value = tf.format(value);
         return this;
     }
@@ -197,7 +191,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThan(Date value)
     {
         this.operator = "<";
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.value = dtf.format(value);
         return this;
     }
@@ -205,7 +198,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThanDate(Date value)
     {
         this.operator = "<";
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         this.value = df.format(value);
         return this;
     }
@@ -213,7 +205,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThanTime(Date value)
     {
         this.operator = "<";
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
         this.value = tf.format(value);
         return this;
     }
@@ -235,7 +226,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThanEqualTo(Date value)
     {
         this.operator = "<=";
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.value = dtf.format(value);
         return this;
     }
@@ -243,7 +233,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThanEqualToDate(Date value)
     {
         this.operator = "<=";
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         this.value = df.format(value);
         return this;
     }
@@ -251,7 +240,6 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isLessThanEqualToTime(Date value)
     {
         this.operator = "<=";
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
         this.value = tf.format(value);
         return this;
     }

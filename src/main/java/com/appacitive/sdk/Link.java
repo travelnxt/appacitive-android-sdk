@@ -1,5 +1,6 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class Link {
+public class Link  implements Serializable {
 
     private static final List<String> knownFields = new ArrayList<String>(){{
         add("name");

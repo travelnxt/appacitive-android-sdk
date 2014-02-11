@@ -1,5 +1,6 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class AppacitiveStatus {
+public class AppacitiveStatus  implements Serializable {
 
     public AppacitiveStatus(Map<String, Object> status)
     {

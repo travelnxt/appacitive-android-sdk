@@ -2,10 +2,11 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
 import com.appacitive.sdk.query.Query;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 /**
 * Created by sathley.
 */
-public class AppacitiveConnection extends AppacitiveEntity {
+public class AppacitiveConnection extends AppacitiveEntity implements Serializable{
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
@@ -113,18 +114,18 @@ public class AppacitiveConnection extends AppacitiveEntity {
         return this;
     }
 
-    public void createInBackground(Callback<AppacitiveConnection> callback) throws ValidationError
+    public void createInBackground(Callback<AppacitiveConnection> callback) throws ValidationException
     {
         // validations
         if ((this.relationType == null || this.relationType.isEmpty()) && (this.relationId <= 0)) {
-            throw new ValidationError("Relation Type and Relation Id both cannot be empty while creating an object.");
+            throw new ValidationException("Relation Type and Relation Id both cannot be empty while creating an object.");
         }
 
         if(this.endpointA == null || this.endpointA.label == null || this.endpointA.label.isEmpty() || (this.endpointA.object == null && this.endpointA.objectId <= 0))
-            throw new ValidationError("Endpoint A is not correctly initialized.");
+            throw new ValidationException("Endpoint A is not correctly initialized.");
 
         if(this.endpointB == null || this.endpointB.label == null || this.endpointB.label.isEmpty() || (this.endpointB.object == null && this.endpointB.objectId <= 0))
-            throw new ValidationError("Endpoint B is not correctly initialized.");
+            throw new ValidationException("Endpoint B is not correctly initialized.");
 
 
 
@@ -156,12 +157,12 @@ public class AppacitiveConnection extends AppacitiveEntity {
         }
     }
 
-    public static void getInBackground(String relationType, long id, List<String> fields, Callback<AppacitiveConnection> callback) throws ValidationError
+    public static void getInBackground(String relationType, long id, List<String> fields, Callback<AppacitiveConnection> callback) throws ValidationException
     {
         if(relationType == null || relationType.isEmpty())
-            throw new ValidationError("RelationType cannot be null or empty.");
+            throw new ValidationException("RelationType cannot be null or empty.");
         if(id <= 0)
-            throw new ValidationError("Connection id should be greater than equal to 0.");
+            throw new ValidationException("Connection id should be greater than equal to 0.");
 
         final String url = Urls.ForConnection.getConnectionUrl(relationType, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -311,10 +312,10 @@ public class AppacitiveConnection extends AppacitiveEntity {
         }
     }
 
-    public static void multiGetInBackground(String relationType, List<Long> ids, List<String> fields, Callback<List<AppacitiveConnection>> callback) throws ValidationError
+    public static void multiGetInBackground(String relationType, List<Long> ids, List<String> fields, Callback<List<AppacitiveConnection>> callback) throws ValidationException
     {
         if(relationType.isEmpty())
-            throw new ValidationError("Relation Type cannot be empty.");
+            throw new ValidationException("Relation Type cannot be empty.");
         final String url = Urls.ForConnection.multiGetConnectionUrl(relationType, ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -420,7 +421,7 @@ public class AppacitiveConnection extends AppacitiveEntity {
         }
     }
 
-    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, Callback<AppacitiveConnection> callback) throws ValidationError
+    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, Callback<AppacitiveConnection> callback) throws ValidationException
     {
         final String url = Urls.ForConnection.findForObjectsAndRelationUrl(relationType, objectId1, objectId2, fields).toString();
         final Map<String, String> headers = Headers.assemble();

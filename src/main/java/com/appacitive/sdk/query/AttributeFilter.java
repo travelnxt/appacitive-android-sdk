@@ -4,6 +4,7 @@ package com.appacitive.sdk.query;
  * Created by sathley.
  */
 public class AttributeFilter extends Filter implements Query {
+
     public AttributeFilter(String propertyName)
     {
         this.key = propertyName;

@@ -1,5 +1,6 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class AppacitiveGraphNode {
+public class AppacitiveGraphNode  implements Serializable {
 
     public AppacitiveObject object = null;
 

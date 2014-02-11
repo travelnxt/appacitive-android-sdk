@@ -2,12 +2,13 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
 import com.appacitive.sdk.query.Query;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveObject extends AppacitiveEntity {
+public class AppacitiveObject extends AppacitiveEntity  implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
 
@@ -70,9 +71,9 @@ public class AppacitiveObject extends AppacitiveEntity {
         return typeId;
     }
 
-    public void createInBackground(Callback<AppacitiveObject> callback) throws ValidationError {
+    public void createInBackground(Callback<AppacitiveObject> callback) throws ValidationException {
         if ((type == null || this.type.isEmpty()) && (typeId <= 0)) {
-            throw new ValidationError("Type and TypeId both cannot be empty while creating an object.");
+            throw new ValidationException("Type and TypeId both cannot be empty while creating an object.");
         }
 
         final String url = Urls.ForObject.createObjectUrl(this.type).toString();
@@ -102,11 +103,11 @@ public class AppacitiveObject extends AppacitiveEntity {
         }
     }
 
-    public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationError {
+    public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationException {
         if (type == null || type.isEmpty())
-            throw new ValidationError("Type cannot be empty.");
+            throw new ValidationException("Type cannot be empty.");
         if (id <= 0)
-            throw new ValidationError("Object id should be greater than equal to 0.");
+            throw new ValidationException("Object id should be greater than equal to 0.");
 
         final String url = Urls.ForObject.getObjectUrl(type, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -252,9 +253,9 @@ public class AppacitiveObject extends AppacitiveEntity {
         }
     }
 
-    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, Callback<List<AppacitiveObject>> callback) throws ValidationError {
+    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, Callback<List<AppacitiveObject>> callback) throws ValidationException {
         if (type.isEmpty())
-            throw new ValidationError("Type cannot be empty.");
+            throw new ValidationException("Type cannot be empty.");
         final String url = Urls.ForObject.multiGetObjectUrl(type, ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {

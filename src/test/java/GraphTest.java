@@ -1,7 +1,7 @@
 import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,7 +33,7 @@ public class GraphTest {
     }
 
     @Test
-    public void filterQueryTest() throws ValidationError
+    public void filterQueryTest() throws ValidationException
     {
         final AppacitiveObject parent = new AppacitiveObject("object");
         final String unique = getRandomString();
@@ -43,10 +43,10 @@ public class GraphTest {
 
         new AppacitiveConnection("link").fromNewObject("parent", parent).toNewObject("child", child).createInBackground(new Callback<AppacitiveConnection>() {
             @Override
-            public void success(AppacitiveConnection result) throws Exception {
+            public void success(AppacitiveConnection result) {
                 AppacitiveGraphSearch.filterQueryInBackground("sample_filter", new HashMap<String, String>(){{put("search_value", unique);}}, new Callback<List<Long>>() {
                             @Override
-                            public void success(List<Long> result) throws Exception {
+                            public void success(List<Long> result) {
                                 assert result.size() == 1;
                                 assert result.get(0) == parent.id;
                             }
@@ -61,7 +61,7 @@ public class GraphTest {
     }
 
     @Test
-    public void projectQueryTest() throws ValidationError
+    public void projectQueryTest() throws ValidationException
     {
         final String val1 = getRandomString();
         final String val2 = getRandomString();
@@ -73,19 +73,20 @@ public class GraphTest {
         level1edge.fromNewObject("parent", root).toNewObject("child", level1child);
         level1edge.createInBackground(new Callback<AppacitiveConnection>() {
             @Override
-            public void success(AppacitiveConnection result) throws Exception {
+            public void success(AppacitiveConnection result) {
                 final AppacitiveObject level2child = new AppacitiveObject("object");
                 level2child.setProperty("stringfield", val2);
                 final AppacitiveConnection level2edge = new AppacitiveConnection("link");
                 level2edge.fromExistingObject("parent", level1child.id).toNewObject("child", level2child);
+                try{
                 level2edge.createInBackground(new Callback<AppacitiveConnection>() {
                     @Override
-                    public void success(AppacitiveConnection result) throws Exception {
+                    public void success(AppacitiveConnection result) {
                         List<Long> ids = new ArrayList<Long>();
                         ids.add(root.getId());
                         AppacitiveGraphSearch.projectQueryInBackground("sample_project", ids, new HashMap<String, String>(){{put("level1_filter", val1);put("level2_filter", val2);}}, new Callback<List<AppacitiveGraphNode>>() {
                                     @Override
-                                    public void success(List<AppacitiveGraphNode> result) throws Exception {
+                                    public void success(List<AppacitiveGraphNode> result) {
                                         assert result.size() == 1;
                                         assert result.get(0).object != null;
                                         assert result.get(0).object.id == root.id;
@@ -115,6 +116,11 @@ public class GraphTest {
                                 });
                     }
                 });
+                }
+                catch (ValidationException e )
+                {
+                    assert false;
+                }
             }
         });
 

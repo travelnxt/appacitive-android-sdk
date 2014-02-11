@@ -7,6 +7,7 @@ import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.NodeHelper;
 import com.appacitive.sdk.infra.Urls;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveGraphSearch {
+public class AppacitiveGraphSearch  implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveGraphSearch.class.getName());
 

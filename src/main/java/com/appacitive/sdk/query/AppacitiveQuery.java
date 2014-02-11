@@ -1,12 +1,13 @@
 package com.appacitive.sdk.query;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by sathley.
  */
-public class AppacitiveQuery  {
+public class AppacitiveQuery  implements Serializable {
 
     public int pageNumber = 0;
 

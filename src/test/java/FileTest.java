@@ -28,7 +28,7 @@ public class FileTest {
     {
         AppacitiveFile.getUploadUrlInBackground("image/png", "abc.png", 10, new Callback<FileUploadUrlResponse>() {
             @Override
-            public void success(FileUploadUrlResponse result) throws Exception {
+            public void success(FileUploadUrlResponse result) {
                 assert result.fileId != null && result.fileId.isEmpty() == false;
                 assert result.url != null && result.url.isEmpty() == false;
             }
@@ -45,7 +45,7 @@ public class FileTest {
     {
         AppacitiveFile.getDownloadUrlInBackground("abc.png", 10, new Callback<String>() {
             @Override
-            public void success(String result) throws Exception {
+            public void success(String result) {
                 assert result != null && result.isEmpty() ==false;
             }
 
@@ -61,7 +61,7 @@ public class FileTest {
     {
         AppacitiveFile.deleteFileInBackground("abc.png", new Callback<Void>() {
             @Override
-            public void success(Void result) throws Exception {
+            public void success(Void result) {
                 assert true;
             }
 

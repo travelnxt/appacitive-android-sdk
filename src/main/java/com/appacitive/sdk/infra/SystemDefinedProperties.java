@@ -7,6 +7,7 @@ import java.util.List;
  * Created by sathley.
  */
 public class SystemDefinedProperties {
+
     public final static List<String> ConnectionSystemProperties = Arrays.asList("__relationtype", "__relationid", "__id", "__createdby", "__lastmodifiedby",
             "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
             "__revision", "__endpointa", "__endpointb");

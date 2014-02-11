@@ -6,6 +6,7 @@ import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveFile {
+public class AppacitiveFile  implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveFile.class.getName());
 

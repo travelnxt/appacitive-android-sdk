@@ -2,12 +2,14 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.UserAuthException;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
 import com.appacitive.sdk.infra.UserIdType;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveUser extends AppacitiveEntity {
+public class AppacitiveUser extends AppacitiveEntity  implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveUser.class.getName());
 
@@ -158,7 +160,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         this.setProperty("location", location);
     }
 
-    public void signupInBackground(Callback<AppacitiveUser> callback) throws ValidationError {
+    public void signupInBackground(Callback<AppacitiveUser> callback) throws ValidationException {
 
         List<String> mandatoryFields = new ArrayList<String>() {{
             add("username");
@@ -174,7 +176,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
 
         if (missingFields.size() > 0)
-            throw new ValidationError("Following mandatory fields are missing. - " + missingFields);
+            throw new ValidationException("Following mandatory fields are missing. - " + missingFields);
 
         final String url = Urls.ForUser.createUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
@@ -203,7 +205,7 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void signupWithFacebookInBackground(final String facebookAccessToken, Callback<AppacitiveUser> callback) throws ValidationError {
+    public static void signupWithFacebookInBackground(final String facebookAccessToken, Callback<AppacitiveUser> callback) throws ValidationException {
 
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
@@ -234,11 +236,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getByIdInBackground(long userId, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
+    public static void getByIdInBackground(long userId, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
-
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -262,11 +264,18 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
+    private static void AssertUserAuth() throws UserAuthException
+    {
+        String token = AppacitiveContext.getLoggedInUserToken();
+        if(token == null || token.isEmpty() == true)
+            throw new UserAuthException();
+    }
+
+    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(username, UserIdType.username, fields).toString();
         final Map<String, String> headers = Headers.assemble();
-
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -290,11 +299,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws ValidationError {
+    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
         final Map<String, String> headers = Headers.assemble();
-
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -439,10 +448,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void multiGetInBackground(List<Long> ids, List<String> fields, Callback<List<AppacitiveUser>> callback) throws ValidationError {
+    public static void multiGetInBackground(List<Long> ids, List<String> fields, Callback<List<AppacitiveUser>> callback) throws ValidationException, UserAuthException {
 
         final String url = Urls.ForUser.multiGetUserUrl(ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
+//        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -469,9 +479,10 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void deleteInBackground(long userId, boolean deleteConnections, Callback<Void> callback) {
+    public static void deleteInBackground(long userId, boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
         final String url = Urls.ForUser.deleteObjectUrl(String.valueOf(userId), UserIdType.id, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -494,9 +505,10 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void deleteInBackground(String username, boolean deleteConnections, Callback<Void> callback) {
+    public static void deleteInBackground(String username, boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
         final String url = Urls.ForUser.deleteObjectUrl(username, UserIdType.username, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -519,9 +531,10 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void deleteLoggedInUserInBackground(boolean deleteConnections, Callback<Void> callback) {
+    public static void deleteLoggedInUserInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
         final String url = Urls.ForUser.deleteObjectUrl("me", UserIdType.token, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -544,9 +557,10 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) {
+    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
         final String url = Urls.ForUser.deleteObjectUrl(this.getUsername(), UserIdType.username, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -569,9 +583,10 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void updateInBackground(boolean withRevision, Callback<AppacitiveUser> callback) {
+    public void updateInBackground(boolean withRevision, Callback<AppacitiveUser> callback) throws UserAuthException{
         final String url = Urls.ForUser.updateUserUrl(this.typeId, withRevision, this.getRevision()).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         final Map<String, Object> payload = new HashMap<String, Object>();
         payload.putAll(super.getUpdateCommand());
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -598,10 +613,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback)
+    public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.updatePasswordUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         final Map<String, Object> payload = new HashMap<String, Object>(){{
             put("oldpassword", oldPassword);
             put("newpassword", newPassword);
@@ -660,12 +676,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback)
+    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.validateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
-
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -688,12 +704,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback)
+    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.invalidateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
-
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -716,10 +732,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void checkinInBackground(double[] coordinates, Callback<Void> callback)
+    public void checkinInBackground(double[] coordinates, Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.checkInUserUrl(this.getId(), coordinates).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         final Map<String, Object> payload = new HashMap<String, Object>();
 
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -745,11 +762,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void linkFacebookInBackground(String facebookAccessToken, Callback<Void> callback)
+    public void linkFacebookInBackground(String facebookAccessToken, Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
+        AssertUserAuth();
         payload.put("authtype", "facebook");
         payload.put("accesstoken", facebookAccessToken);
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -774,11 +792,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void linkTwitterInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback)
+    public void linkTwitterInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
+        AssertUserAuth();
         payload.put("authtype", "twitter");
         payload.put("oauthtoken", oauthToken);
         payload.put("oauthtokensecret", oauthTokenSecret);
@@ -811,11 +830,12 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void delinkAccountInBackground(String linkName, Callback<Void> callback)
+    public void delinkAccountInBackground(String linkName, Callback<Void> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.delinkAccountUrl(this.getId(), linkName).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -838,10 +858,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void getLinkedAccountInBackground(String linkName, Callback<Link> callback)
+    public void getLinkedAccountInBackground(String linkName, Callback<Link> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.getLinkAccountUrl(this.getId(), linkName).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -868,10 +889,11 @@ public class AppacitiveUser extends AppacitiveEntity {
         }
     }
 
-    public void getAllLinkedAccountsInBackground(Callback<List<Link>> callback)
+    public void getAllLinkedAccountsInBackground(Callback<List<Link>> callback) throws UserAuthException
     {
         final String url = Urls.ForUser.getAllLinkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
+        AssertUserAuth();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -900,4 +922,5 @@ public class AppacitiveUser extends AppacitiveEntity {
             LOGGER.log(Level.ALL, e.getMessage());
         }
     }
+
 }

@@ -16,18 +16,22 @@ public class BooleanOperator implements Query {
         this.filters = filters;
     }
 
+    private static final String and = "and";
+
+    private static final String or = "or";
+
     private String operator = null;
 
     private List<Query> filters = null;
 
     public static BooleanOperator and(List<Query> filters)
     {
-        return new BooleanOperator("and", filters);
+        return new BooleanOperator(and, filters);
     }
 
     public static BooleanOperator or(List<Query> filters)
     {
-        return new BooleanOperator("or", filters);
+        return new BooleanOperator(or, filters);
     }
 
     @Override

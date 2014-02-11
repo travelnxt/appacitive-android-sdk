@@ -3,7 +3,7 @@ import com.appacitive.sdk.AppacitiveObject;
 import com.appacitive.sdk.PagedList;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationError;
+import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,7 +33,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void createFullObjectTest() throws ValidationError, ParseException {
+    public void createFullObjectTest() throws ValidationException, ParseException {
 
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setProperty("intfield", 100);
@@ -99,7 +99,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void multiLingualObjectCreateTest() throws ValidationError {
+    public void multiLingualObjectCreateTest() throws ValidationException {
         AppacitiveObject newObject = new AppacitiveObject("object");
         final String randomString1 = " 以下便是有关此问题的所有信息";
         final String randomString2 = " ä»¥ä¸ä¾¿æ¯æå³æ­¤é®é¢çææä¿¡æ¯";
@@ -111,14 +111,14 @@ public class ObjectTest {
                 assertTrue(result.getProperty("stringfield").toString().equals(randomString1));
                 assertTrue(result.getProperty("textfield").toString().equals(randomString2));
             }
+
             public void failure(AppacitiveObject result, AppacitiveException e) {
                 assert false;
             }
         });
     }
 
-    private static AppacitiveObject getRandomObject()
-    {
+    private static AppacitiveObject getRandomObject() {
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setProperty("intfield", 100);
         newObject.setProperty("decimalfield", 20.251100);
@@ -156,8 +156,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateObjectTest() throws Exception
-    {
+    public void updateObjectTest() throws Exception {
         AppacitiveObject object = getRandomObject();
         getRandomObject().createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
@@ -184,8 +183,7 @@ public class ObjectTest {
                 }});
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
-                    public void success(AppacitiveObject result)
-                    {
+                    public void success(AppacitiveObject result) {
                         assertTrue(result.getRevision() == 2);
                         assertTrue(result.getPropertyAsInt("intfield") == 200);
                         assertTrue(result.getPropertyAsDouble("decimalfield") == 40.502d);
@@ -206,8 +204,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e)
-                    {
+                    public void failure(AppacitiveObject result, AppacitiveException e) {
                         assert false;
                     }
                 });
@@ -226,8 +223,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateObjectPropertyAsNull() throws Exception
-    {
+    public void updateObjectPropertyAsNull() throws Exception {
         AppacitiveObject appacitiveObject = getRandomObject();
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -258,8 +254,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateEmptyObjectTest() throws ValidationError
-    {
+    public void updateEmptyObjectTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -318,8 +313,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateWithValidRevisionTest() throws ValidationError
-    {
+    public void updateWithValidRevisionTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -344,44 +338,46 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateWithInvalidRevisionTest() throws Exception
-    {
+    public void updateWithInvalidRevisionTest() throws Exception {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
 
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
-            public void success(final AppacitiveObject origResult) throws ValidationError{
+            public void success(final AppacitiveObject origResult) {
                 final long id = origResult.getId();
-                AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
-                    @Override
-                    public void success(AppacitiveObject returnOrigResult) {
-                        returnOrigResult.updateInBackground(true, new Callback<AppacitiveObject>() {
-                            @Override
-                            public void success(AppacitiveObject result) {
-                                origResult.updateInBackground(true, new Callback<AppacitiveObject>() {
-                                    @Override
-                                    public void success(AppacitiveObject result) {
-                                        assert false;
-                                    }
+                try {
+                    AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
+                        @Override
+                        public void success(AppacitiveObject returnOrigResult) {
+                            returnOrigResult.updateInBackground(true, new Callback<AppacitiveObject>() {
+                                @Override
+                                public void success(AppacitiveObject result) {
+                                    origResult.updateInBackground(true, new Callback<AppacitiveObject>() {
+                                        @Override
+                                        public void success(AppacitiveObject result) {
+                                            assert false;
+                                        }
 
-                                    @Override
-                                    public void failure(AppacitiveObject result, AppacitiveException e) {
-                                        assert e.code.equals(ErrorCodes.INCORRECT_REVISION);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
+                                        @Override
+                                        public void failure(AppacitiveObject result, AppacitiveException e) {
+                                            assert e.code.equals(ErrorCodes.INCORRECT_REVISION);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } catch (ValidationException e) {
+                    assert false;
+                }
             }
-        }) ;
+        });
 
 
     }
 
     @Test
-    public void updateExistingNullValuesToNullTest() throws ValidationError
-    {
+    public void updateExistingNullValuesToNullTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setProperty("intfield", null);
         appacitiveObject.setProperty("decimalfield", null);
@@ -408,7 +404,7 @@ public class ObjectTest {
                 result.setProperty("multifield", null);
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
-                    public void success(AppacitiveObject result) throws Exception {
+                    public void success(AppacitiveObject result) {
                         assert result.getRevision() == 2;
                     }
 
@@ -422,8 +418,7 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateAttributesTest() throws ValidationError
-    {
+    public void updateAttributesTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "vx");
         appacitiveObject.setAttribute("a2", "v2");
@@ -444,7 +439,7 @@ public class ObjectTest {
 
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
-                    public void success(AppacitiveObject result) throws Exception {
+                    public void success(AppacitiveObject result) {
                         Map<String, String> attributes = result.getAllAttributes();
                         assert attributes.containsKey("a1") == false;
                         assert attributes.containsKey("a2") == false;
@@ -457,6 +452,7 @@ public class ObjectTest {
                             public void failure(AppacitiveObject result, AppacitiveException e) {
                                 assert true;
                             }
+
                             @Override
                             public void success(AppacitiveObject result) {
                                 assert false;
@@ -474,15 +470,14 @@ public class ObjectTest {
     }
 
     @Test
-    public void updateTagsTest() throws ValidationError
-    {
+    public void updateTagsTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.addTag("t1");
         appacitiveObject.addTag("t2");
         appacitiveObject.addTag("t3");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
-            public void success(AppacitiveObject result) throws Exception {
+            public void success(AppacitiveObject result) {
                 List<String> tags = result.getAllTags();
                 assert tags.size() == 3;
                 assert tags.contains("t1");
@@ -496,7 +491,7 @@ public class ObjectTest {
                 result.removeTag("t6");
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
-                    public void success(AppacitiveObject result) throws Exception {
+                    public void success(AppacitiveObject result) {
                         List<String> tags = result.getAllTags();
                         assert tags.size() == 4;
                         assert result.tagExists("t3") == false;
@@ -513,14 +508,13 @@ public class ObjectTest {
     }
 
     @Test
-    public void multiGetObjectsTest() throws IOException, ValidationError, InterruptedException {
+    public void multiGetObjectsTest() throws IOException, ValidationException, InterruptedException {
         final ArrayList<Long> ids = new ArrayList<Long>();
-        for(int i =0; i<3; i++)
-        {
+        for (int i = 0; i < 3; i++) {
             AppacitiveObject appacitiveObject = new AppacitiveObject("object");
             appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
                 @Override
-                public void success(AppacitiveObject result) throws Exception {
+                public void success(AppacitiveObject result) {
                     ids.add(result.getId());
                 }
             });
@@ -528,7 +522,7 @@ public class ObjectTest {
         Thread.sleep(5000);
         AppacitiveObject.multiGetInBackground("object", ids, null, new Callback<List<AppacitiveObject>>() {
             @Override
-            public void success(List<AppacitiveObject> result) throws Exception {
+            public void success(List<AppacitiveObject> result) {
                 assert result.size() == 3;
             }
 
@@ -540,62 +534,68 @@ public class ObjectTest {
     }
 
     @Test
-    public void fieldsTest() throws ValidationError
-    {
+    public void fieldsTest() throws ValidationException {
         AppacitiveObject appacitiveObject = getRandomObject();
         appacitiveObject.setAttribute("aa", "vv");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
-            public void success(AppacitiveObject result) throws Exception {
+            public void success(AppacitiveObject result) {
                 List<String> fields = new ArrayList<String>();
                 fields.add("intfield");
                 fields.add("geofield");
                 fields.add(SystemDefinedProperties.attributes);
                 fields.add(SystemDefinedProperties.lastModifiedBy);
                 fields.add(SystemDefinedProperties.utcDateCreated);
-                AppacitiveObject.getInBackground("object", result.getId(), fields, new Callback<AppacitiveObject>() {
-                    @Override
-                    public void success(AppacitiveObject result)  {
-                        assert result.getProperty("intfield") != null;
-                        assert result.getProperty("geofield") != null;
+                try {
+                    AppacitiveObject.getInBackground("object", result.getId(), fields, new Callback<AppacitiveObject>() {
+                        @Override
+                        public void success(AppacitiveObject result) {
+                            assert result.getProperty("intfield") != null;
+                            assert result.getProperty("geofield") != null;
 
-                        assert result.getProperty("stringfield") == null;
-                        assert result.getProperty("textfield") == null;
+                            assert result.getProperty("stringfield") == null;
+                            assert result.getProperty("textfield") == null;
 
-                        assert result.getAllTags().size() == 0;
-                        assert result.getAllAttributes().size() !=0;
-                    }
+                            assert result.getAllTags().size() == 0;
+                            assert result.getAllAttributes().size() != 0;
+                        }
 
-                    @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
-                        assert false;
-                    }
-                });
+                        @Override
+                        public void failure(AppacitiveObject result, AppacitiveException e) {
+                            assert false;
+                        }
+                    });
+                } catch (ValidationException e) {
+                    assert false;
+                }
             }
         });
     }
 
     @Test
-    public void deleteObjectTest() throws ValidationError
-    {
+    public void deleteObjectTest() throws ValidationException {
         AppacitiveObject object = new AppacitiveObject("object");
         object.createInBackground(new Callback<AppacitiveObject>() {
-            public void success(AppacitiveObject result)  {
+            public void success(AppacitiveObject result) {
                 final long id = result.getId();
                 result.deleteInBackground(false, new Callback<Void>() {
                     @Override
-                    public void success(Void result) throws Exception {
-                        AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
-                            @Override
-                            public void success(AppacitiveObject result) throws Exception {
-                                assert false;
-                            }
+                    public void success(Void result) {
+                        try {
+                            AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
+                                @Override
+                                public void success(AppacitiveObject result) {
+                                    assert false;
+                                }
 
-                            @Override
-                            public void failure(AppacitiveObject result, AppacitiveException e) {
-                                assert e.code.equals(ErrorCodes.NOT_FOUND);
-                            }
-                        });
+                                @Override
+                                public void failure(AppacitiveObject result, AppacitiveException e) {
+                                    assert e.code.equals(ErrorCodes.NOT_FOUND);
+                                }
+                            });
+                        } catch (ValidationException e) {
+                            assert false;
+                        }
                     }
 
                     @Override
@@ -608,15 +608,13 @@ public class ObjectTest {
     }
 
     @Test
-    public void multiDeleteObjectTest() throws ValidationError, InterruptedException
-    {
+    public void multiDeleteObjectTest() throws ValidationException, InterruptedException {
         final List<Long> ids = new ArrayList<Long>();
-        for(int i=0; i<3; i++)
-        {
+        for (int i = 0; i < 3; i++) {
             AppacitiveObject appacitiveObject = new AppacitiveObject("object");
             appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
                 @Override
-                public void success(AppacitiveObject result) throws Exception {
+                public void success(AppacitiveObject result) {
                     ids.add(result.getId());
                 }
             });
@@ -624,20 +622,23 @@ public class ObjectTest {
         Thread.sleep(10000);
         AppacitiveObject.bulkDeleteInBackground("object", ids, new Callback<Void>() {
             @Override
-            public void success(Void result) throws Exception {
-                for (long id:ids)
-                {
-                    AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
-                        @Override
-                        public void success(AppacitiveObject result) throws Exception {
-                            assert false;
-                        }
+            public void success(Void result) {
+                for (long id : ids) {
+                    try {
+                        AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
+                            @Override
+                            public void success(AppacitiveObject result) {
+                                assert false;
+                            }
 
-                        @Override
-                        public void failure(AppacitiveObject result, AppacitiveException e) {
-                            assert true;
-                        }
-                    });
+                            @Override
+                            public void failure(AppacitiveObject result, AppacitiveException e) {
+                                assert true;
+                            }
+                        });
+                    } catch (ValidationException e) {
+                        assert false;
+                    }
                 }
             }
 
@@ -650,15 +651,14 @@ public class ObjectTest {
     }
 
     @Test
-    public void findObjectsTest() throws ValidationError
-    {
+    public void findObjectsTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
-            public void success(AppacitiveObject result) throws Exception {
+            public void success(AppacitiveObject result) {
                 AppacitiveObject.findInBackground("object", null, null, new Callback<PagedList<AppacitiveObject>>() {
                     @Override
-                    public void success(PagedList<AppacitiveObject> result) throws Exception {
+                    public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
                     }
 
