@@ -40,6 +40,6 @@ public class AttributeFilter extends Filter implements Query {
 
     @Override
     public String asString() {
-        return String.format("@%s %s %s", this.key, this.operator, this.value);
+        return String.format("@%s %s '%s'", this.key, this.operator, this.value);
     }
 }

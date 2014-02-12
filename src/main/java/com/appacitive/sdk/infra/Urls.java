@@ -1,5 +1,6 @@
 package com.appacitive.sdk.infra;
 
+import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.Query;
 import org.omg.DynamicAny._DynEnumStub;
 
@@ -73,11 +74,13 @@ public class Urls {
             return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static Url findObjectsUrl(String type, final Query query, List<String> fields)
+        public static Url findObjectsUrl(String type, final AppacitiveQuery query, List<String> fields)
         {
             Map<String, String> qsp = new HashMap<String, String>();
+
             if(query != null)
-                qsp.put("query", query.asString());
+                qsp.putAll(query.asQueryStringParameters());
+
             if(fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
@@ -150,11 +153,13 @@ public class Urls {
             return new Url(baseURL, endpoint, suffix, qsp);
         }
 
-        public static Url findConnectionsUrl(String relationType, final Query query, final List<String> fields)
+        public static Url findConnectionsUrl(String relationType, final AppacitiveQuery query, final List<String> fields)
         {
             Map<String, String> qsp = new HashMap<String, String>();
+
             if(query != null)
-                qsp.put("query", query.asString());
+                qsp.putAll(query.asQueryStringParameters());
+
             if(fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
@@ -185,6 +190,15 @@ public class Urls {
         }
 
         public static Url findByObjectAndLabelUrl(String relationType, final long objectId, final String label, List<String> fields) {
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+            qsp.put("objectid", String.valueOf(objectId));
+            qsp.put("label", label);
+            return new Url(baseURL, endpoint, "find", qsp);
+        }
+
+        public static Url findByObjectAndLabelUrl123(String relationType, final long objectId, final String label, List<String> fields) {
             Map<String, String> qsp = new HashMap<String, String>();
             if(fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));

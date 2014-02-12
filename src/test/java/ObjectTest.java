@@ -5,6 +5,8 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.query.*;
+import com.sun.jndi.url.iiop.iiopURLContext;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -42,7 +44,7 @@ public class ObjectTest {
         newObject.setProperty("decimalfield", 20.251100);
         newObject.setProperty("boolfield", true);
         newObject.setProperty("stringfield", "hello world");
-        newObject.setProperty("textfield", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
+        newObject.setProperty(".", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
         final Date date = new Date();
         TimeZone tz = TimeZone.getTimeZone("UTC");
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -655,13 +657,170 @@ public class ObjectTest {
     @Test
     public void findObjectsTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        final AppacitiveQuery query = new AppacitiveQuery();
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
-                AppacitiveObject.findInBackground("object", null, null, new Callback<PagedList<AppacitiveObject>>() {
+                AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
+                    }
+
+                    @Override
+                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                        assert false;
+                    }
+                });
+            }
+        });
+    }
+
+    @Test
+    public void findObjectsTestWithPagination() throws ValidationException {
+        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        final AppacitiveQuery query = new AppacitiveQuery();
+        query.pageNumber = 2;
+        query.pageSize = 15;
+        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
+                    @Override
+                    public void success(PagedList<AppacitiveObject> result) {
+                        assert result.results.size() == 15;
+                        assert result.pageSize == 15;
+                        assert result.pageNumber == 2;
+                    }
+
+                    @Override
+                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                        assert false;
+                    }
+                });
+            }
+        });
+    }
+
+    @Test
+    public void findObjectsWithPropertyFilterTest() throws ValidationException {
+        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        appacitiveObject.setProperty("stringfield", "hello world123");
+        appacitiveObject.setProperty("intfield", 2005);
+        appacitiveObject.setProperty("boolfield", false);
+        appacitiveObject.setProperty("geofield", "11.11, 22.22");
+        final Date date = new Date();
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        final String nowAsISODate = df.format(date);
+        final String nowAsISOTime = tf.format(date);
+        final String nowAsISODateTime = dtf.format(date);
+        appacitiveObject.setProperty("datefield", nowAsISODate);
+        appacitiveObject.setProperty("timefield", nowAsISOTime);
+        appacitiveObject.setProperty("datetimefield", nowAsISODateTime);
+
+        final AppacitiveQuery query = new AppacitiveQuery();
+        final Query q1 = new PropertyFilter("stringfield").isEqualTo("hello world123");
+        final Query q2 = new PropertyFilter("intfield").isEqualTo(2005);
+        final Query q3 = new PropertyFilter("boolfield").isEqualTo(false);
+        final Query q4 = new PropertyFilter("datefield").isEqualTo(nowAsISODate);
+        final Query q5 = new PropertyFilter("timefield").isEqualTo(nowAsISOTime);
+        final Query q6 = new PropertyFilter("datetimefield").isEqualTo(nowAsISODateTime);
+        double[] geo = new double[2];
+        geo[0] = 11.11d;
+        geo[1] = 22.23d;
+        final Query q7 = new GeoFilter("geofield").withinCircle(geo, 10, DistanceMetric.mi);
+
+        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+            add(q1);add(q2);add(q3);add(q4);add(q5);add(q6);add(q7);
+        }});
+        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
+                    @Override
+                    public void success(PagedList<AppacitiveObject> result) {
+                        assert result.results.size() > 0;
+                    }
+
+                    @Override
+                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                        assert false;
+                    }
+                });
+            }
+        });
+    }
+
+    @Test
+    @Ignore
+    public void findObjectsWithAttributeFilterTest() throws ValidationException {
+        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        appacitiveObject.setAttribute("a1", "v1");
+        appacitiveObject.setAttribute("a2", "v2");
+        appacitiveObject.setAttribute("a3", "v3");
+        appacitiveObject.setAttribute("a4", "appacitive");
+        final AppacitiveQuery query = new AppacitiveQuery();
+        final AttributeFilter a1 = new AttributeFilter("a1").isEqualTo("v1");
+        final AttributeFilter a2 = new AttributeFilter("a2").endsWith("2");
+        final AttributeFilter a3 = new AttributeFilter("a3").startsWith("v");
+        final AttributeFilter a4 = new AttributeFilter("a4").like("*acit*");
+        query.query = BooleanOperator.and(new ArrayList<Query>(){{
+            add(a1);add(a2);add(a3);add(a4);
+        }});
+
+        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
+                    @Override
+                    public void success(PagedList<AppacitiveObject> result) {
+                        assert result.results.size() > 0;
+                    }
+
+                    @Override
+                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                        assert false;
+                    }
+                });
+            }
+        });
+    }
+
+    @Test
+    public void findObjectsWithTagsFilterTest() throws ValidationException {
+        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+        List<String> tags = new ArrayList<String>(){{
+            add("tag1");add("tag2");add("tag3");add("tag4");add("tag5");
+        }};
+        appacitiveObject.addTags(tags);
+        final AppacitiveQuery query = new AppacitiveQuery();
+        final TagFilter t1 = new TagFilter().matchAll(new ArrayList<String>(){{
+            add("tag1");add("tag2");
+        }});
+
+        final TagFilter t2 = new TagFilter().matchOneOrMore(new ArrayList<String>(){{
+            add("tag4");add("tag6");add("tag7");
+        }});
+        query.query = BooleanOperator.and(new ArrayList<Query>(){{
+            add(t1);add(t2);
+        }});
+
+        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
+                    @Override
+                    public void success(PagedList<AppacitiveObject> result) {
+                        assert result.results.size() > 0;
+                        for(AppacitiveObject obj : result.results)
+                        {
+                            assert obj.tagExists("tag1") == true;
+                            assert obj.tagExists("tag2") == true;
+                            assert obj.tagExists("tag4") == true || obj.tagExists("tag6") == true || obj.tagExists("tag7") == true;
+                        }
                     }
 
                     @Override

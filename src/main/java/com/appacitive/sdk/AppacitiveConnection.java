@@ -4,6 +4,7 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.Query;
 
 import java.io.Serializable;
@@ -345,7 +346,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         }
     }
 
-    public static void findInBackground(String relationType, Query query, List<String> fields,  Callback<PagedList<AppacitiveConnection>> callback)
+    public static void findInBackground(String relationType, AppacitiveQuery query, List<String> fields,  Callback<PagedList<AppacitiveConnection>> callback)
     {
         final String url = Urls.ForConnection.findConnectionsUrl(relationType, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -530,6 +531,44 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             LOGGER.log(Level.ALL, e.getMessage());
         }
     }
+
+//    public static void findConnectedObjectsInBackground(String relationType, String objectType, long objectId , List<String> fields, Query query,  Callback<PagedList<AppacitiveConnection>> callback)
+//    {
+//        final String url = Urls.ForConnection.findByObjectAndLabelUrl(relationType, objectId, label, fields).toString();
+//        final Map<String, String> headers = Headers.assemble();
+//
+//        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+//            @Override
+//            public Map<String, Object> call() throws Exception {
+//                return AppacitiveHttp.get(url, headers);
+//            }
+//        });
+//
+//        try {
+//            Map<String, Object> responseMap = future.get();
+//            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+//            if (status.isSuccessful()) {
+//                if (callback != null)
+//                {
+//                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
+//                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
+//                    for (Object conn : connections) {
+//                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
+//                    }
+//                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
+//                    pagedResult.results = returnConnections;
+//                    callback.success(pagedResult);
+//                }
+//
+//            } else {
+//                if (callback != null)
+//                    callback.failure(null, new AppacitiveException(status));
+//            }
+//
+//        } catch (Exception e) {
+//            LOGGER.log(Level.ALL, e.getMessage());
+//        }
+//    }
 
 
 

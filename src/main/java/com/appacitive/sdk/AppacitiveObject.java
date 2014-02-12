@@ -6,6 +6,7 @@ import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.Query;
 
 import java.io.Serializable;
@@ -284,7 +285,7 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
         }
     }
 
-    public static void findInBackground(String type, Query query, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
+    public static void findInBackground(String type, AppacitiveQuery query, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
     {
         final String url = Urls.ForObject.findObjectsUrl(type, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();

@@ -4,27 +4,31 @@ import com.appacitive.sdk.AppacitiveContext;
 import org.omg.CORBA.NameValuePair;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
-public class Url  implements Serializable {
+public class Url implements Serializable {
 
-    public Url(String baseUrl, String endpoint, String suffix, Map<String, String> queryStringParameters)
-    {
+    public final static Logger LOGGER = Logger.getLogger(Url.class.getName());
+
+    public Url(String baseUrl, String endpoint, String suffix, Map<String, String> queryStringParameters) {
         this.queryStringParameters = new HashMap<String, String>();
         this.baseUrl = baseUrl;
         this.endpoint = endpoint;
         this.suffix = suffix;
-        if(queryStringParameters != null)
+        if (queryStringParameters != null)
             this.queryStringParameters = queryStringParameters;
         Double[] location = AppacitiveContext.getCurrentLocation();
-        if(location[0] != null && location[1] != null && endpoint.equals("user"))
-        {
+        if (location[0] != null && location[1] != null && endpoint.equals("user")) {
             this.queryStringParameters.put("lat", String.valueOf(location[0]));
             this.queryStringParameters.put("long", String.valueOf(location[1]));
         }
@@ -39,20 +43,22 @@ public class Url  implements Serializable {
     public Map<String, String> queryStringParameters = null;
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder urlBuilder = new StringBuilder();
         urlBuilder.append(baseUrl).append("/").append(endpoint).append("/").append(suffix);
 
-        if(queryStringParameters.size() > 0)
+        if (queryStringParameters.size() > 0)
             urlBuilder.append("?");
 
         String separator = "";
-        for (Map.Entry<String, String> qsp : queryStringParameters.entrySet())
-        {
+        for (Map.Entry<String, String> qsp : queryStringParameters.entrySet()) {
             urlBuilder.append(separator);
             separator = "&";
-            urlBuilder.append(qsp.getKey()).append("=").append(qsp.getValue());
+            try {
+                urlBuilder.append(qsp.getKey()).append("=").append(URLEncoder.encode(qsp.getValue(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.log(Level.ALL, e.getMessage());
+            }
         }
         return urlBuilder.toString();
     }

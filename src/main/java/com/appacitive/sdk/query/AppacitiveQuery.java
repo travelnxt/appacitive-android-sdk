@@ -1,8 +1,12 @@
 package com.appacitive.sdk.query;
 
+import com.appacitive.sdk.infra.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sathley.
@@ -21,49 +25,31 @@ public class AppacitiveQuery  implements Serializable {
 
     public Query query;
 
-    @Override
-    public String toString()
+    public Map<String, String> asQueryStringParameters()
     {
-        List<String> items = new ArrayList<String>();
+        Map<String, String> queryStringParameters = new HashMap<String, String>();
 
         if(this.pageNumber > 0)
-            items.add("pNum=".concat(String.valueOf(pageNumber)));
+            queryStringParameters.put("pNum", String.valueOf(pageNumber));
 
         if(this.pageSize > 0)
-            items.add("pSize=".concat(String.valueOf(pageSize)));
+            queryStringParameters.put("pSize", String.valueOf(pageSize));
 
         if(this.orderBy != null){
-            items.add("orderBy=".concat(orderBy));
-            items.add("isAsc=".concat(String.valueOf(isAscending)));
+            queryStringParameters.put("orderBy=", orderBy);
+            queryStringParameters.put("isAsc", String.valueOf(isAscending));
         }
-
-        if(this.pageSize > 0)
-            items.add("pSize=".concat(String.valueOf(pageSize)));
 
         if(this.freeTextTokens != null && this.freeTextTokens.size() > 0)
         {
-            items.add("freetext=".concat(join(freeTextTokens,",")));
+            queryStringParameters.put("freeText", StringUtils.join(freeTextTokens, ","));
         }
 
         if(this.query != null)
         {
-            items.add(this.query.toString());
+            queryStringParameters.put("query", this.query.asString());
         }
 
-        return join(items, "&");
+        return queryStringParameters;
     }
-
-    private static String join(List<String> lst, String prefix)
-    {
-        final StringBuilder sb = new StringBuilder();
-        String separator = "";
-        for(Object f : lst)
-        {
-            sb.append(separator);
-            separator = prefix;
-            sb.append(f);
-        }
-        return sb.toString();
-    }
-
 }
