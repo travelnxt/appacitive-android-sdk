@@ -58,6 +58,7 @@ public class AppacitiveGraphSearch  implements Serializable {
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
 
     }
@@ -97,6 +98,7 @@ public class AppacitiveGraphSearch  implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 

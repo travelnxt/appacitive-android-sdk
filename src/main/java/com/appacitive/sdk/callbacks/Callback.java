@@ -9,5 +9,5 @@ public abstract class Callback<T>
 {
     public void success(T result) {}
 
-    public void failure(T result, AppacitiveException e) {}
+    public void failure(T result, Exception e) {}
 }

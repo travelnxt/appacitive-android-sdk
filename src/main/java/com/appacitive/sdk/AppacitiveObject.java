@@ -5,11 +5,13 @@ import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
+import com.appacitive.sdk.infra.NodeHelper;
 import com.appacitive.sdk.infra.Urls;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.Query;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -19,7 +21,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveObject extends AppacitiveEntity  implements Serializable {
+public class AppacitiveObject extends AppacitiveEntity implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
 
@@ -34,11 +36,11 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
         if (entity != null) {
 
             Object object = entity.get("__typeid");
-            if(object != null)
+            if (object != null)
                 this.typeId = Long.parseLong(object.toString());
 
             object = entity.get("__type");
-            if(object != null)
+            if (object != null)
                 this.type = object.toString();
 
         }
@@ -100,7 +102,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -132,7 +136,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -157,7 +163,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -166,8 +174,7 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
         List<String> strIds = new ArrayList<String>();
-        for(long id:objectIds)
-        {
+        for (long id : objectIds) {
             strIds.add(String.valueOf(id));
         }
         payload.put("idlist", strIds);
@@ -191,7 +198,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
 
     }
@@ -213,7 +222,7 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
                 this.resetUpdateCommands();
-                this.setSelf((Map<String, Object>)responseMap.get("object"));
+                this.setSelf((Map<String, Object>) responseMap.get("object"));
                 if (callback != null)
                     callback.success(this);
             } else {
@@ -221,7 +230,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -250,7 +261,9 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -281,12 +294,13 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
-    public static void findInBackground(String type, AppacitiveQuery query, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
-    {
+    public static void findInBackground(String type, AppacitiveQuery query, List<String> fields, Callback<PagedList<AppacitiveObject>> callback) {
         final String url = Urls.ForObject.findObjectsUrl(type, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -301,14 +315,13 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                if (callback != null)
-                {
+                if (callback != null) {
                     ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
                     List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
                     for (Object obj : objects) {
                         returnObjects.add(new AppacitiveObject((Map<String, Object>) obj));
                     }
-                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>)responseMap.get("paginginfo"));
+                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>) responseMap.get("paginginfo"));
                     pagedResult.results = returnObjects;
                     callback.success(pagedResult);
                 }
@@ -319,12 +332,13 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
-    public static void findInBetweenTwoObjectsInBackground(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields, Callback<PagedList<AppacitiveObject>> callback)
-    {
+    public static void findInBetweenTwoObjectsInBackground(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields, Callback<PagedList<AppacitiveObject>> callback) {
         final String url = Urls.ForObject.findBetweenTwoObjectsUrl(type, objectAId, relationA, labelA, objectBId, relationB, labelB, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -338,14 +352,13 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                if (callback != null)
-                {
+                if (callback != null) {
                     ArrayList<Object> objects = (ArrayList<Object>) responseMap.get("objects");
                     List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
                     for (Object obj : objects) {
                         returnObjects.add(new AppacitiveObject((Map<String, Object>) obj));
                     }
-                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>)responseMap.get("paginginfo"));
+                    PagedList<AppacitiveObject> pagedResult = new PagedList<AppacitiveObject>((Map<String, Object>) responseMap.get("paginginfo"));
                     pagedResult.results = returnObjects;
                     callback.success(pagedResult);
                 }
@@ -357,9 +370,51 @@ public class AppacitiveObject extends AppacitiveEntity  implements Serializable 
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
-    // find connected objects
+    public static void getConnectedObjectsInBackground(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields, Callback<ConnectedObjectsResponse> callback) {
+        final String url = Urls.ForConnection.getConnectedObjectsUrl(relationType, objectType, objectId, query, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null) {
+                    ConnectedObjectsResponse response = new ConnectedObjectsResponse(responseMap.get("parent").toString());
+                    response.pagingInfo = new PagingInfo((Map<String, Object>) responseMap.get("paginginfo"));
+                    List<Object> nodeObjects = (ArrayList<Object>) (responseMap.get("nodes"));
+                    response.results = new ArrayList<ConnectedObject>();
+                    for (Object n : nodeObjects) {
+                        Map<String, Object> obj_n = (Map<String, Object>) n;
+                        ConnectedObject connectedObject = new ConnectedObject();
+                        if (obj_n.containsKey("__edge")) {
+                            connectedObject.connection = new AppacitiveConnection((Map<String, Object>) obj_n.get("__edge"));
+                            obj_n.remove("__edge");
+                        }
+                        connectedObject.object = new AppacitiveObject(obj_n);
+                        response.results.add(connectedObject);
+                    }
+                    callback.success(response);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
+        }
+    }
 
 }

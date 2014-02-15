@@ -206,6 +206,19 @@ public class Urls {
             qsp.put("label", label);
             return new Url(baseURL, endpoint, "find", qsp);
         }
+
+        public static Url getConnectedObjectsUrl(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields) {
+
+            Map<String, String> qsp = new HashMap<String, String>();
+
+            if(query != null)
+                qsp.putAll(query.asQueryStringParameters());
+
+            if(fields != null && fields.size() > 0)
+                qsp.put("fields", StringUtils.join(fields, ","));
+
+            return new Url(baseURL, endpoint, String.format("%s/%s/%s/find", relationType, objectType, objectId), qsp);
+        }
     }
 
     public static class ForUser

@@ -62,7 +62,7 @@ public class ConnectionTest {
                                     }
 
                                     @Override
-                                    public void failure(AppacitiveConnection result, AppacitiveException e) {
+                                    public void failure(AppacitiveConnection result, Exception e) {
                                         assert false;
                                     }
                                 });
@@ -109,7 +109,7 @@ public class ConnectionTest {
                                     }
 
                                     @Override
-                                    public void failure(AppacitiveConnection result, AppacitiveException e) {
+                                    public void failure(AppacitiveConnection result, Exception e) {
                                         assert false;
                                     }
                                 });
@@ -143,7 +143,7 @@ public class ConnectionTest {
                         }
 
                         @Override
-                        public void failure(AppacitiveConnection result, AppacitiveException e) {
+                        public void failure(AppacitiveConnection result, Exception e) {
                             assert false;
                         }
                     });
@@ -169,7 +169,7 @@ public class ConnectionTest {
             }
 
             @Override
-            public void failure(AppacitiveConnection result, AppacitiveException e) {
+            public void failure(AppacitiveConnection result, Exception e) {
                 assert false;
             }
         });
@@ -190,7 +190,7 @@ public class ConnectionTest {
                         }
 
                         @Override
-                        public void failure(AppacitiveConnection result, AppacitiveException e) {
+                        public void failure(AppacitiveConnection result, Exception e) {
                             assert false;
                         }
                     });
@@ -222,7 +222,7 @@ public class ConnectionTest {
             }
 
             @Override
-            public void failure(List<AppacitiveConnection> result, AppacitiveException e) {
+            public void failure(List<AppacitiveConnection> result, Exception e) {
                 assert false;
             }
         });
@@ -242,7 +242,7 @@ public class ConnectionTest {
                     }
 
                     @Override
-                    public void failure(Void result, AppacitiveException e) {
+                    public void failure(Void result, Exception e) {
                         assert false;
                     }
                 });
@@ -276,8 +276,9 @@ public class ConnectionTest {
                             }
 
                             @Override
-                            public void failure(AppacitiveConnection result, AppacitiveException e) {
-                                assert e.code.equals(ErrorCodes.NOT_FOUND);
+                            public void failure(AppacitiveConnection result, Exception e) {
+                                AppacitiveException ae = (AppacitiveException)e;
+                                assert ae.code.equals(ErrorCodes.NOT_FOUND);
                             }
                         });
                     } catch (ValidationException e) {
@@ -287,7 +288,7 @@ public class ConnectionTest {
             }
 
             @Override
-            public void failure(Void result, AppacitiveException e) {
+            public void failure(Void result, Exception e) {
                 assert false;
             }
         });

@@ -11,27 +11,15 @@ import java.util.Map;
 public class PagedList<T>  implements Serializable {
 
     public PagedList(Map<String, Object> pagingInfo) {
+
         if (pagingInfo != null) {
-
-            Object object = pagingInfo.get("pagenumber");
-            if (object != null)
-                this.pageNumber = (Integer) object;
-
-            object = pagingInfo.get("pagesize");
-            if (object != null)
-                this.pageSize = (Integer) object;
-
-            object = pagingInfo.get("totalrecords");
-            if (object != null)
-                this.totalRecords = (Integer) object;
+            this.pagingInfo = new PagingInfo(pagingInfo);
         }
     }
 
+    public PagedList(){}
+
     public List<T> results = new ArrayList<T>();
 
-    public int pageNumber = 0;
-
-    public int pageSize = 0;
-
-    public int totalRecords = 0;
+    public PagingInfo pagingInfo;
 }

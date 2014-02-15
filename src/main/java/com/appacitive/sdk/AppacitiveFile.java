@@ -62,6 +62,7 @@ public class AppacitiveFile  implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -97,6 +98,7 @@ public class AppacitiveFile  implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -127,6 +129,7 @@ public class AppacitiveFile  implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 }

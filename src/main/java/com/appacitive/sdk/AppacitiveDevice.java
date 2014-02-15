@@ -160,6 +160,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -188,6 +189,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -217,6 +219,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -247,6 +250,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -277,6 +281,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -302,6 +307,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 }

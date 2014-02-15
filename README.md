@@ -8,3 +8,11 @@ Official Android and Java SDK for Appacitive.
 
 
 
+TODO
+
+Add file upload support
+Complete device and push
+IOC support
+Android support
+make user/device inherit from object
+make object extendable

@@ -36,7 +36,7 @@ public class FileTest {
             }
 
             @Override
-            public void failure(FileUploadUrlResponse result, AppacitiveException e) {
+            public void failure(FileUploadUrlResponse result, Exception e) {
                 assert false;
             }
         });
@@ -52,7 +52,7 @@ public class FileTest {
             }
 
             @Override
-            public void failure(String result, AppacitiveException e) {
+            public void failure(String result, Exception e) {
                 assert false;
             }
         });
@@ -68,7 +68,7 @@ public class FileTest {
             }
 
             @Override
-            public void failure(Void result, AppacitiveException e) {
+            public void failure(Void result, Exception e) {
                 assert false;
             }
         });

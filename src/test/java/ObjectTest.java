@@ -1,6 +1,4 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveObject;
-import com.appacitive.sdk.PagedList;
+import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
@@ -34,6 +32,10 @@ public class ObjectTest {
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private String getRandomString() {
+        return UUID.randomUUID().toString();
     }
 
     @Test
@@ -208,7 +210,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -249,7 +251,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -308,7 +310,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -333,7 +335,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -363,8 +365,9 @@ public class ObjectTest {
                                         }
 
                                         @Override
-                                        public void failure(AppacitiveObject result, AppacitiveException e) {
-                                            assert e.code.equals(ErrorCodes.INCORRECT_REVISION);
+                                        public void failure(AppacitiveObject result, Exception e) {
+                                            AppacitiveException ae = (AppacitiveException) e;
+                                            assert ae.code.equals(ErrorCodes.INCORRECT_REVISION);
                                         }
                                     });
                                 }
@@ -413,7 +416,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -453,7 +456,7 @@ public class ObjectTest {
                         result.removeAttribute("non_existent_attr");
                         result.updateInBackground(false, new Callback<AppacitiveObject>() {
                             @Override
-                            public void failure(AppacitiveObject result, AppacitiveException e) {
+                            public void failure(AppacitiveObject result, Exception e) {
                                 assert true;
                             }
 
@@ -465,7 +468,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -503,7 +506,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(AppacitiveObject result, AppacitiveException e) {
+                    public void failure(AppacitiveObject result, Exception e) {
                         assert false;
                     }
                 });
@@ -531,7 +534,7 @@ public class ObjectTest {
             }
 
             @Override
-            public void failure(List<AppacitiveObject> result, AppacitiveException e) {
+            public void failure(List<AppacitiveObject> result, Exception e) {
                 assert false;
             }
         });
@@ -565,7 +568,7 @@ public class ObjectTest {
                         }
 
                         @Override
-                        public void failure(AppacitiveObject result, AppacitiveException e) {
+                        public void failure(AppacitiveObject result, Exception e) {
                             assert false;
                         }
                     });
@@ -593,8 +596,9 @@ public class ObjectTest {
                                 }
 
                                 @Override
-                                public void failure(AppacitiveObject result, AppacitiveException e) {
-                                    assert e.code.equals(ErrorCodes.NOT_FOUND);
+                                public void failure(AppacitiveObject result, Exception e) {
+                                    AppacitiveException ae = (AppacitiveException) e;
+                                    assert ae.code.equals(ErrorCodes.NOT_FOUND);
                                 }
                             });
                         } catch (ValidationException e) {
@@ -603,7 +607,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(Void result, AppacitiveException e) {
+                    public void failure(Void result, Exception e) {
                         assert false;
                     }
                 });
@@ -636,7 +640,7 @@ public class ObjectTest {
                             }
 
                             @Override
-                            public void failure(AppacitiveObject result, AppacitiveException e) {
+                            public void failure(AppacitiveObject result, Exception e) {
                                 assert true;
                             }
                         });
@@ -647,7 +651,7 @@ public class ObjectTest {
             }
 
             @Override
-            public void failure(Void result, AppacitiveException e) {
+            public void failure(Void result, Exception e) {
                 assert false;
             }
         });
@@ -668,7 +672,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                    public void failure(PagedList<AppacitiveObject> result, Exception e) {
                         assert false;
                     }
                 });
@@ -689,12 +693,12 @@ public class ObjectTest {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() == 15;
-                        assert result.pageSize == 15;
-                        assert result.pageNumber == 2;
+                        assert result.pagingInfo.pageSize == 15;
+                        assert result.pagingInfo.pageNumber == 2;
                     }
 
                     @Override
-                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                    public void failure(PagedList<AppacitiveObject> result, Exception e) {
                         assert false;
                     }
                 });
@@ -734,7 +738,13 @@ public class ObjectTest {
         final Query q7 = new GeoFilter("geofield").withinCircle(geo, 10, DistanceMetric.mi);
 
         query.query = BooleanOperator.and(new ArrayList<Query>() {{
-            add(q1);add(q2);add(q3);add(q4);add(q5);add(q6);add(q7);
+            add(q1);
+            add(q2);
+            add(q3);
+            add(q4);
+            add(q5);
+            add(q6);
+            add(q7);
         }});
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -746,7 +756,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                    public void failure(PagedList<AppacitiveObject> result, Exception e) {
                         assert false;
                     }
                 });
@@ -767,8 +777,11 @@ public class ObjectTest {
         final AttributeFilter a2 = new AttributeFilter("a2").endsWith("2");
         final AttributeFilter a3 = new AttributeFilter("a3").startsWith("v");
         final AttributeFilter a4 = new AttributeFilter("a4").like("*acit*");
-        query.query = BooleanOperator.and(new ArrayList<Query>(){{
-            add(a1);add(a2);add(a3);add(a4);
+        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+            add(a1);
+            add(a2);
+            add(a3);
+            add(a4);
         }});
 
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -781,7 +794,7 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                    public void failure(PagedList<AppacitiveObject> result, Exception e) {
                         assert false;
                     }
                 });
@@ -792,20 +805,28 @@ public class ObjectTest {
     @Test
     public void findObjectsWithTagsFilterTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
-        List<String> tags = new ArrayList<String>(){{
-            add("tag1");add("tag2");add("tag3");add("tag4");add("tag5");
+        List<String> tags = new ArrayList<String>() {{
+            add("tag1");
+            add("tag2");
+            add("tag3");
+            add("tag4");
+            add("tag5");
         }};
         appacitiveObject.addTags(tags);
         final AppacitiveQuery query = new AppacitiveQuery();
-        final TagFilter t1 = new TagFilter().matchAll(new ArrayList<String>(){{
-            add("tag1");add("tag2");
+        final TagFilter t1 = new TagFilter().matchAll(new ArrayList<String>() {{
+            add("tag1");
+            add("tag2");
         }});
 
-        final TagFilter t2 = new TagFilter().matchOneOrMore(new ArrayList<String>(){{
-            add("tag4");add("tag6");add("tag7");
+        final TagFilter t2 = new TagFilter().matchOneOrMore(new ArrayList<String>() {{
+            add("tag4");
+            add("tag6");
+            add("tag7");
         }});
-        query.query = BooleanOperator.and(new ArrayList<Query>(){{
-            add(t1);add(t2);
+        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+            add(t1);
+            add(t2);
         }});
 
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -815,8 +836,7 @@ public class ObjectTest {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
-                        for(AppacitiveObject obj : result.results)
-                        {
+                        for (AppacitiveObject obj : result.results) {
                             assert obj.tagExists("tag1") == true;
                             assert obj.tagExists("tag2") == true;
                             assert obj.tagExists("tag4") == true || obj.tagExists("tag6") == true || obj.tagExists("tag7") == true;
@@ -824,11 +844,28 @@ public class ObjectTest {
                     }
 
                     @Override
-                    public void failure(PagedList<AppacitiveObject> result, AppacitiveException e) {
+                    public void failure(PagedList<AppacitiveObject> result, Exception e) {
                         assert false;
                     }
                 });
             }
         });
     }
+
+    @Test
+    public void getConnectedObjectsTest() throws ValidationException {
+        AppacitiveObject.getConnectedObjectsInBackground("my_device", "user", 50933461752611232L, null, null, new Callback<ConnectedObjectsResponse>() {
+            @Override
+            public void success(ConnectedObjectsResponse result) {
+                super.success(result);
+            }
+
+            @Override
+            public void failure(ConnectedObjectsResponse result, Exception e) {
+                super.failure(result, e);
+            }
+        });
+
+    }
+
 }

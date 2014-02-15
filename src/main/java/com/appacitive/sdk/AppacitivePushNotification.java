@@ -104,6 +104,7 @@ public class AppacitivePushNotification  implements Serializable {
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 

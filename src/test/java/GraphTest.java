@@ -52,7 +52,7 @@ public class GraphTest {
                             }
 
                             @Override
-                            public void failure(List<Long> result, AppacitiveException e) {
+                            public void failure(List<Long> result, Exception e) {
                                 assert false;
                             }
                         });
@@ -110,7 +110,7 @@ public class GraphTest {
                                     }
 
                                     @Override
-                                    public void failure(List<AppacitiveGraphNode> result, AppacitiveException e) {
+                                    public void failure(List<AppacitiveGraphNode> result, Exception e) {
                                         assert false;
                                     }
                                 });

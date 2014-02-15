@@ -155,6 +155,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -189,6 +190,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
 
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -214,7 +216,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -249,7 +253,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -279,7 +285,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -309,7 +317,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -342,7 +352,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -380,7 +392,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -418,7 +432,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -447,7 +463,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -490,7 +508,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 
@@ -528,7 +548,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
+//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
         }
     }
 

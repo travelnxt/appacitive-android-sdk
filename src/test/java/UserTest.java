@@ -47,7 +47,7 @@ public class UserTest {
             }
 
             @Override
-            public void failure(AppacitiveUser result, AppacitiveException e) {
+            public void failure(AppacitiveUser result, Exception e) {
                 assert false;
             }
         });
@@ -71,7 +71,7 @@ public class UserTest {
                     }
 
                     @Override
-                    public void failure(String result, AppacitiveException e) {
+                    public void failure(String result, Exception e) {
                         assert false;
                     }
                 });
@@ -120,7 +120,7 @@ public class UserTest {
                                                 }
 
                                                 @Override
-                                                public void failure(List<AppacitiveUser> result, AppacitiveException e) {
+                                                public void failure(List<AppacitiveUser> result, Exception e) {
                                                     assert false;
                                                 }
                                             });
@@ -167,7 +167,7 @@ public class UserTest {
                                             }
 
                                             @Override
-                                            public void failure(AppacitiveUser result, AppacitiveException e) {
+                                            public void failure(AppacitiveUser result, Exception e) {
                                                 assert true;
                                             }
                                         });
@@ -177,7 +177,7 @@ public class UserTest {
                                 }
 
                                 @Override
-                                public void failure(Void result, AppacitiveException e) {
+                                public void failure(Void result, Exception e) {
                                     assert false;
                                 }
                             });
@@ -218,14 +218,14 @@ public class UserTest {
                                         }
 
                                         @Override
-                                        public void failure(String result, AppacitiveException e) {
+                                        public void failure(String result, Exception e) {
                                             assert false;
                                         }
                                     });
                                 }
 
                                 @Override
-                                public void failure(Void result, AppacitiveException e) {
+                                public void failure(Void result, Exception e) {
                                     assert false;
                                 }
                             });
@@ -257,7 +257,7 @@ public class UserTest {
                     }
 
                     @Override
-                    public void failure(Void result, AppacitiveException e) {
+                    public void failure(Void result, Exception e) {
                         assert false;
                     }
                 });
@@ -287,7 +287,7 @@ public class UserTest {
                                 }
 
                                 @Override
-                                public void failure(Void result, AppacitiveException e) {
+                                public void failure(Void result, Exception e) {
                                     assert false;
                                 }
                             });
@@ -327,7 +327,7 @@ public class UserTest {
                                             }
 
                                             @Override
-                                            public void failure(Void result, AppacitiveException e) {
+                                            public void failure(Void result, Exception e) {
                                                 assert true;
                                             }
                                         });
@@ -338,7 +338,7 @@ public class UserTest {
                                 }
 
                                 @Override
-                                public void failure(Void result, AppacitiveException e) {
+                                public void failure(Void result, Exception e) {
                                     assert false;
                                 }
                             });
@@ -381,7 +381,7 @@ public class UserTest {
                                 }
 
                                 @Override
-                                public void failure(Void result, AppacitiveException e) {
+                                public void failure(Void result, Exception e) {
                                     assert false;
                                 }
                             });

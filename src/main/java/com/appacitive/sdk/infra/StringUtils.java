@@ -11,7 +11,7 @@ public class StringUtils {
     {
         final StringBuilder sb = new StringBuilder();
         String separator = "";
-        for(Object f : lst)
+        for(String f : lst)
         {
             sb.append(separator);
             separator = prefix;
