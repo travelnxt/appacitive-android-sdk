@@ -4,10 +4,7 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.UserAuthException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
-import com.appacitive.sdk.infra.Headers;
-import com.appacitive.sdk.infra.Urls;
-import com.appacitive.sdk.infra.UserIdType;
+import com.appacitive.sdk.infra.*;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -20,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveUser extends AppacitiveEntity  implements Serializable {
+public class AppacitiveUser extends AppacitiveEntity  implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveUser.class.getName());
 
@@ -34,7 +31,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable {
 
     }
 
-    protected void setSelf(Map<String, Object> user) {
+    public void setSelf(Map<String, Object> user) {
 
         super.setSelf(user);
 
@@ -51,7 +48,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable {
         }
     }
 
-    protected Map<String, Object> getMap() {
+    public Map<String, Object> getMap() {
         Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__type", this.type);
         nativeMap.put("__typeid", String.valueOf(this.typeId));

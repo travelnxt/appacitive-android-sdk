@@ -3,9 +3,11 @@ package com.appacitive.sdk;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
+import com.appacitive.sdk.infra.APSerializable;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.query.AppacitiveQuery;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
+public class AppacitiveDevice extends AppacitiveEntity implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
 
@@ -28,7 +30,9 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
         this.setSelf(device);
     }
 
-    protected void setSelf(Map<String, Object> device) {
+    public AppacitiveDevice(){}
+
+    public void setSelf(Map<String, Object> device) {
 
         super.setSelf(device);
 
@@ -45,7 +49,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
         }
     }
 
-    protected Map<String, Object> getMap() {
+    public Map<String, Object> getMap() {
         Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__type", this.type);
         nativeMap.put("__typeid", String.valueOf(this.typeId));
@@ -194,7 +198,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
     }
 
     public void fetchLatestInBackground(Callback<Void> callback) {
-        final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(this.typeId)).toString();
+        final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(this.getId())).toString();
         final Map<String, String> headers = Headers.assemble();
 
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -305,6 +309,43 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable {
                 if (callback != null)
                     callback.failure(null, new AppacitiveException(status));
             }
+        } catch (Exception e) {
+            LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
+        }
+    }
+
+    public static void findInBackground(AppacitiveQuery query, List<String> fields, Callback<PagedList<AppacitiveDevice>> callback) {
+        final String url = Urls.ForObject.findObjectsUrl("device", query, fields).toString();
+        final Map<String, String> headers = Headers.assemble();
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.get(url, headers);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                if (callback != null) {
+                    ArrayList<Object> devices = (ArrayList<Object>) responseMap.get("objects");
+                    List<AppacitiveDevice> returnDevices = new ArrayList<AppacitiveDevice>();
+                    for (Object device : devices) {
+                        returnDevices.add(new AppacitiveDevice((Map<String, Object>) device));
+                    }
+                    PagedList<AppacitiveDevice> pagedResult = new PagedList<AppacitiveDevice>((Map<String, Object>) responseMap.get("paginginfo"));
+                    pagedResult.results = returnDevices;
+                    callback.success(pagedResult);
+                }
+
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);

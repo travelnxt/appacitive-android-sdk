@@ -13,10 +13,10 @@ public class AppacitiveException extends Exception {
 
     public AppacitiveException(AppacitiveStatus status)
     {
+        super(status.message);
         if(status != null)
         {
             code = status.code;
-            message = status.message;
             referenceId = status.referenceId;
             apiVersion = status.version;
             additionalMessages = status.additionalMessages;
@@ -24,8 +24,6 @@ public class AppacitiveException extends Exception {
     }
 
     public String code;
-
-    public String message;
 
     public List<String> additionalMessages;
 

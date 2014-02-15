@@ -1,6 +1,4 @@
-import com.appacitive.sdk.AppacitiveConnection;
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveObject;
+import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
@@ -13,11 +11,12 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by sathley.
  */
-@Ignore
+//@Ignore
 public class ConnectionTest {
 
     @BeforeClass
@@ -28,6 +27,10 @@ public class ConnectionTest {
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private String getRandomString() {
+        return UUID.randomUUID().toString();
     }
 
     @Test
@@ -75,6 +78,72 @@ public class ConnectionTest {
                     });
                 } catch (ValidationException e) {
                     assert false;
+                }
+            }
+        });
+    }
+
+    @Test
+    public void createConnectionBetweenNewUserAndDevice() throws ValidationException {
+        AppacitiveUser user = new AppacitiveUser();
+        user.setPassword(getRandomString());
+        user.setUsername(getRandomString());
+        user.setFirstName(getRandomString());
+        user.setEmail(getRandomString().concat("@gmail.com"));
+
+        AppacitiveDevice device = new AppacitiveDevice();
+        device.setDeviceToken(getRandomString());
+        device.setDeviceType("ios");
+
+        new AppacitiveConnection("my_device").fromNewUser("user", user).toNewDevice("device", device).createInBackground(new Callback<AppacitiveConnection>() {
+            @Override
+            public void success(AppacitiveConnection result) {
+                assert result.getId() > 0;
+                assert result.endpointA.object instanceof AppacitiveDevice;
+                assert result.endpointB.object instanceof AppacitiveUser;
+            }
+
+            @Override
+            public void failure(AppacitiveConnection result, Exception e) {
+                assert false;
+            }
+        });
+    }
+
+    @Test
+    public void createConnectionBetweenExistingUserAndDevice() throws ValidationException {
+        final AppacitiveUser user = new AppacitiveUser();
+        user.setPassword(getRandomString());
+        user.setUsername(getRandomString());
+        user.setFirstName(getRandomString());
+        user.setEmail(getRandomString().concat("@gmail.com"));
+        user.signupInBackground(new Callback<AppacitiveUser>() {
+            @Override
+            public void success(AppacitiveUser result) {
+                final AppacitiveDevice device = new AppacitiveDevice();
+                device.setDeviceToken(getRandomString());
+                device.setDeviceType("ios");
+                try {
+                    device.registerInBackground(new Callback<AppacitiveDevice>() {
+                        @Override
+                        public void success(AppacitiveDevice result) {
+                            try {
+                                new AppacitiveConnection("my_device").fromExistingUser("user", user.getId()).toExistingDevice("device", device.getId()).createInBackground(new Callback<AppacitiveConnection>() {
+                                    @Override
+                                    public void success(AppacitiveConnection result) {
+                                        assert result.getId() > 0;
+                                    }
+
+                                    @Override
+                                    public void failure(AppacitiveConnection result, Exception e) {
+                                        assert false;
+                                    }
+                                });
+                            } catch (ValidationException e) {
+                            }
+                        }
+                    });
+                } catch (ValidationException e) {
                 }
             }
         });
@@ -277,7 +346,7 @@ public class ConnectionTest {
 
                             @Override
                             public void failure(AppacitiveConnection result, Exception e) {
-                                AppacitiveException ae = (AppacitiveException)e;
+                                AppacitiveException ae = (AppacitiveException) e;
                                 assert ae.code.equals(ErrorCodes.NOT_FOUND);
                             }
                         });

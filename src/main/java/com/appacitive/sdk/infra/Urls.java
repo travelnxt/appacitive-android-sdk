@@ -416,7 +416,11 @@ public class Urls {
 
         public static Url updateDeviceUrl(long deviceId, boolean withRevision, long revision)
         {
-            return ForObject.updateObjectUrl("device", deviceId,  withRevision, revision);
+            Map<String, String> qsp = new HashMap<String, String>();
+            if(withRevision == true)
+                qsp.put("revision", String.valueOf(revision));
+
+            return new Url(baseURL, endpoint, String.valueOf(deviceId), qsp);
         }
 
         public static Url deleteDeviceUrl(long deviceId, boolean deleteConnections)

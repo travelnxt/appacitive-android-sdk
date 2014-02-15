@@ -3,6 +3,7 @@
  */
 package com.appacitive.sdk;
 
+import com.appacitive.sdk.infra.APSerializable;
 import com.appacitive.sdk.infra.SystemDefinedProperties;
 
 import java.io.Serializable;
@@ -11,13 +12,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class AppacitiveEntity  implements Serializable {
+public abstract class AppacitiveEntity  implements Serializable, APSerializable {
 
     public AppacitiveEntity(Map<String, Object> entity) {
         this.setSelf(entity);
     }
 
-    protected void setSelf(Map<String, Object> entity) {
+    public void setSelf(Map<String, Object> entity) {
         if (entity != null) {
             //  Wipe out previous data
             this.properties = new HashMap<String, Object>();
@@ -81,7 +82,7 @@ public abstract class AppacitiveEntity  implements Serializable {
 
     }
 
-    protected Map<String, Object> getMap() {
+    public Map<String, Object> getMap() {
         Map<String, Object> nativeMap = new HashMap<String, Object>();
 
         nativeMap.put(SystemDefinedProperties.id, String.valueOf(this.id));

@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Created by sathley.
  */
-@Ignore
+//@Ignore
 public class ObjectTest {
 
     @BeforeClass

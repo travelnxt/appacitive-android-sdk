@@ -5,7 +5,6 @@ import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
 import com.appacitive.sdk.query.AppacitiveQuery;
-import com.appacitive.sdk.query.Query;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
 /**
 * Created by sathley.
 */
-public class AppacitiveConnection extends AppacitiveEntity implements Serializable{
+public class AppacitiveConnection extends AppacitiveEntity implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
@@ -38,7 +37,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         this.relationId = relationId;
     }
 
-    protected void setSelf(Map<String, Object> connection)
+    public void setSelf(Map<String, Object> connection)
     {
         super.setSelf(connection);
         if(connection != null)
@@ -61,7 +60,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         }
     }
 
-    protected Map<String, Object> getMap()
+    public Map<String, Object> getMap()
     {
         Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__relationtype", this.relationType);
@@ -101,6 +100,34 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         return this;
     }
 
+    public AppacitiveConnection fromNewUser(String label, AppacitiveUser object)
+    {
+        this.endpointA.label = label;
+        this.endpointA.object = object;
+        return this;
+    }
+
+    public AppacitiveConnection toNewUser(String label, AppacitiveUser object)
+    {
+        this.endpointB.label = label;
+        this.endpointB.object = object;
+        return this;
+    }
+
+    public AppacitiveConnection fromNewDevice(String label, AppacitiveDevice object)
+    {
+        this.endpointA.label = label;
+        this.endpointA.object = object;
+        return this;
+    }
+
+    public AppacitiveConnection toNewDevice(String label, AppacitiveDevice object)
+    {
+        this.endpointB.label = label;
+        this.endpointB.object = object;
+        return this;
+    }
+
     public AppacitiveConnection fromExistingObject(String label, long objectId)
     {
         this.endpointA.label = label;
@@ -113,6 +140,26 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         this.endpointB.label = label;
         this.endpointB.objectId = objectId;
         return this;
+    }
+
+    public AppacitiveConnection fromExistingUser(String label, long userId)
+    {
+        return this.fromExistingObject(label, userId);
+    }
+
+    public AppacitiveConnection toExistingUser(String label, long userId)
+    {
+        return this.toExistingObject(label, userId);
+    }
+
+    public AppacitiveConnection fromExistingDevice(String label, long deviceId)
+    {
+        return this.fromExistingObject(label, deviceId);
+    }
+
+    public AppacitiveConnection toExistingDevice(String label, long deviceId)
+    {
+        return this.toExistingObject(label, deviceId);
     }
 
     public void createInBackground(Callback<AppacitiveConnection> callback) throws ValidationException
@@ -216,7 +263,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -253,7 +299,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -285,7 +330,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -317,7 +361,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -352,7 +395,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -392,7 +434,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -432,7 +473,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -463,7 +503,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -508,7 +547,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -548,50 +586,8 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
     }
-
-//    public static void findConnectedObjectsInBackground(String relationType, String objectType, long objectId , List<String> fields, Query query,  Callback<PagedList<AppacitiveConnection>> callback)
-//    {
-//        final String url = Urls.ForConnection.findByObjectAndLabelUrl(relationType, objectId, label, fields).toString();
-//        final Map<String, String> headers = Headers.assemble();
-//
-//        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
-//            @Override
-//            public Map<String, Object> call() throws Exception {
-//                return AppacitiveHttp.get(url, headers);
-//            }
-//        });
-//
-//        try {
-//            Map<String, Object> responseMap = future.get();
-//            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
-//            if (status.isSuccessful()) {
-//                if (callback != null)
-//                {
-//                    ArrayList<Object> connections = (ArrayList<Object>) responseMap.get("connections");
-//                    List<AppacitiveConnection> returnConnections = new ArrayList<AppacitiveConnection>();
-//                    for (Object conn : connections) {
-//                        returnConnections.add(new AppacitiveConnection((Map<String, Object>) conn));
-//                    }
-//                    PagedList<AppacitiveConnection> pagedResult = new PagedList<AppacitiveConnection>((Map<String, Object>)responseMap.get("paginginfo"));
-//                    pagedResult.results = returnConnections;
-//                    callback.success(pagedResult);
-//                }
-//
-//            } else {
-//                if (callback != null)
-//                    callback.failure(null, new AppacitiveException(status));
-//            }
-//
-//        } catch (Exception e) {
-//            LOGGER.log(Level.ALL, e.getMessage());
-//        }
-//    }
-
-
-
 }

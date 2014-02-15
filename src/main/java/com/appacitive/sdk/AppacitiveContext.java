@@ -41,7 +41,7 @@ public class AppacitiveContext {
         ExecutorServiceWrapper.shutdown();
     }
 
-    private static Double[] currentLocation = new Double[2];
+    private static final Double[] currentLocation = new Double[2];
 
     public static Double[] getCurrentLocation() {
         return currentLocation;

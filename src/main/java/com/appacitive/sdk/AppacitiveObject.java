@@ -3,10 +3,7 @@ package com.appacitive.sdk;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
-import com.appacitive.sdk.infra.Headers;
-import com.appacitive.sdk.infra.NodeHelper;
-import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.infra.*;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.Query;
 
@@ -21,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveObject extends AppacitiveEntity implements Serializable {
+public class AppacitiveObject extends AppacitiveEntity implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
 
@@ -29,7 +26,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
         this.setSelf(entity);
     }
 
-    protected void setSelf(Map<String, Object> entity) {
+    public void setSelf(Map<String, Object> entity) {
 
         super.setSelf(entity);
 
@@ -54,7 +51,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
         this.typeId = typeId;
     }
 
-    protected Map<String, Object> getMap() {
+    public Map<String, Object> getMap() {
         Map<String, Object> nativeMap = super.getMap();
         nativeMap.put("__type", this.type);
         nativeMap.put("__typeid", String.valueOf(this.typeId));
@@ -102,7 +99,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -136,7 +132,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -163,7 +158,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -198,7 +192,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -230,7 +223,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -261,7 +253,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -294,7 +285,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
                     callback.failure(null, new AppacitiveException(status));
             }
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
@@ -332,7 +322,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable {
             }
 
         } catch (Exception e) {
-//            callback.failure(null, e);
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }

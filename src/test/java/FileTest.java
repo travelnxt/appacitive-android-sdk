@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
 * Created by sathley.
 */
-@Ignore
+//@Ignore
 public class FileTest {
 
     @BeforeClass
