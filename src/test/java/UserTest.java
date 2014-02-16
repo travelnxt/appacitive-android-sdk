@@ -5,6 +5,7 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.UserAuthException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class UserTest {
 
             @Override
             public void failure(AppacitiveUser result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -70,7 +71,7 @@ public class UserTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -119,21 +120,21 @@ public class UserTest {
 
                                                 @Override
                                                 public void failure(List<AppacitiveUser> result, Exception e) {
-                                                    assert false;
+                                                    Assert.fail(e.getMessage());
                                                 }
                                             });
                                         } catch (Exception e) {
-                                            assert false;
+                                            Assert.fail(e.getMessage());
                                         }
                                     }
                                 });
                             } catch (ValidationException e) {
-                                assert false;
+                                Assert.fail(e.getMessage());
                             }
                         }
                     });
                 } catch (ValidationException e) {
-                    assert false;
+                    Assert.fail(e.getMessage());
                 }
             }
         });
@@ -170,17 +171,17 @@ public class UserTest {
                                             }
                                         });
                                     } catch (Exception e) {
-                                        assert false;
+                                        Assert.fail(e.getMessage());
                                     }
                                 }
 
                                 @Override
                                 public void failure(Void result, Exception e) {
-                                    assert false;
+                                    Assert.fail(e.getMessage());
                                 }
                             });
                         } catch (Exception e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
                 });
@@ -217,18 +218,18 @@ public class UserTest {
 
                                         @Override
                                         public void failure(String result, Exception e) {
-                                            assert false;
+                                            Assert.fail(e.getMessage());
                                         }
                                     });
                                 }
 
                                 @Override
                                 public void failure(Void result, Exception e) {
-                                    assert false;
+                                    Assert.fail(e.getMessage());
                                 }
                             });
                         } catch (UserAuthException e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
                 });
@@ -256,7 +257,7 @@ public class UserTest {
 
                     @Override
                     public void failure(Void result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -286,11 +287,11 @@ public class UserTest {
 
                                 @Override
                                 public void failure(Void result, Exception e) {
-                                    assert false;
+                                    Assert.fail(e.getMessage());
                                 }
                             });
                         } catch (UserAuthException e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
                 });
@@ -330,18 +331,18 @@ public class UserTest {
                                             }
                                         });
                                     } catch (UserAuthException e) {
-                                        assert false;
+                                        Assert.fail(e.getMessage());
                                     }
 
                                 }
 
                                 @Override
                                 public void failure(Void result, Exception e) {
-                                    assert false;
+                                    Assert.fail(e.getMessage());
                                 }
                             });
                         } catch (UserAuthException e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
                 });
@@ -380,11 +381,11 @@ public class UserTest {
 
                                 @Override
                                 public void failure(Void result, Exception e) {
-                                    assert false;
+                                    Assert.fail(e.getMessage());
                                 }
                             });
                         } catch (UserAuthException e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
                 });

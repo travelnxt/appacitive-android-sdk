@@ -4,6 +4,7 @@ import com.appacitive.sdk.Environment;
 import com.appacitive.sdk.FileUploadUrlResponse;
 import com.appacitive.sdk.callbacks.Callback;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class FileTest {
 
             @Override
             public void failure(FileUploadUrlResponse result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -51,7 +52,7 @@ public class FileTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -67,7 +68,7 @@ public class FileTest {
 
             @Override
             public void failure(Void result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }

@@ -2,6 +2,7 @@ import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.ValidationException;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -51,7 +52,7 @@ public class GraphTest {
 
                             @Override
                             public void failure(List<Long> result, Exception e) {
-                                assert false;
+                                Assert.fail(e.getMessage());
                             }
                         });
             }
@@ -109,7 +110,7 @@ public class GraphTest {
 
                                     @Override
                                     public void failure(List<AppacitiveGraphNode> result, Exception e) {
-                                        assert false;
+                                        Assert.fail(e.getMessage());
                                     }
                                 });
                     }
@@ -117,7 +118,7 @@ public class GraphTest {
                 }
                 catch (ValidationException e )
                 {
-                    assert false;
+                    Assert.fail(e.getMessage());
                 }
             }
         });

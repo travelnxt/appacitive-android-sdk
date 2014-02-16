@@ -6,6 +6,7 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -72,7 +73,7 @@ public class DeviceTest {
 
             @Override
             public void failure(AppacitiveDevice result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -92,10 +93,11 @@ public class DeviceTest {
 
                         @Override
                         public void failure(AppacitiveDevice result, Exception e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     });
                 } catch (ValidationException e) {
+                    Assert.fail(e.getMessage());
                 }
             }
         });
@@ -124,7 +126,7 @@ public class DeviceTest {
 
                     @Override
                     public void failure(AppacitiveDevice result, Exception e) {
-                        super.failure(result, e);
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -156,7 +158,7 @@ public class DeviceTest {
 
                                         @Override
                                         public void failure(Void result, Exception e) {
-                                            assert false;
+                                            Assert.fail(e.getMessage());
                                         }
                                     });
                                 }
@@ -165,6 +167,7 @@ public class DeviceTest {
                         }
                     });
                 } catch (ValidationException e) {
+                    Assert.fail(e.getMessage());
                 }
             }
         });
@@ -192,12 +195,13 @@ public class DeviceTest {
                                 }
                             });
                         } catch (ValidationException e) {
+                            Assert.fail(e.getMessage());
                         }
                     }
 
                     @Override
                     public void failure(Void result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -206,8 +210,7 @@ public class DeviceTest {
     }
 
     @Test
-    public void findDeviceTest() throws ValidationException
-    {
+    public void findDeviceTest() throws ValidationException {
         AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
@@ -222,7 +225,7 @@ public class DeviceTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveDevice> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }

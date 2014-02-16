@@ -5,10 +5,7 @@ import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.ErrorCodes;
 import com.appacitive.sdk.infra.SystemDefinedProperties;
 import com.appacitive.sdk.query.*;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -86,7 +83,7 @@ public class ObjectTest {
                     assertTrue(tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
                     assertTrue(dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
                 } catch (ParseException pe) {
-                    assert false;
+                    Assert.fail(pe.getMessage());
                 }
                 assertTrue(result.getPropertyAsGeo("geofield")[0] == 10.11d);
                 assertTrue(result.getPropertyAsGeo("geofield")[1] == 20.22d);
@@ -98,7 +95,7 @@ public class ObjectTest {
 
 
             public void failure(AppacitiveObject result, AppacitiveException e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
 
@@ -119,7 +116,7 @@ public class ObjectTest {
             }
 
             public void failure(AppacitiveObject result, AppacitiveException e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -199,7 +196,7 @@ public class ObjectTest {
                             assertTrue(tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
                             assertTrue(dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
                         } catch (ParseException pe) {
-                            assert false;
+                            Assert.fail(pe.getMessage());
                         }
                         assertTrue(result.getPropertyAsGeo("geofield")[0] == 15.55d);
                         assertTrue(result.getPropertyAsGeo("geofield")[1] == 33.88d);
@@ -211,7 +208,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -222,7 +219,7 @@ public class ObjectTest {
             }
 
             public void failure(AppacitiveObject result, AppacitiveException e) {
-
+                Assert.fail(e.getMessage());
             }
         });
 
@@ -252,7 +249,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -311,7 +308,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -336,7 +333,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -375,7 +372,7 @@ public class ObjectTest {
                         }
                     });
                 } catch (ValidationException e) {
-                    assert false;
+                    Assert.fail(e.getMessage());
                 }
             }
         });
@@ -417,7 +414,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -469,7 +466,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -507,7 +504,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(AppacitiveObject result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -535,7 +532,7 @@ public class ObjectTest {
 
             @Override
             public void failure(List<AppacitiveObject> result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -569,11 +566,11 @@ public class ObjectTest {
 
                         @Override
                         public void failure(AppacitiveObject result, Exception e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     });
                 } catch (ValidationException e) {
-                    assert false;
+                    Assert.fail(e.getMessage());
                 }
             }
         });
@@ -602,13 +599,13 @@ public class ObjectTest {
                                 }
                             });
                         } catch (ValidationException e) {
-                            assert false;
+                            Assert.fail(e.getMessage());
                         }
                     }
 
                     @Override
                     public void failure(Void result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -645,14 +642,14 @@ public class ObjectTest {
                             }
                         });
                     } catch (ValidationException e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 }
             }
 
             @Override
             public void failure(Void result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
 
@@ -673,7 +670,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveObject> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -699,7 +696,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveObject> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -757,7 +754,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveObject> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -795,7 +792,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveObject> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -845,7 +842,7 @@ public class ObjectTest {
 
                     @Override
                     public void failure(PagedList<AppacitiveObject> result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 });
             }
@@ -862,7 +859,7 @@ public class ObjectTest {
 
             @Override
             public void failure(ConnectedObjectsResponse result, Exception e) {
-                super.failure(result, e);
+                Assert.fail(e.getMessage());
             }
         });
 

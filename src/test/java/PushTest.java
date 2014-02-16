@@ -6,6 +6,7 @@ import com.appacitive.sdk.push.*;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.PropertyFilter;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class PushTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
             }
         });
     }
@@ -59,7 +60,7 @@ public class PushTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 }
         );
@@ -80,7 +81,7 @@ public class PushTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
                 }
         );
@@ -103,7 +104,7 @@ public class PushTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
                     }
             }
         );
@@ -123,7 +124,7 @@ public class PushTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
 
                     }
                 });
@@ -143,7 +144,7 @@ public class PushTest {
 
                     @Override
                     public void failure(String result, Exception e) {
-                        assert false;
+                        Assert.fail(e.getMessage());
 
                     }
                 });
@@ -165,7 +166,7 @@ public class PushTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
 
             }
         });
@@ -199,7 +200,7 @@ public class PushTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
 
             }
         });
@@ -239,7 +240,7 @@ public class PushTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
 
             }
         });
@@ -283,7 +284,7 @@ public class PushTest {
 
             @Override
             public void failure(String result, Exception e) {
-                assert false;
+                Assert.fail(e.getMessage());
 
             }
         });
