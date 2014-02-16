@@ -1,10 +1,14 @@
-import com.appacitive.sdk.*;
-import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.ErrorCodes;
-import com.appacitive.sdk.infra.SystemDefinedProperties;
-import com.appacitive.sdk.query.*;
+import com.appacitive.sdk.core.model.Callback;
+import com.appacitive.sdk.core.AppacitiveContext;
+import com.appacitive.sdk.core.AppacitiveObject;
+import com.appacitive.sdk.core.exceptions.AppacitiveException;
+import com.appacitive.sdk.core.exceptions.ValidationException;
+import com.appacitive.sdk.core.infra.ErrorCodes;
+import com.appacitive.sdk.core.infra.SystemDefinedProperties;
+import com.appacitive.sdk.core.model.ConnectedObjectsResponse;
+import com.appacitive.sdk.core.model.Environment;
+import com.appacitive.sdk.core.model.PagedList;
+import com.appacitive.sdk.core.query.*;
 import org.junit.*;
 
 import java.io.IOException;

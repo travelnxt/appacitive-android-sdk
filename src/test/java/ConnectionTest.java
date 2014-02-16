@@ -1,8 +1,9 @@
-import com.appacitive.sdk.*;
-import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.ErrorCodes;
+import com.appacitive.sdk.core.model.Callback;
+import com.appacitive.sdk.core.*;
+import com.appacitive.sdk.core.exceptions.AppacitiveException;
+import com.appacitive.sdk.core.exceptions.ValidationException;
+import com.appacitive.sdk.core.infra.ErrorCodes;
+import com.appacitive.sdk.core.model.Environment;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -94,7 +95,7 @@ public class ConnectionTest {
         device.setDeviceToken(getRandomString());
         device.setDeviceType("ios");
 
-        new AppacitiveConnection("my_device").fromNewUser("user", user).toNewDevice("device", device).createInBackground(new Callback<AppacitiveConnection>() {
+        new AppacitiveConnection("my_device").toNewUser("user", user).fromNewDevice("device", device).createInBackground(new Callback<AppacitiveConnection>() {
             @Override
             public void success(AppacitiveConnection result) {
                 assert result.getId() > 0;

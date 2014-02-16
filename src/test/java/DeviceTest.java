@@ -1,10 +1,10 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveDevice;
-import com.appacitive.sdk.Environment;
-import com.appacitive.sdk.PagedList;
-import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.query.AppacitiveQuery;
+import com.appacitive.sdk.core.AppacitiveContext;
+import com.appacitive.sdk.core.AppacitiveDevice;
+import com.appacitive.sdk.core.model.Environment;
+import com.appacitive.sdk.core.model.PagedList;
+import com.appacitive.sdk.core.model.Callback;
+import com.appacitive.sdk.core.exceptions.ValidationException;
+import com.appacitive.sdk.core.query.AppacitiveQuery;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

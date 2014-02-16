@@ -1,6 +1,11 @@
-import com.appacitive.sdk.*;
-import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.ValidationException;
+import com.appacitive.sdk.core.model.Callback;
+import com.appacitive.sdk.core.AppacitiveConnection;
+import com.appacitive.sdk.core.AppacitiveContext;
+import com.appacitive.sdk.core.AppacitiveGraphSearch;
+import com.appacitive.sdk.core.AppacitiveObject;
+import com.appacitive.sdk.core.exceptions.ValidationException;
+import com.appacitive.sdk.core.model.AppacitiveGraphNode;
+import com.appacitive.sdk.core.model.Environment;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,7 +48,9 @@ public class GraphTest {
         new AppacitiveConnection("link").fromNewObject("parent", parent).toNewObject("child", child).createInBackground(new Callback<AppacitiveConnection>() {
             @Override
             public void success(AppacitiveConnection result) {
-                AppacitiveGraphSearch.filterQueryInBackground("sample_filter", new HashMap<String, String>(){{put("search_value", unique);}}, new Callback<List<Long>>() {
+                AppacitiveGraphSearch.filterQueryInBackground("sample_filter", new HashMap<String, String>() {{
+                            put("search_value", unique);
+                        }}, new Callback<List<Long>>() {
                             @Override
                             public void success(List<Long> result) {
                                 assert result.size() == 1;
@@ -54,7 +61,8 @@ public class GraphTest {
                             public void failure(List<Long> result, Exception e) {
                                 Assert.fail(e.getMessage());
                             }
-                        });
+                        }
+                );
             }
         });
     }
