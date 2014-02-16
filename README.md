@@ -14,5 +14,4 @@ Add file upload support
 Complete device and push
 IOC support
 Android support
-make user/device inherit from object
 make object extendable

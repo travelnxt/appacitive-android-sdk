@@ -1,11 +1,11 @@
 package com.appacitive.sdk;
 
-import com.appacitive.sdk.infra.Environment;
+import java.io.Serializable;
 
 /**
  * Created by sathley.
  */
-public class AppacitiveContext {
+public class AppacitiveContext implements Serializable {
 
     private static String loggedInUserToken;
 
@@ -15,15 +15,15 @@ public class AppacitiveContext {
 
     private static boolean isInitialized = false;
 
-    public static String getLoggedInUserToken() {
+    public static final  String getLoggedInUserToken() {
         return loggedInUserToken;
     }
 
-    public static void setLoggedInUserToken(String userToken) {
+    public static final void setLoggedInUserToken(String userToken) {
         AppacitiveContext.loggedInUserToken = userToken;
     }
 
-    public static void initialize(String apiKey, Environment environment)
+    public static final void initialize(String apiKey, Environment environment)
     {
         AppacitiveContext.apiKey = apiKey;
         AppacitiveContext.environment = environment.name();
@@ -31,7 +31,7 @@ public class AppacitiveContext {
         isInitialized = true;
     }
 
-    public static boolean isInitialized()
+    public static final boolean isInitialized()
     {
         return isInitialized;
     }
@@ -43,11 +43,11 @@ public class AppacitiveContext {
 
     private static final Double[] currentLocation = new Double[2];
 
-    public static Double[] getCurrentLocation() {
+    public static final Double[] getCurrentLocation() {
         return currentLocation;
     }
 
-    public static void setCurrentLocation(Double latitude, Double longitude) {
+    public static final void setCurrentLocation(Double latitude, Double longitude) {
         AppacitiveContext.currentLocation[0] = latitude;
         AppacitiveContext.currentLocation[1] = longitude;
     }

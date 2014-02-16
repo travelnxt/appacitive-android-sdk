@@ -11,25 +11,25 @@ class ExecutorServiceWrapper {
 
     private final static ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public static void init()
+    public static final void init()
     {}
 
-    public static void submit(Runnable runnable)
+    public static final void submit(Runnable runnable)
     {
         executorService.submit(runnable);
     }
 
-    public static <T> Future<T> submit(Callable<T> callable)
+    public static final <T> Future<T> submit(Callable<T> callable)
     {
         return executorService.submit(callable);
     }
 
-    public static void shutdown()
+    public static final  void shutdown()
     {
         executorService.shutdown();
     }
 
-    public static void shutdownNow()
+    public static final  void shutdownNow()
     {
         executorService.shutdownNow();
     }

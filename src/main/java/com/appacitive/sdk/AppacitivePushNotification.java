@@ -5,8 +5,15 @@ import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.infra.AppacitiveHttp;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.push.AndroidOptions;
+import com.appacitive.sdk.push.IosOptions;
+import com.appacitive.sdk.push.PlatformOptions;
+import com.appacitive.sdk.push.WindowsPhoneOptions;
+import com.appacitive.sdk.query.AppacitiveQuery;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -22,15 +29,89 @@ public class AppacitivePushNotification  implements Serializable {
 
     private Map<String, Object> getMap()
     {
-        // TODO
-        return new HashMap<String, Object>();
+
+        Map<String, Object> nativeMap = new HashMap<String, Object>();
+        nativeMap.put("broadcast", this.isBroadcast);
+        if(this.deviceIds.size() > 0)
+            nativeMap.put("deviceids", this.deviceIds);
+        if(this.channels.size() > 0)
+            nativeMap.put("channels", this.channels);
+        if(this.query != null)
+            nativeMap.put("query", this.query);
+        if(this.expiryInSeconds > 0)
+            nativeMap.put("expireafter", this.expiryInSeconds);
+
+        // write data
+        if(this.alert != null && this.alert.isEmpty() == false)
+            this.data.put("alert", this.alert);
+
+        if(this.badge != null && this.badge.isEmpty() == false)
+        this.data.put("badge", this.badge);
+
+        nativeMap.put("data", this.data);
+
+        // write platform options
+        if(this.platformOptions != null)
+        {
+            nativeMap.put("platformoptions", this.platformOptions.getMap());
+        }
+
+        return nativeMap;
+    }
+
+    public static AppacitivePushNotification Broadcast(String message)
+    {
+        return new AppacitivePushNotification(message, true, null, null, null);
+    }
+
+    public static AppacitivePushNotification ToChannels(String message, List<String> channels)
+    {
+        return new AppacitivePushNotification(message, false, channels, null, null);
+    }
+
+    public static AppacitivePushNotification ToQueryResult(String message, AppacitiveQuery query)
+    {
+        if(query != null)
+        {
+            Map<String, String> queryStringParameters = query.asQueryStringParameters();
+            StringBuilder queryBuilder = new StringBuilder();
+            String separator = "";
+            for (Map.Entry<String, String> qsp : queryStringParameters.entrySet()) {
+                queryBuilder.append(separator);
+                separator = "&";
+                try {
+                    queryBuilder.append(qsp.getKey()).append("=").append(URLEncoder.encode(qsp.getValue(), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    LOGGER.log(Level.ALL, e.getMessage());
+                }
+            }
+            return new AppacitivePushNotification(message, false, null, null, queryBuilder.toString());
+        }
+        return new AppacitivePushNotification(message, false, null, null, null);
+    }
+
+    public static AppacitivePushNotification ToDeviceIds(String message, List<String> deviceIds)
+    {
+        return new AppacitivePushNotification(message, false, null, deviceIds, null);
+    }
+
+    private AppacitivePushNotification(String alert, boolean isBroadcast, List<String> channels, List<String> deviceIds, String query)
+    {
+        this.alert = alert;
+        this.isBroadcast = isBroadcast;
+        this.query = query;
+        if (channels != null)
+            this.channels.addAll(channels);
+        if (deviceIds != null)
+            this.deviceIds.addAll(deviceIds);
+        this.expiryInSeconds = -1;
     }
 
     public String alert;
 
     public String badge;
 
-    public boolean isBroadcast;
+    public boolean isBroadcast = false;
 
     public String query;
 
@@ -47,6 +128,14 @@ public class AppacitivePushNotification  implements Serializable {
     public AppacitivePushNotification withBadge(String badge)
     {
         this.badge = badge;
+        return this;
+    }
+
+    public AppacitivePushNotification withPlatformOptions(IosOptions options)
+    {
+        if (this.platformOptions == null)
+            this.platformOptions = new PlatformOptions();
+        this.platformOptions.iOS = options;
         return this;
     }
 
@@ -107,359 +196,6 @@ public class AppacitivePushNotification  implements Serializable {
             callback.failure(null, e);
         }
     }
-
-
-    public class PlatformOptions {
-        public IosOptions iOS;
-
-        public AndroidOptions android;
-
-        public WindowsPhoneOptions windowsPhone;
-
-        public boolean isEmpty() {
-            return
-                    (this.iOS == null || this.iOS.isEmpty() == true) &&
-                            (this.android == null || this.android.isEmpty() == true) &&
-                            (this.windowsPhone == null || this.windowsPhone.isEmpty() == true);
-        }
-
-    }
-
-    public class IosOptions {
-        public String soundFile;
-
-        public IosOptions(String soundFile) {
-            this.soundFile = soundFile;
-        }
-
-        public boolean isEmpty() {
-            return this.soundFile == null || this.soundFile.isEmpty() == true;
-        }
-    }
-
-    public class AndroidOptions {
-        public String notificationTitle;
-
-        public AndroidOptions(String notificationTitle) {
-            this.notificationTitle = notificationTitle;
-        }
-
-        public boolean isEmpty() {
-            return this.notificationTitle == null || this.notificationTitle.isEmpty() == true;
-        }
-    }
-
-    public enum WindowsPhoneNotificationType {
-        Toast,
-        Tile,
-        Raw
-    }
-
-    public class WindowsPhoneNotification {
-        public WindowsPhoneNotification(WindowsPhoneNotificationType windowsPhoneNotificationType) {
-            this.windowsPhoneNotificationType = windowsPhoneNotificationType;
-        }
-
-        public WindowsPhoneNotification() {
-        }
-
-        public WindowsPhoneNotificationType windowsPhoneNotificationType;
-    }
-
-    public class WindowsPhoneOptions {
-        public WindowsPhoneOptions withToast(ToastNotification notification) {
-            return new WindowsPhoneOptions(notification);
-        }
-
-        public WindowsPhoneOptions withTile(TileNotification notification) {
-            return new WindowsPhoneOptions(notification);
-        }
-
-        public WindowsPhoneOptions withRaw(RawNotification notification) {
-            return new WindowsPhoneOptions(notification);
-        }
-
-        public WindowsPhoneOptions(WindowsPhoneNotification notification) {
-            this.notification = notification;
-        }
-
-        public WindowsPhoneNotification notification;
-
-        public boolean isEmpty() {
-            return this.notification == null;
-        }
-    }
-
-    public class ToastNotification extends WindowsPhoneNotification {
-        public ToastNotification(String text1, String text2, String path) {
-            super(WindowsPhoneNotificationType.Toast);
-            this.text1 = text1;
-            this.text2 = text2;
-            this.path = path;
-        }
-
-        public String text1;
-
-        public String text2;
-
-        public String path;
-    }
-
-    public class TileNotification extends WindowsPhoneNotification {
-        public TileNotification() {
-            super(WindowsPhoneNotificationType.Tile);
-        }
-
-        public TileNotification createNewFlipTile(FlipTile tile) {
-            TileNotification notification = new TileNotification();
-            notification.setWp75Tile(tile);
-            notification.setWp7Tile(tile);
-            notification.setWp8Tile(tile);
-            return notification;
-        }
-
-        public TileNotification createNewIconicTile(IconicTile tile, FlipTile tileForWP75AndBelow) {
-            TileNotification notification = new TileNotification();
-            notification.setWp75Tile(tileForWP75AndBelow);
-            notification.setWp7Tile(tileForWP75AndBelow);
-            notification.setWp8Tile(tile);
-            return notification;
-        }
-
-        public TileNotification createNewCyclicTile(CyclicTile tile, FlipTile tileForWP75AndBelow) {
-            TileNotification notification = new TileNotification();
-            notification.setWp75Tile(tileForWP75AndBelow);
-            notification.setWp7Tile(tileForWP75AndBelow);
-            notification.setWp8Tile(tile);
-            return notification;
-        }
-
-        private WindowsPhoneTile _wp8Tile;
-
-        public WindowsPhoneTile getWp8Tile() {
-            return _wp8Tile;
-        }
-
-        public void setWp8Tile(WindowsPhoneTile tile) {
-            _wp8Tile = tile;
-        }
-
-        private WindowsPhoneTile _wp75Tile;
-
-        public WindowsPhoneTile getWp75Tile() {
-            return _wp75Tile;
-        }
-
-        public void setWp75Tile(WindowsPhoneTile tile) {
-            if (tile != null && tile.windowsPhoneTileType != WindowsPhoneTileType.Flip) {
-                throw new IllegalArgumentException("Only flip tiles are supported for Windows Phone v7.");
-            }
-            _wp75Tile = tile;
-        }
-
-        private WindowsPhoneTile _wp7Tile;
-
-        public WindowsPhoneTile getWp7Tile() {
-            return _wp7Tile;
-        }
-
-        public void setWp7Tile(WindowsPhoneTile tile) {
-            if (tile != null && tile.windowsPhoneTileType != WindowsPhoneTileType.Flip) {
-                throw new IllegalArgumentException("Only flip tiles are supported for Windows Phone v7.");
-            }
-            _wp7Tile = tile;
-        }
-    }
-
-    public class RawNotification extends WindowsPhoneNotification {
-        public RawNotification() {
-            super(WindowsPhoneNotificationType.Raw);
-        }
-
-        public String rawData;
-    }
-
-    public enum WindowsPhoneTileType {
-        Flip,
-        Cyclic,
-        Iconic
-    }
-
-    public class WindowsPhoneTile {
-        protected WindowsPhoneTile(WindowsPhoneTileType type) {
-            this.windowsPhoneTileType = type;
-        }
-
-        public WindowsPhoneTileType windowsPhoneTileType;
-    }
-
-    public class FlipTile extends WindowsPhoneTile {
-        public FlipTile() {
-            super(WindowsPhoneTileType.Flip);
-        }
-
-        public String tileId;
-
-        public String frontTitle;
-
-        public String frontBackgroundImage;
-
-        public String frontCount;
-
-        public String smallBackgroundImage;
-
-        public String wideBackgroundImage;
-
-        public String backTitle;
-
-        public String backContent;
-
-        public String backBackgroundImage;
-
-        public String wideBackContent;
-
-        public String wideBackBackgroundImage;
-    }
-
-    public class CyclicTile extends WindowsPhoneTile {
-        public CyclicTile(String frontTitle, String[] images) {
-            this();
-            this.frontTitle = frontTitle;
-            this.images = new FixedSizeImageList(Arrays.asList(images));
-        }
-
-        public CyclicTile() {
-            super(WindowsPhoneTileType.Cyclic);
-        }
-
-        public String tileId;
-
-        public String frontTitle;
-
-        public FixedSizeImageList images;
-    }
-
-    public class FixedSizeImageList {
-        public FixedSizeImageList(List<String> images) {
-            int index = 0;
-            for (String image : images) {
-                if (index == 9)
-                    break;
-                if (image != null && image.isEmpty() == false)
-                    _images[index++] = image;
-            }
-        }
-
-        private String[] _images = new String[9];
-
-//        public String[] toArray()
-//        {
-//
-//            return _images.Where(x => string.IsNullOrWhiteSpace(x) == false).ToArray();
-//        }
-
-        private void Set(int index, String image) {
-            _images[index] = image;
-        }
-
-        private String Get(int index) {
-            return _images[index];
-        }
-
-        public String getImage1() {
-            return this.Get(0);
-        }
-
-        public void setImage1(String image1) {
-            this.Set(0, image1);
-        }
-
-        public String getImage2() {
-            return this.Get(1);
-        }
-
-        public void setImage2(String image2) {
-            this.Set(1, image2);
-        }
-
-        public String getImage3() {
-            return this.Get(2);
-        }
-
-        public void setImage3(String image3) {
-            this.Set(2, image3);
-        }
-
-        public String getImage4() {
-            return this.Get(3);
-        }
-
-        public void setImage4(String image4) {
-            this.Set(3, image4);
-        }
-
-        public String getImage5() {
-            return this.Get(4);
-        }
-
-        public void setImage5(String image5) {
-            this.Set(4, image5);
-        }
-
-        public String getImage6() {
-            return this.Get(5);
-        }
-
-        public void setImage6(String image6) {
-            this.Set(5, image6);
-        }
-
-        public String getImage7() {
-            return this.Get(6);
-        }
-
-        public void setImage7(String image7) {
-            this.Set(6, image7);
-        }
-
-        public String getImage8() {
-            return this.Get(7);
-        }
-
-        public void setImage8(String image8) {
-            this.Set(7, image8);
-        }
-
-        public String getImage9() {
-            return this.Get(8);
-        }
-
-        public void setImage9(String image9) {
-            this.Set(8, image9);
-        }
-    }
-
-    public class IconicTile extends WindowsPhoneTile {
-
-        public IconicTile() {
-            super(WindowsPhoneTileType.Iconic);
-        }
-
-        public String tileId;
-
-        public String frontTitle;
-
-        public String iconImage;
-
-        public String smallIconImage;
-
-        public String backgroundColor;
-
-        public String wideContent1;
-
-        public String wideContent2;
-
-        public String wideContent3;
-    }
-
 }
+
+

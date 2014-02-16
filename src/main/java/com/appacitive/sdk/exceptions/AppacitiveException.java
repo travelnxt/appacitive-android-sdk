@@ -2,14 +2,13 @@ package com.appacitive.sdk.exceptions;
 
 import com.appacitive.sdk.AppacitiveStatus;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by sathley.
  */
-public class AppacitiveException extends Exception {
+public class AppacitiveException extends Exception implements Serializable {
 
     public AppacitiveException(AppacitiveStatus status)
     {

@@ -1,8 +1,7 @@
 package com.appacitive.sdk.infra;
 
+import com.appacitive.sdk.UserIdType;
 import com.appacitive.sdk.query.AppacitiveQuery;
-import com.appacitive.sdk.query.Query;
-import org.omg.DynamicAny._DynEnumStub;
 
 import java.util.HashMap;
 import java.util.List;
@@ -358,7 +357,7 @@ public class Urls {
     {
         public static Url sendPushUrl()
         {
-            return new Url(baseURL, "push", null, null);
+            return new Url(baseURL, "push", "", null);
         }
 
         public static Url sendEmailUrl()

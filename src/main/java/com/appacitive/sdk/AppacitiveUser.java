@@ -4,7 +4,10 @@ import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.UserAuthException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.infra.APSerializable;
+import com.appacitive.sdk.infra.AppacitiveHttp;
+import com.appacitive.sdk.infra.Headers;
+import com.appacitive.sdk.infra.Urls;
 
 import java.io.Serializable;
 import java.text.ParseException;

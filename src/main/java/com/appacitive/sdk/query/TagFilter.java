@@ -1,6 +1,5 @@
 package com.appacitive.sdk.query;
 
-import com.appacitive.sdk.Link;
 import com.appacitive.sdk.infra.StringUtils;
 
 import java.util.ArrayList;

@@ -1,14 +1,11 @@
 package com.appacitive.sdk.infra;
 
 import com.appacitive.sdk.AppacitiveContext;
-import org.omg.CORBA.NameValuePair;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

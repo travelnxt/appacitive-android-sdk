@@ -1,11 +1,11 @@
 package com.appacitive.sdk.callbacks;
 
-import com.appacitive.sdk.exceptions.AppacitiveException;
+import java.io.Serializable;
 
 /**
  * Created by sathley.
  */
-public abstract class Callback<T>
+public abstract class Callback<T> implements Serializable
 {
     public void success(T result) {}
 

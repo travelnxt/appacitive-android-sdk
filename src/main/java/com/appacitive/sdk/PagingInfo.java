@@ -1,11 +1,12 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by sathley.
  */
-public class PagingInfo {
+public class PagingInfo implements Serializable {
 
     public PagingInfo(Map<String, Object> pagingInfo)
     {

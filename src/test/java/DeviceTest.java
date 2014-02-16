@@ -1,9 +1,9 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveDevice;
+import com.appacitive.sdk.Environment;
 import com.appacitive.sdk.PagedList;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.Environment;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

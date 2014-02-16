@@ -1,15 +1,13 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveUser;
+import com.appacitive.sdk.Environment;
 import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.UserAuthException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

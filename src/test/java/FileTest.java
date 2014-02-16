@@ -1,12 +1,10 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveFile;
+import com.appacitive.sdk.Environment;
 import com.appacitive.sdk.FileUploadUrlResponse;
 import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.infra.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

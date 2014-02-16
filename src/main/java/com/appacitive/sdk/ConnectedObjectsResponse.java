@@ -1,9 +1,11 @@
 package com.appacitive.sdk;
 
+import java.io.Serializable;
+
 /**
  * Created by sathley.
  */
-public class ConnectedObjectsResponse extends PagedList<ConnectedObject> {
+public class ConnectedObjectsResponse extends PagedList<ConnectedObject> implements Serializable {
 
     public String parent = null;
 

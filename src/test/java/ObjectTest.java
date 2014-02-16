@@ -2,21 +2,21 @@ import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.infra.ErrorCodes;
+import com.appacitive.sdk.infra.SystemDefinedProperties;
 import com.appacitive.sdk.query.*;
-import com.sun.jndi.url.iiop.iiopURLContext;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sathley.

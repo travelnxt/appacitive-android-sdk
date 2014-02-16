@@ -1,8 +1,6 @@
 import com.appacitive.sdk.*;
 import com.appacitive.sdk.callbacks.Callback;
-import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

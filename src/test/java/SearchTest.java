@@ -1,5 +1,5 @@
 import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.infra.Environment;
+import com.appacitive.sdk.Environment;
 import com.appacitive.sdk.query.BooleanOperator;
 import com.appacitive.sdk.query.PropertyFilter;
 import com.appacitive.sdk.query.Query;

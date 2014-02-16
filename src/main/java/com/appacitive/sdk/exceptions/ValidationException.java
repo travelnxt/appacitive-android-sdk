@@ -1,6 +1,8 @@
 package com.appacitive.sdk.exceptions;
 
-public class ValidationException extends Exception
+import java.io.Serializable;
+
+public class ValidationException extends Exception implements Serializable
 {
     public ValidationException(String message)
     {
