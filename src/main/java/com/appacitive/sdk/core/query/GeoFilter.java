@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-public class GeoFilter extends Filter implements  Query {
+public class GeoFilter extends Filter {
 
     public GeoFilter(String propertyName)
     {

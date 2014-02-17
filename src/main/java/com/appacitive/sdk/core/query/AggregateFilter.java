@@ -3,7 +3,7 @@ package com.appacitive.sdk.core.query;
 /**
  * Created by sathley.
  */
-public class AggregateFilter extends Filter implements Query {
+public class AggregateFilter extends Filter {
 
     public AggregateFilter(String propertyName)
     {

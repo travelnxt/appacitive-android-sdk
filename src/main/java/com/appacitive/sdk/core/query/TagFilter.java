@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-public class TagFilter implements Query {
+public class TagFilter extends Filter {
 
     protected String operator = null;
 

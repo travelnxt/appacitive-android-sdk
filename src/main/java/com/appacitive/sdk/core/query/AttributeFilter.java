@@ -3,7 +3,7 @@ package com.appacitive.sdk.core.query;
 /**
  * Created by sathley.
  */
-public class AttributeFilter extends Filter implements Query {
+public class AttributeFilter extends Filter {
 
     public AttributeFilter(String propertyName)
     {

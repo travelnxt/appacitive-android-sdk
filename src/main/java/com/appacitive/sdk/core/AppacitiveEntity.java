@@ -52,7 +52,7 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
 
                 object = entity.get(SystemDefinedProperties.utcLastUpdatedDate);
                 if (object != null)
-                    this.ucLastUpdated = format.parse(object.toString());
+                    this.utcLastUpdated = format.parse(object.toString());
 
             } catch (ParseException e) {
                 // Log
@@ -90,7 +90,7 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
         nativeMap.put(SystemDefinedProperties.createdBy, this.createdBy);
         nativeMap.put(SystemDefinedProperties.lastModifiedBy, this.lastModifiedBy);
         nativeMap.put(SystemDefinedProperties.utcDateCreated, this.utcDateCreated);
-        nativeMap.put(SystemDefinedProperties.utcLastUpdatedDate, this.ucLastUpdated);
+        nativeMap.put(SystemDefinedProperties.utcLastUpdatedDate, this.utcLastUpdated);
         if (this.tags != null && tags.size() != 0)
             nativeMap.put(SystemDefinedProperties.tags, this.tags);
 
@@ -126,7 +126,7 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
 
     private Date utcDateCreated = null;
 
-    private Date ucLastUpdated = null;
+    private Date utcLastUpdated = null;
 
     private Map<String, Object> propertiesChanged = new HashMap<String, Object>();
 
@@ -294,7 +294,7 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
         return utcDateCreated;
     }
 
-    public Date getUcLastUpdated() {
-        return ucLastUpdated;
+    public Date getUtcLastUpdated() {
+        return utcLastUpdated;
     }
 }

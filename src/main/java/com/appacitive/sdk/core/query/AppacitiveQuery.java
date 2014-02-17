@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class AppacitiveQuery  implements Serializable {
+public class AppacitiveQuery implements Serializable {
 
     public int pageNumber = 0;
 

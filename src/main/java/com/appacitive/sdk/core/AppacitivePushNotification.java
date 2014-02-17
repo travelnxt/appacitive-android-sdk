@@ -1,5 +1,6 @@
 package com.appacitive.sdk.core;
 
+import com.appacitive.sdk.core.infra.StringUtils;
 import com.appacitive.sdk.core.model.Callback;
 import com.appacitive.sdk.core.exceptions.AppacitiveException;
 import com.appacitive.sdk.core.infra.AppacitiveHttp;
@@ -11,6 +12,8 @@ import com.appacitive.sdk.core.push.IosOptions;
 import com.appacitive.sdk.core.push.PlatformOptions;
 import com.appacitive.sdk.core.push.WindowsPhoneOptions;
 import com.appacitive.sdk.core.query.AppacitiveQuery;
+import com.appacitive.sdk.core.query.BooleanOperator;
+import com.appacitive.sdk.core.query.Filter;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -70,23 +73,20 @@ public class AppacitivePushNotification  implements Serializable {
         return new AppacitivePushNotification(message, false, channels, null, null);
     }
 
-    public static AppacitivePushNotification ToQueryResult(String message, AppacitiveQuery query)
+    public static AppacitivePushNotification ToQueryResult(String message, BooleanOperator booleanOperator)
     {
-        if(query != null)
+        if(booleanOperator != null)
         {
-            Map<String, String> queryStringParameters = query.asQueryStringParameters();
-            StringBuilder queryBuilder = new StringBuilder();
-            String separator = "";
-            for (Map.Entry<String, String> qsp : queryStringParameters.entrySet()) {
-                queryBuilder.append(separator);
-                separator = "&";
-                try {
-                    queryBuilder.append(qsp.getKey()).append("=").append(URLEncoder.encode(qsp.getValue(), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    LOGGER.log(Level.ALL, e.getMessage());
-                }
-            }
-            return new AppacitivePushNotification(message, false, null, null, queryBuilder.toString());
+            return new AppacitivePushNotification(message, false, null, null, booleanOperator.asString());
+        }
+        return new AppacitivePushNotification(message, false, null, null, null);
+    }
+
+    public static AppacitivePushNotification ToQueryResult(String message, Filter filter)
+    {
+        if(filter != null)
+        {
+            return new AppacitivePushNotification(message, false, null, null, filter.asString());
         }
         return new AppacitivePushNotification(message, false, null, null, null);
     }

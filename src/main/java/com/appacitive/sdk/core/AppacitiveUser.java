@@ -23,17 +23,15 @@ import java.util.logging.Logger;
 /**
  * Created by sathley.
  */
-public class AppacitiveUser extends AppacitiveEntity  implements Serializable, APSerializable {
+public class AppacitiveUser extends AppacitiveEntity implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveUser.class.getName());
 
-    public AppacitiveUser(Map<String, Object> user)
-    {
+    public AppacitiveUser(Map<String, Object> user) {
         this.setSelf(user);
     }
 
-    public AppacitiveUser()
-    {
+    public AppacitiveUser() {
 
     }
 
@@ -44,11 +42,11 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         if (user != null) {
 
             Object object = user.get("__typeid");
-            if(object != null)
+            if (object != null)
                 this.typeId = Long.parseLong(object.toString());
 
             object = user.get("__type");
-            if(object != null)
+            if (object != null)
                 this.type = object.toString();
 
         }
@@ -150,8 +148,8 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         return this.getPropertyAsDate("birthdate");
     }
 
-    public void setBirthDate(Date birthdate) {
-        this.setProperty("birthdate", birthdate);
+    public void setBirthDate(Date birthDate) {
+        this.setProperty("birthdate", birthDate);
 
     }
 
@@ -213,7 +211,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
 
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
-        final Map<String, Object> payload = new HashMap<String, Object>(){{
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
             put("type", "facebook");
             put("accesstoken", facebookAccessToken);
             put("createnew", "true");
@@ -270,10 +268,9 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    private static void AssertUserAuth() throws UserAuthException
-    {
+    private static void AssertUserAuth() throws UserAuthException {
         String token = AppacitiveContext.getLoggedInUserToken();
-        if(token == null || token.isEmpty() == true)
+        if (token == null || token.isEmpty() == true)
             throw new UserAuthException();
     }
 
@@ -359,18 +356,16 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                String token = (String)responseMap.get("token");
+                String token = (String) responseMap.get("token");
                 AppacitiveContext.setLoggedInUserToken(token);
-                if(callback != null)
-                {
+                if (callback != null) {
                     callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
                 }
-                else
-                {
-                    if(callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                }
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
+
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
@@ -396,31 +391,71 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                String token = (String)responseMap.get("token");
+                String token = (String) responseMap.get("token");
                 AppacitiveContext.setLoggedInUserToken(token);
-                if(callback != null)
-                {
+                if (callback != null) {
                     callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
                 }
-                else
-                {
-                    if(callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                }
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
+
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
             callback.failure(null, e);
         }
     }
 
-    public void loginInBackground(final String password, Callback<String> callback)
-    {
+    public static void loginWithTwitterInBackground(final String oauthToken, final String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<AppacitiveUser> callback) {
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
+            put("type", "twitter");
+            put("oauthtoken", oauthToken);
+            put("oauthtokensecret", oauthTokenSecret);
+        }};
+        if(consumerKey != null)
+            payload.put("consumerkey", consumerKey);
+        if(consumerSecret != null)
+            payload.put("consumersecret", consumerSecret);
+
+        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return AppacitiveHttp.post(url, headers, payload);
+            }
+        });
+
+        try {
+            Map<String, Object> responseMap = future.get();
+            AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
+            if (status.isSuccessful()) {
+                String token = (String) responseMap.get("token");
+                AppacitiveContext.setLoggedInUserToken(token);
+                if (callback != null) {
+                    callback.success(new AppacitiveUser((Map<String, Object>) responseMap.get("user")));
+                }
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+            }
+
+        } catch (Exception e) {
+            LOGGER.log(Level.ALL, e.getMessage());
+            callback.failure(null, e);
+        }
+    }
+
+    public static void loginWithTwitterInBackground(final String oauthToken, final String oauthTokenSecret, Callback<AppacitiveUser> callback) {
+        loginWithTwitterInBackground(oauthToken, oauthTokenSecret, null, null, callback);
+    }
+
+    public void loginInBackground(final String password, Callback<String> callback) {
         this.loginInBackground(password, Integer.MAX_VALUE, callback);
     }
 
-    public void loginInBackground(final String password, int expiry, Callback<String> callback)
-    {
+    public void loginInBackground(final String password, int expiry, Callback<String> callback) {
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>() {{
@@ -441,17 +476,15 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                String token = (String)responseMap.get("token");
+                String token = (String) responseMap.get("token");
                 AppacitiveContext.setLoggedInUserToken(token);
-                if(callback != null)
-                {
+                if (callback != null) {
                     callback.success(token);
                 }
-                else
-                {
-                    if(callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                }
+            } else {
+                if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+
             }
         } catch (Exception e) {
             LOGGER.log(Level.ALL, e.getMessage());
@@ -491,7 +524,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void deleteInBackground(long userId, boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
+    public static void deleteInBackground(long userId, boolean deleteConnections, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.deleteObjectUrl(String.valueOf(userId), UserIdType.id, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -518,7 +551,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void deleteInBackground(String username, boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
+    public static void deleteInBackground(String username, boolean deleteConnections, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.deleteObjectUrl(username, UserIdType.username, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -545,7 +578,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void deleteLoggedInUserInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
+    public static void deleteLoggedInUserInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.deleteObjectUrl("me", UserIdType.token, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -572,7 +605,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException{
+    public void deleteInBackground(boolean deleteConnections, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.deleteObjectUrl(this.getUsername(), UserIdType.username, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -599,7 +632,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void updateInBackground(boolean withRevision, Callback<AppacitiveUser> callback) throws UserAuthException{
+    public void updateInBackground(boolean withRevision, Callback<AppacitiveUser> callback) throws UserAuthException {
         final String url = Urls.ForUser.updateUserUrl(this.typeId, withRevision, this.getRevision()).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -617,7 +650,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
                 this.resetUpdateCommands();
-                this.setSelf((Map<String, Object>)responseMap.get("user"));
+                this.setSelf((Map<String, Object>) responseMap.get("user"));
                 if (callback != null)
                     callback.success(this);
             } else {
@@ -630,12 +663,11 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback) throws UserAuthException
-    {
+    public void updatePasswordInBackground(final String oldPassword, final String newPassword, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.updatePasswordUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
-        final Map<String, Object> payload = new HashMap<String, Object>(){{
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
             put("oldpassword", oldPassword);
             put("newpassword", newPassword);
         }};
@@ -663,11 +695,10 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void sendResetPasswordEmailInBackground(final String username, final String subjectForEmail, Callback<Void> callback)
-    {
+    public static void sendResetPasswordEmailInBackground(final String username, final String subjectForEmail, Callback<Void> callback) {
         final String url = Urls.ForUser.sendResetPasswordEmailUrl().toString();
         final Map<String, String> headers = Headers.assemble();
-        final Map<String, Object> payload = new HashMap<String, Object>(){{
+        final Map<String, Object> payload = new HashMap<String, Object>() {{
             put("username", username);
             put("subject", subjectForEmail);
         }};
@@ -695,8 +726,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException
-    {
+    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.validateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
@@ -723,8 +753,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException
-    {
+    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.invalidateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
@@ -751,8 +780,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void checkinInBackground(double[] coordinates, Callback<Void> callback) throws UserAuthException
-    {
+    public void checkinInBackground(double[] coordinates, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.checkInUserUrl(this.getId(), coordinates).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -781,8 +809,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void linkFacebookInBackground(String facebookAccessToken, Callback<Void> callback) throws UserAuthException
-    {
+    public void linkFacebookInBackground(String facebookAccessToken, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
@@ -811,8 +838,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void linkTwitterInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback) throws UserAuthException
-    {
+    public void linkTwitterInBackground(String oauthToken, String oauthTokenSecret, String consumerKey, String consumerSecret, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.linkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
@@ -821,10 +847,10 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         payload.put("oauthtoken", oauthToken);
         payload.put("oauthtokensecret", oauthTokenSecret);
 
-        if(consumerKey != null && consumerKey.isEmpty() == false)
+        if (consumerKey != null && consumerKey.isEmpty() == false)
             payload.put("consumerkey", consumerKey);
 
-        if(consumerSecret != null && consumerSecret.isEmpty() == false)
+        if (consumerSecret != null && consumerSecret.isEmpty() == false)
             payload.put("consumersecret", consumerSecret);
 
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -849,8 +875,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void delinkAccountInBackground(String linkName, Callback<Void> callback) throws UserAuthException
-    {
+    public void delinkAccountInBackground(String linkName, Callback<Void> callback) throws UserAuthException {
         final String url = Urls.ForUser.delinkAccountUrl(this.getId(), linkName).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payload = new HashMap<String, Object>();
@@ -877,8 +902,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void getLinkedAccountInBackground(String linkName, Callback<Link> callback) throws UserAuthException
-    {
+    public void getLinkedAccountInBackground(String linkName, Callback<Link> callback) throws UserAuthException {
         final String url = Urls.ForUser.getLinkAccountUrl(this.getId(), linkName).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -893,7 +917,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                if (callback != null){
+                if (callback != null) {
                     Map<String, Object> link = (Map<String, Object>) responseMap.get("identity");
                     callback.success(new Link(link));
                 }
@@ -908,8 +932,7 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
         }
     }
 
-    public void getAllLinkedAccountsInBackground(Callback<List<Link>> callback) throws UserAuthException
-    {
+    public void getAllLinkedAccountsInBackground(Callback<List<Link>> callback) throws UserAuthException {
         final String url = Urls.ForUser.getAllLinkAccountUrl(this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         AssertUserAuth();
@@ -924,11 +947,10 @@ public class AppacitiveUser extends AppacitiveEntity  implements Serializable, A
             Map<String, Object> responseMap = future.get();
             AppacitiveStatus status = new AppacitiveStatus((Map<String, Object>) responseMap.get("status"));
             if (status.isSuccessful()) {
-                if (callback != null){
+                if (callback != null) {
                     ArrayList<Object> links = (ArrayList<Object>) responseMap.get("identities");
                     List<Link> returnLinks = new ArrayList<Link>();
-                    for(Object link : links)
-                    {
+                    for (Object link : links) {
                         returnLinks.add(new Link((Map<String, Object>) link));
                     }
                     callback.success(returnLinks);

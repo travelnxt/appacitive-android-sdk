@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by sathley.
  */
-public class PropertyFilter extends Filter implements Query {
+public class PropertyFilter extends Filter {
 
     final static DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
 
@@ -65,6 +65,48 @@ public class PropertyFilter extends Filter implements Query {
     public PropertyFilter isEqualTo(Date value)
     {
         this.operator = "==";
+        this.value = dtf.format(value);
+        return this;
+    }
+
+    public PropertyFilter isNotEqualTo(String value)
+    {
+        this.operator = "<>";
+        this.value = value;
+        return this;
+    }
+
+    public PropertyFilter isNotEqualTo(long value)
+    {
+        this.operator = "<>";
+        this.value = String.valueOf(value);
+        return this;
+    }
+
+    public PropertyFilter isNotEqualTo(double value)
+    {
+        this.operator = "<>";
+        this.value = String.valueOf(value);
+        return this;
+    }
+
+    public PropertyFilter isNotEqualToDate(Date value)
+    {
+        this.operator = "<>";
+        this.value = df.format(value);
+        return this;
+    }
+
+    public PropertyFilter isNotEqualToTime(Date value)
+    {
+        this.operator = "<>";
+        this.value = tf.format(value);
+        return this;
+    }
+
+    public PropertyFilter isNotEqualTo(Date value)
+    {
+        this.operator = "<>";
         this.value = dtf.format(value);
         return this;
     }
@@ -268,6 +310,8 @@ public class PropertyFilter extends Filter implements Query {
 
     @Override
     public String asString() {
+        if(this.operator.equals("between"))
+            return String.format("*%s %s %s", this.key, this.operator, this.value);
         return String.format("*%s %s '%s'", this.key, this.operator, this.value);
     }
 }

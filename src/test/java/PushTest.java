@@ -3,8 +3,7 @@ import com.appacitive.sdk.core.AppacitivePushNotification;
 import com.appacitive.sdk.core.model.Environment;
 import com.appacitive.sdk.core.model.Callback;
 import com.appacitive.sdk.core.push.*;
-import com.appacitive.sdk.core.query.AppacitiveQuery;
-import com.appacitive.sdk.core.query.PropertyFilter;
+import com.appacitive.sdk.core.query.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -90,12 +89,11 @@ public class PushTest {
     @Test
     public void sendUsingQueryTest()
     {
-        AppacitiveQuery query = new AppacitiveQuery();
-        query.query = new PropertyFilter("devicetype").isEqualTo("ios");
-        AppacitivePushNotification.ToQueryResult("hello guys", query)
+
+        AppacitivePushNotification.ToQueryResult("hello guys", BooleanOperator.and(new ArrayList<Query>(){{add(new PropertyFilter("devicetype").isEqualTo("ios"));add(new PropertyFilter("isactive").isEqualTo(true));}}))
                 .withData(new HashMap<String, String>() {{
-                    put("a1", "v1");
-                }}).sendInBackground(
+        put("a1", "v1");
+    }}).sendInBackground(
                 new Callback<String>() {
                     @Override
                     public void success(String result) {
@@ -106,7 +104,7 @@ public class PushTest {
                     public void failure(String result, Exception e) {
                         Assert.fail(e.getMessage());
                     }
-            }
+                }
         );
     }
 
