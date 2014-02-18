@@ -7,7 +7,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
+//import org.apache.http.impl.client.HttpClientBuilder;
+//import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -27,10 +29,16 @@ public class AppacitiveHttp {
 
     public static final String UTF8_BOM = "\uFEFF";
 
+    private static HttpClient getHttpClient()
+    {
+        return new DefaultHttpClient();
+    }
+
 
     public static Map<String, Object> get(String url, Map<String, String> headers) throws IOException
     {
-        HttpClient client = HttpClientBuilder.create().build();
+//        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = getHttpClient();
         HttpGet request = new HttpGet(url);
 
         for(Map.Entry<String, String> header : headers.entrySet())
@@ -44,7 +52,7 @@ public class AppacitiveHttp {
 
     public static Map<String, Object> delete(String url, Map<String, String> headers) throws IOException
     {
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = getHttpClient();
         HttpDelete request = new HttpDelete(url);
 
         for(Map.Entry<String, String> header : headers.entrySet())
@@ -58,7 +66,7 @@ public class AppacitiveHttp {
 
     public static Map<String, Object> put(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = getHttpClient();
         HttpPut request = new HttpPut(url);
 
         for(Map.Entry<String, String> header : headers.entrySet()){
@@ -76,7 +84,7 @@ public class AppacitiveHttp {
 
     public static Map<String, Object> post(String url, Map<String, String> headers, Map<String, Object> payload) throws IOException
     {
-        HttpClient client = HttpClientBuilder.create().build();
+        HttpClient client = getHttpClient();
         HttpPost request = new HttpPost(url);
 
         for(Map.Entry<String, String> header : headers.entrySet())

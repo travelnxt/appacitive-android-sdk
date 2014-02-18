@@ -2,6 +2,7 @@ import com.appacitive.sdk.core.AppacitiveContext;
 import com.appacitive.sdk.core.model.Environment;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Created by sathley.
@@ -17,4 +18,8 @@ public class LinkTest {
     public static void oneTimeTearDown() {
         // one-time cleanup code
     }
+
+    //@Test
+
+
 }
