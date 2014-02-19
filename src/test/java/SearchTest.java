@@ -1,8 +1,8 @@
-import com.appacitive.sdk.core.AppacitiveContext;
-import com.appacitive.sdk.core.model.Environment;
-import com.appacitive.sdk.core.query.BooleanOperator;
-import com.appacitive.sdk.core.query.PropertyFilter;
-import com.appacitive.sdk.core.query.Query;
+import com.appacitive.sdk.AppacitiveContext;
+import com.appacitive.sdk.model.Environment;
+import com.appacitive.sdk.query.BooleanOperator;
+import com.appacitive.sdk.query.PropertyFilter;
+import com.appacitive.sdk.query.Query;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

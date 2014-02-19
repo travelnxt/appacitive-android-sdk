@@ -1,10 +1,6 @@
-import com.appacitive.sdk.core.AppacitiveContext;
-import com.appacitive.sdk.core.AppacitiveEmail;
-import com.appacitive.sdk.core.model.RawEmailBody;
-import com.appacitive.sdk.core.model.TemplatedEmailBody;
-import com.appacitive.sdk.core.model.Callback;
-import com.appacitive.sdk.core.model.Environment;
-import com.appacitive.sdk.core.model.SmtpSettings;
+import com.appacitive.sdk.AppacitiveContext;
+import com.appacitive.sdk.AppacitiveEmail;
+import com.appacitive.sdk.model.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -120,4 +116,27 @@ public class EmailTest {
             }
         });
     }
+
+    @Test
+    public void sendRawEmailTestSample()
+    {
+        AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
+        email.to.add(testEmail);
+        email.cc.add(testEmail);
+        email.bcc.add(testEmail);
+        email.fromAddress = testEmail;
+        email.replyToAddress = testEmail;
+        email.sendInBackground(new Callback<AppacitiveEmail>() {
+            @Override
+            public void success(AppacitiveEmail result) {
+                assert result.getId() > 0;
+            }
+
+            @Override
+            public void failure(AppacitiveEmail result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+    }
+
 }

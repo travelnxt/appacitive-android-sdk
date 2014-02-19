@@ -1,14 +1,14 @@
-import com.appacitive.sdk.core.model.Callback;
-import com.appacitive.sdk.core.AppacitiveContext;
-import com.appacitive.sdk.core.AppacitiveObject;
-import com.appacitive.sdk.core.exceptions.AppacitiveException;
-import com.appacitive.sdk.core.exceptions.ValidationException;
-import com.appacitive.sdk.core.infra.ErrorCodes;
-import com.appacitive.sdk.core.infra.SystemDefinedProperties;
-import com.appacitive.sdk.core.model.ConnectedObjectsResponse;
-import com.appacitive.sdk.core.model.Environment;
-import com.appacitive.sdk.core.model.PagedList;
-import com.appacitive.sdk.core.query.*;
+import com.appacitive.sdk.AppacitiveContext;
+import com.appacitive.sdk.AppacitiveObject;
+import com.appacitive.sdk.exceptions.AppacitiveException;
+import com.appacitive.sdk.exceptions.ValidationException;
+import com.appacitive.sdk.infra.ErrorCodes;
+import com.appacitive.sdk.infra.SystemDefinedProperties;
+import com.appacitive.sdk.model.Callback;
+import com.appacitive.sdk.model.ConnectedObjectsResponse;
+import com.appacitive.sdk.model.Environment;
+import com.appacitive.sdk.model.PagedList;
+import com.appacitive.sdk.query.*;
 import org.junit.*;
 
 import java.io.IOException;
@@ -426,6 +426,7 @@ public class ObjectTest {
     }
 
     @Test
+//    @Ignore
     public void updateAttributesTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "vx");

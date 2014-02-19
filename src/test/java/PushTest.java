@@ -1,9 +1,11 @@
-import com.appacitive.sdk.core.AppacitiveContext;
-import com.appacitive.sdk.core.AppacitivePushNotification;
-import com.appacitive.sdk.core.model.Environment;
-import com.appacitive.sdk.core.model.Callback;
-import com.appacitive.sdk.core.push.*;
-import com.appacitive.sdk.core.query.*;
+import com.appacitive.sdk.AppacitiveContext;
+import com.appacitive.sdk.AppacitivePushNotification;
+import com.appacitive.sdk.model.Callback;
+import com.appacitive.sdk.model.Environment;
+import com.appacitive.sdk.push.*;
+import com.appacitive.sdk.query.BooleanOperator;
+import com.appacitive.sdk.query.PropertyFilter;
+import com.appacitive.sdk.query.Query;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

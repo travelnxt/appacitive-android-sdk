@@ -11,9 +11,7 @@ Official Android and Java SDK for Appacitive.
 TODO
 
 
-try/catch all callback.successes and failures
 Add file upload support
-Complete device and push
 IOC support
 Android support
 make object extendable
