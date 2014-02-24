@@ -12,9 +12,4 @@ public abstract class Filter implements Serializable, Query {
     protected String value = null;
 
     protected String operator = null;
-
-//    @Override
-//    public String asString() {
-//        return null;
-//    }
 }

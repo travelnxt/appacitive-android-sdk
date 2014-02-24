@@ -27,10 +27,6 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveUser.class.getName());
 
-//    public AppacitiveUser(Map<String, Object> user) {
-//        this.setSelf(user);
-//    }
-
     public AppacitiveUser() {
 
     }

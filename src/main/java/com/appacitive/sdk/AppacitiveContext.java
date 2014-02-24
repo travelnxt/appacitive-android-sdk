@@ -11,9 +11,9 @@ public class AppacitiveContext implements Serializable {
 
     private static String loggedInUserToken;
 
-    public static String apiKey;
+    private static String apiKey;
 
-    public static String environment;
+    private static String environment;
 
     private static boolean isInitialized = false;
 
@@ -31,6 +31,10 @@ public class AppacitiveContext implements Serializable {
         AppacitiveContext.environment = environment.name();
         ExecutorServiceWrapper.init();
         isInitialized = true;
+    }
+
+    public static final void logout(){
+        setLoggedInUserToken(null);
     }
 
     public static final boolean isInitialized()

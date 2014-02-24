@@ -458,18 +458,19 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                 response.pagingInfo = new PagingInfo((Map<String, Object>) responseMap.get("paginginfo"));
                 List<Object> nodeObjects = (ArrayList<Object>) (responseMap.get("nodes"));
                 response.results = new ArrayList<ConnectedObject>();
-                for (Object n : nodeObjects) {
-                    Map<String, Object> obj_n = (Map<String, Object>) n;
-                    ConnectedObject connectedObject = new ConnectedObject();
-                    if (obj_n.containsKey("__edge")) {
-                        connectedObject.connection = new AppacitiveConnection("");
-                        connectedObject.connection.setSelf((Map<String, Object>) obj_n.get("__edge"));
-                        obj_n.remove("__edge");
+                if (nodeObjects != null)
+                    for (Object n : nodeObjects) {
+                        Map<String, Object> obj_n = (Map<String, Object>) n;
+                        ConnectedObject connectedObject = new ConnectedObject();
+                        if (obj_n.containsKey("__edge")) {
+                            connectedObject.connection = new AppacitiveConnection("");
+                            connectedObject.connection.setSelf((Map<String, Object>) obj_n.get("__edge"));
+                            obj_n.remove("__edge");
+                        }
+                        connectedObject.object = new AppacitiveObject("");
+                        connectedObject.object.setSelf(obj_n);
+                        response.results.add(connectedObject);
                     }
-                    connectedObject.object = new AppacitiveObject("");
-                    connectedObject.object.setSelf(obj_n);
-                    response.results.add(connectedObject);
-                }
             } else
                 exception = new AppacitiveException(status);
         } catch (Exception e) {

@@ -1,5 +1,11 @@
 import com.appacitive.sdk.AppacitiveContext;
+import com.appacitive.sdk.AppacitiveObject;
+import com.appacitive.sdk.infra.SystemDefinedProperties;
+import com.appacitive.sdk.model.Callback;
+import com.appacitive.sdk.model.ConnectedObject;
+import com.appacitive.sdk.model.ConnectedObjectsResponse;
 import com.appacitive.sdk.model.Environment;
+import com.appacitive.sdk.query.AppacitiveQuery;
 import com.appacitive.sdk.query.BooleanOperator;
 import com.appacitive.sdk.query.PropertyFilter;
 import com.appacitive.sdk.query.Query;
@@ -27,11 +33,22 @@ public class SearchTest {
     @Test
     public void queryDslTest()
     {
-        final PropertyFilter f1 = new PropertyFilter("p1").isEqualTo(false);
-        final PropertyFilter f2 = new PropertyFilter("p2").between(100, 200);
-        String v1 = BooleanOperator.and(new ArrayList<Query>(){{
-            add(f1);
-            add(f2);
-        }}).asString();
+        AppacitiveContext.initialize("OucpFOfXszNgDj3/Ct6YLXIg0FvY9b/b0UBxVqtd8do=", Environment.sandbox);
+        AppacitiveQuery query = new AppacitiveQuery();
+        AppacitiveObject.getConnectedObjectsInBackground("user_lists", "user", 51357983522817298L, query, new ArrayList<String>() {{
+                    add("list_name");
+                    add(SystemDefinedProperties.utcDateCreated);
+                }}, new Callback<ConnectedObjectsResponse>() {
+                    @Override
+                    public void success(ConnectedObjectsResponse result) {
+
+                    }
+
+                    @Override
+                    public void failure(ConnectedObjectsResponse result, Exception e) {
+
+                    }
+                }
+        );
     }
 }

@@ -12,7 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class AppacitiveEntity  implements Serializable, APSerializable {
+public abstract class AppacitiveEntity  implements Serializable, APSerializable  {
 
 //    public AppacitiveEntity(Map<String, Object> entity) {
 //        this.setSelf(entity);
@@ -77,10 +77,6 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
             }
         }
     }
-
-//    public AppacitiveEntity() {
-//
-//    }
 
     public Map<String, Object> getMap() {
         Map<String, Object> nativeMap = new HashMap<String, Object>();
@@ -194,9 +190,7 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
 
     public void setPropertyAsGeo(String propertyName, double[] coordinates)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append(coordinates[0]).append(",").append(coordinates[1]);
-        this.properties.put(propertyName, sb.toString());
+        this.properties.put(propertyName, String.valueOf(coordinates[0]) + "," + coordinates[1]);
     }
 
     public List<String> getPropertyAsMultiValued(String propertyName) {

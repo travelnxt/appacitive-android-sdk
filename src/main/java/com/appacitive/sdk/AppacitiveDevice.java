@@ -28,10 +28,6 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
 
-//    public AppacitiveDevice(Map<String, Object> device) {
-//        this.setSelf(device);
-//    }
-
     public AppacitiveDevice() {
     }
 

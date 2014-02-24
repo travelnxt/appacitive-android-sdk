@@ -20,7 +20,7 @@ public class AttributeFilter extends Filter {
     public AttributeFilter like(String value)
     {
         this.operator = "like";
-        this.value = value;
+        this.value = "*" + value + "*";
         return this;
     }
 

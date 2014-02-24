@@ -785,7 +785,6 @@ public class ObjectTest {
             add(a3);
             add(a4);
         }});
-
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
