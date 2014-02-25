@@ -3,11 +3,9 @@ import com.appacitive.sdk.AppacitiveObject;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.ErrorCodes;
+import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.infra.SystemDefinedProperties;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.ConnectedObjectsResponse;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PagedList;
+import com.appacitive.sdk.model.*;
 import com.appacitive.sdk.query.*;
 import org.junit.*;
 
@@ -20,14 +18,14 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 //@Ignore
 public class ObjectTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox);
+        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass

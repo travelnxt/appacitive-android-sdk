@@ -1,10 +1,8 @@
 package com.appacitive.sdk;
 
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
-import com.appacitive.sdk.infra.Headers;
-import com.appacitive.sdk.infra.SystemDefinedProperties;
-import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.*;
 
 import java.io.Serializable;
@@ -137,7 +135,7 @@ public class AppacitiveEmail implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
         AppacitiveStatus status;

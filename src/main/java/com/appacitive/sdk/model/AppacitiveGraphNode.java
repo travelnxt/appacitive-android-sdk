@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitiveGraphNode  implements Serializable {
 
     public AppacitiveObject object = null;

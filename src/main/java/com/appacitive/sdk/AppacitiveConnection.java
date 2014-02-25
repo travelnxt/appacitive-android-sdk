@@ -3,6 +3,7 @@ package com.appacitive.sdk;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.*;
+import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.AppacitiveEndpoint;
 import com.appacitive.sdk.model.AppacitiveStatus;
 import com.appacitive.sdk.model.Callback;
@@ -20,8 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitiveConnection extends AppacitiveEntity implements Serializable, APSerializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
@@ -167,7 +168,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.put(url, headers, payload);
+                return APContainer.build(Http.class).put(url, headers, payload);
             }
         });
         AppacitiveStatus status;
@@ -206,7 +207,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
         AppacitiveStatus status;
@@ -240,7 +241,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.delete(url, headers);
+                return APContainer.build(Http.class).delete(url, headers);
             }
         });
 
@@ -278,7 +279,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
 
@@ -310,7 +311,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
 
@@ -345,7 +346,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
 
@@ -382,7 +383,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
         AppacitiveStatus status;
@@ -421,7 +422,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
         AppacitiveStatus status;
@@ -463,7 +464,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
 
@@ -506,7 +507,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
 
@@ -547,7 +548,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
 
@@ -590,7 +591,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(url, headers);
+                return APContainer.build(Http.class).get(url, headers);
             }
         });
 

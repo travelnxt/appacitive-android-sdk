@@ -1,5 +1,6 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveEmail;
+import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.model.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -15,7 +16,7 @@ public class EmailTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox);
+        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass

@@ -6,8 +6,8 @@ import com.appacitive.sdk.AppacitiveObject;
 import java.io.Serializable;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class ConnectedObject implements Serializable {
 
     public AppacitiveObject object;

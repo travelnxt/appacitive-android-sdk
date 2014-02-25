@@ -1,9 +1,10 @@
 package com.appacitive.sdk;
 
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
+import com.appacitive.sdk.infra.APContainer;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.AppacitiveStatus;
 import com.appacitive.sdk.model.Callback;
 import com.appacitive.sdk.push.AndroidOptions;
@@ -24,8 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitivePushNotification implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitivePushNotification.class.getName());
@@ -160,7 +161,7 @@ public class AppacitivePushNotification implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
         boolean isSuccessful;

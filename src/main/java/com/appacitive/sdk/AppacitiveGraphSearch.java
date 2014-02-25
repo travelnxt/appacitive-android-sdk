@@ -1,10 +1,11 @@
 package com.appacitive.sdk;
 
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
+import com.appacitive.sdk.infra.APContainer;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.NodeHelper;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.AppacitiveGraphNode;
 import com.appacitive.sdk.model.AppacitiveStatus;
 import com.appacitive.sdk.model.Callback;
@@ -20,8 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitiveGraphSearch implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveGraphSearch.class.getName());
@@ -36,7 +37,7 @@ public class AppacitiveGraphSearch implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
         boolean isSuccessful;
@@ -83,7 +84,7 @@ public class AppacitiveGraphSearch implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.post(url, headers, payload);
+                return APContainer.build(Http.class).post(url, headers, payload);
             }
         });
         boolean isSuccessful;

@@ -14,8 +14,8 @@ public class Headers implements Serializable {
     public static Map<String, String> assemble()
     {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Appacitive-Apikey", AppacitiveContext.apiKey);
-        headers.put("Appacitive-Environment", AppacitiveContext.environment);
+        headers.put("Appacitive-Apikey", AppacitiveContext.getApiKey());
+        headers.put("Appacitive-Environment", AppacitiveContext.getEnvironment());
         headers.put("Content-Type", "application/json");
 
         if (AppacitiveContext.getLoggedInUserToken() != null && AppacitiveContext.getLoggedInUserToken().isEmpty() == false)

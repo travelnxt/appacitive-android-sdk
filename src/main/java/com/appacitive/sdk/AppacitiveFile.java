@@ -1,9 +1,10 @@
 package com.appacitive.sdk;
 
 import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.infra.AppacitiveHttp;
+import com.appacitive.sdk.infra.APContainer;
 import com.appacitive.sdk.infra.Headers;
 import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.AppacitiveStatus;
 import com.appacitive.sdk.model.Callback;
 import com.appacitive.sdk.model.FileUploadUrlResponse;
@@ -16,8 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitiveFile implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveFile.class.getName());
@@ -41,7 +42,7 @@ public class AppacitiveFile implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(finalUrl, headers);
+                return APContainer.build(Http.class).get(finalUrl, headers);
             }
         });
         AppacitiveStatus status;
@@ -82,7 +83,7 @@ public class AppacitiveFile implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.get(finalUrl, headers);
+                return APContainer.build(Http.class).get(finalUrl, headers);
             }
         });
         AppacitiveStatus status;
@@ -115,7 +116,7 @@ public class AppacitiveFile implements Serializable {
         Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
-                return AppacitiveHttp.delete(url, headers);
+                return APContainer.build(Http.class).delete(url, headers);
             }
         });
         AppacitiveStatus status;

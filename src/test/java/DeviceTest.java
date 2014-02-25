@@ -1,9 +1,11 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveDevice;
 import com.appacitive.sdk.exceptions.ValidationException;
+import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.model.Callback;
 import com.appacitive.sdk.model.Environment;
 import com.appacitive.sdk.model.PagedList;
+import com.appacitive.sdk.model.PlatformType;
 import com.appacitive.sdk.query.AppacitiveQuery;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -15,13 +17,13 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class DeviceTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox);
+        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass

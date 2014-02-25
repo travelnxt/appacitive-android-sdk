@@ -7,8 +7,8 @@ import com.appacitive.sdk.model.AppacitiveGraphNode;
 import java.util.*;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class NodeHelper {
 
     public static AppacitiveGraphNode convertNode(Map<String, Object> value) {

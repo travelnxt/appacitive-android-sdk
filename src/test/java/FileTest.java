@@ -1,8 +1,10 @@
 import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveFile;
+import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.model.Callback;
 import com.appacitive.sdk.model.Environment;
 import com.appacitive.sdk.model.FileUploadUrlResponse;
+import com.appacitive.sdk.model.PlatformType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,7 +18,7 @@ public class FileTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox);
+        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass

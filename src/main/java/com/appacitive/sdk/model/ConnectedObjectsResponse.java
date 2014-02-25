@@ -3,8 +3,8 @@ package com.appacitive.sdk.model;
 import java.io.Serializable;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class ConnectedObjectsResponse extends PagedList<ConnectedObject> implements Serializable {
 
     public String parent = null;

@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class AppacitiveEndpoint implements Serializable, APSerializable {
 
 //    public AppacitiveEndpoint(Map<String, Object> endpoint) {
