@@ -6,7 +6,6 @@ import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.model.Callback;
 import com.appacitive.sdk.model.Environment;
 import com.appacitive.sdk.model.Link;
-import com.appacitive.sdk.model.PlatformType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,8 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 public class LinkTest {
 
     @BeforeClass
@@ -51,7 +50,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkFacebookAccountTest() throws ValidationException {
+    public void linkTwitterAccountTest() throws ValidationException {
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
@@ -87,7 +86,8 @@ public class LinkTest {
 
                                             @Override
                                             public void failure(Link result, Exception e) {
-                                                super.failure(result, e);
+                                                Assert.fail(e.getMessage());
+
                                             }
                                         });
                                     } catch (UserAuthException e) {
@@ -110,7 +110,7 @@ public class LinkTest {
     }
 
     @Test
-    public void linkTwitterAccountTest() throws ValidationException {
+    public void linkFacebookAccountTest() throws ValidationException {
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
@@ -182,44 +182,44 @@ public class LinkTest {
                                 @Override
                                 public void success(Void result2) {
                                     try {
-                                        result.linkFacebookInBackground(fbToken, new Callback<Void>() {
-                                            @Override
-                                            public void success(Void result3) {
-                                                try {
-                                                    result.getAllLinkedAccountsInBackground(new Callback<List<Link>>() {
-                                                        @Override
-                                                        public void success(List<Link> result4) {
-                                                            assert result4 != null;
-                                                            assert result4.size() == 2;
+                                        result.linkFacebookInBackground(fbToken,
+                                                new Callback<Void>() {
+                                                    @Override
+                                                    public void success(Void result3) {
+                                                        try {
+                                                            result.getAllLinkedAccountsInBackground(new Callback<List<Link>>() {
+                                                                @Override
+                                                                public void success(List<Link> result4) {
+                                                                    assert result4 != null;
+                                                                    assert result4.size() == 2;
 
-                                                            try{
-                                                                result.deleteInBackground(true, new Callback<Void>() {
-                                                                    @Override
-                                                                    public void success(Void result) {
-                                                                        assert true;
-                                                                    }
+                                                                    try {
+                                                                        result.deleteInBackground(true, new Callback<Void>() {
+                                                                            @Override
+                                                                            public void success(Void result) {
+                                                                                assert true;
+                                                                            }
 
-                                                                    @Override
-                                                                    public void failure(Void result, Exception e) {
+                                                                            @Override
+                                                                            public void failure(Void result, Exception e) {
+                                                                                Assert.fail(e.getMessage());
+                                                                            }
+                                                                        });
+                                                                    } catch (UserAuthException e) {
                                                                         Assert.fail(e.getMessage());
                                                                     }
-                                                                });
-                                                            }
-                                                            catch (UserAuthException e){
-                                                                Assert.fail(e.getMessage());
-                                                            }
-                                                        }
+                                                                }
 
-                                                        @Override
-                                                        public void failure(List<Link> result, Exception e) {
+                                                                @Override
+                                                                public void failure(List<Link> result, Exception e) {
+                                                                    Assert.fail(e.getMessage());
+                                                                }
+                                                            });
+                                                        } catch (UserAuthException e) {
                                                             Assert.fail(e.getMessage());
                                                         }
-                                                    });
-                                                } catch (UserAuthException e) {
-                                                    Assert.fail(e.getMessage());
-                                                }
-                                            }
-                                        });
+                                                    }
+                                                });
                                     } catch (UserAuthException e) {
                                         Assert.fail(e.getMessage());
                                     }

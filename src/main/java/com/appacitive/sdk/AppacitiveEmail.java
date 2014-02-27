@@ -30,6 +30,10 @@ public class AppacitiveEmail implements Serializable {
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveEmail.class.getName());
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     private long id;
 
     public long getId() {

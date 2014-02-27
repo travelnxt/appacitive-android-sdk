@@ -55,8 +55,8 @@ public class ConnectionTest {
                             sibling.endpointB.label = "object";
                             sibling.endpointA.objectId = p.getId();
                             sibling.endpointB.objectId = c.getId();
-                            sibling.setProperty("field1", "hello");
-                            sibling.setProperty("field2", "1520");
+                            sibling.setStringProperty("field1", "hello");
+                            sibling.setStringProperty("field2", "1520");
 
                             sibling.addTag("t1");
                             sibling.addTag("t2");
@@ -169,8 +169,8 @@ public class ConnectionTest {
                         @Override
                         public void success(final AppacitiveObject c) {
                             AppacitiveConnection sibling = new AppacitiveConnection("sibling").fromExistingObject("object", p.getId()).toExistingObject("object", c.getId());
-                            sibling.setProperty("field1", "hello");
-                            sibling.setProperty("field2", "1520");
+                            sibling.setStringProperty("field1", "hello");
+                            sibling.setStringProperty("field2", "1520");
 
                             sibling.addTag("t1");
                             sibling.addTag("t2");

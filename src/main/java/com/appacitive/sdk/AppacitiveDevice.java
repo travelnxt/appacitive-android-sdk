@@ -57,25 +57,33 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         return nativeMap;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setTypeId(long typeId) {
+        this.typeId = typeId;
+    }
+
     public String type = null;
 
     public long typeId = 0;
 
     public String getDeviceType() {
-        return this.getProperty("devicetype");
+        return this.getPropertyAsString("devicetype");
     }
 
     public void setDeviceType(String deviceType) {
-        this.setProperty("devicetype", deviceType);
+        this.setStringProperty("devicetype", deviceType);
 
     }
 
     public String getDeviceToken() {
-        return this.getProperty("devicetoken");
+        return this.getPropertyAsString("devicetoken");
     }
 
     public void setDeviceToken(String deviceToken) {
-        this.setProperty("devicetoken", deviceToken);
+        this.setStringProperty("devicetoken", deviceToken);
 
     }
 
@@ -84,16 +92,16 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void setLocation(double[] coordinates) {
-        this.setPropertyAsGeo("location", coordinates);
+        this.setGeoProperty("location", coordinates);
 
     }
 
     public List<String> getChannels() {
-        return this.getPropertyAsMultiValued("channels");
+        return this.getPropertyAsMultiValuedString("channels");
     }
 
     public void setChannels(List<String> channels) {
-        this.setProperty("channels", channels);
+        this.setPropertyAsMultiValuedString("channels", channels);
 
     }
 
@@ -102,16 +110,16 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void setBadge(int badge) {
-        this.setProperty("badge", badge);
+        this.setIntProperty("badge", badge);
 
     }
 
     public String getTimeZone() {
-        return this.getProperty("timezone");
+        return this.getPropertyAsString("timezone");
     }
 
     public void setTimeZone(String timezone) {
-        this.setProperty("timezone", timezone);
+        this.setStringProperty("timezone", timezone);
 
     }
 
@@ -120,7 +128,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void setIsActive(boolean isActive) {
-        this.setProperty("isactive", isActive);
+        this.setBoolProperty("isactive", isActive);
 
     }
 
@@ -131,7 +139,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         }};
         List<String> missingFields = new ArrayList<String>();
         for (String field : mandatoryFields) {
-            if (this.getProperty(field) == null) {
+            if (this.getPropertyAsString(field) == null) {
                 missingFields.add(field);
             }
         }

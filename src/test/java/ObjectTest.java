@@ -5,7 +5,10 @@ import com.appacitive.sdk.exceptions.ValidationException;
 import com.appacitive.sdk.infra.ErrorCodes;
 import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.infra.SystemDefinedProperties;
-import com.appacitive.sdk.model.*;
+import com.appacitive.sdk.model.Callback;
+import com.appacitive.sdk.model.ConnectedObjectsResponse;
+import com.appacitive.sdk.model.Environment;
+import com.appacitive.sdk.model.PagedList;
 import com.appacitive.sdk.query.*;
 import org.junit.*;
 
@@ -18,8 +21,8 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 //@Ignore
 public class ObjectTest {
 
@@ -41,11 +44,11 @@ public class ObjectTest {
     public void createFullObjectTest() throws ValidationException, ParseException {
 
         AppacitiveObject newObject = new AppacitiveObject("object");
-        newObject.setProperty("intfield", 100);
-        newObject.setProperty("decimalfield", 20.251100);
-        newObject.setProperty("boolfield", true);
-        newObject.setProperty("stringfield", "hello world");
-        newObject.setProperty(".", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
+        newObject.setIntProperty("intfield", 100);
+        newObject.setDoubleProperty("decimalfield", 20.251100);
+        newObject.setBoolProperty("boolfield", true);
+        newObject.setStringProperty("stringfield", "hello world");
+        newObject.setStringProperty("textfield", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
         final Date date = new Date();
         TimeZone tz = TimeZone.getTimeZone("UTC");
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -54,14 +57,14 @@ public class ObjectTest {
         final String nowAsISODate = df.format(date);
         final String nowAsISOTime = tf.format(date);
         final String nowAsISODateTime = dtf.format(date);
-        newObject.setProperty("datefield", nowAsISODate);
-        newObject.setProperty("timefield", nowAsISOTime);
-        newObject.setProperty("datetimefield", nowAsISODateTime);
-        newObject.setProperty("geofield", "10.11, 20.22");
-        newObject.setProperty("multifield", new ArrayList<Object>() {{
+        newObject.setStringProperty("datefield", nowAsISODate);
+        newObject.setStringProperty("timefield", nowAsISOTime);
+        newObject.setStringProperty("datetimefield", nowAsISODateTime);
+        newObject.setStringProperty("geofield", "10.11, 20.22");
+        newObject.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
             add("val1");
-            add(500);
-            add(false);
+            add("500");
+            add("false");
         }});
 
         newObject.addTag("t1");
@@ -74,7 +77,7 @@ public class ObjectTest {
         newObject.setAttribute("a1", "v1");
         newObject.setAttribute("a2", "v2");
         newObject.createInBackground(new Callback<AppacitiveObject>() {
-
+            @Override
             public void success(AppacitiveObject result) {
                 assertTrue(result.getId() > 0);
                 assertTrue(result.getPropertyAsInt("intfield") == 100);
@@ -89,14 +92,14 @@ public class ObjectTest {
                 }
                 assertTrue(result.getPropertyAsGeo("geofield")[0] == 10.11d);
                 assertTrue(result.getPropertyAsGeo("geofield")[1] == 20.22d);
-                assertTrue(result.getPropertyAsMultiValued("multifield").size() == 3);
-                assertTrue((result.getPropertyAsMultiValued("multifield").get(0).equals("val1")));
-                assertTrue((result.getPropertyAsMultiValued("multifield").get(1).equals("500")));
-                assertTrue((result.getPropertyAsMultiValued("multifield").get(2).equals("False")));
+                assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val1")));
+                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("500")));
+                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("false")));
             }
 
-
-            public void failure(AppacitiveObject result, AppacitiveException e) {
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
                 Assert.fail(e.getMessage());
             }
         });
@@ -108,13 +111,13 @@ public class ObjectTest {
         AppacitiveObject newObject = new AppacitiveObject("object");
         final String randomString1 = " 以下便是有关此问题的所有信息";
         final String randomString2 = " ä»¥ä¸ä¾¿æ¯æå³æ­¤é®é¢çææä¿¡æ¯";
-        newObject.setProperty("stringfield", randomString1);
-        newObject.setProperty("textfield", randomString2);
+        newObject.setStringProperty("stringfield", randomString1);
+        newObject.setStringProperty("textfield", randomString2);
         newObject.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
                 assertTrue(result.getId() > 0);
-                assertTrue(result.getProperty("stringfield").toString().equals(randomString1));
-                assertTrue(result.getProperty("textfield").toString().equals(randomString2));
+                assertTrue(result.getPropertyAsString("stringfield").toString().equals(randomString1));
+                assertTrue(result.getPropertyAsString("textfield").toString().equals(randomString2));
             }
 
             public void failure(AppacitiveObject result, AppacitiveException e) {
@@ -125,11 +128,11 @@ public class ObjectTest {
 
     private static AppacitiveObject getRandomObject() {
         AppacitiveObject newObject = new AppacitiveObject("object");
-        newObject.setProperty("intfield", 100);
-        newObject.setProperty("decimalfield", 20.251100);
-        newObject.setProperty("boolfield", true);
-        newObject.setProperty("stringfield", "hello world");
-        newObject.setProperty("textfield", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
+        newObject.setIntProperty("intfield", 100);
+        newObject.setDoubleProperty("decimalfield", 20.251100);
+        newObject.setBoolProperty("boolfield", true);
+        newObject.setStringProperty("stringfield", "hello world");
+        newObject.setStringProperty("textfield", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
         final Date date = new Date();
         TimeZone tz = TimeZone.getTimeZone("UTC");
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -138,13 +141,13 @@ public class ObjectTest {
         final String nowAsISODate = df.format(date);
         final String nowAsISOTime = tf.format(date);
         final String nowAsISODateTime = dtf.format(date);
-        newObject.setProperty("datefield", nowAsISODate);
-        newObject.setProperty("timefield", nowAsISOTime);
-        newObject.setProperty("datetimefield", nowAsISODateTime);
-        newObject.setProperty("geofield", "10.11, 20.22");
-        newObject.setProperty("multifield", new ArrayList<Object>() {{
+        newObject.setStringProperty("datefield", nowAsISODate);
+        newObject.setStringProperty("timefield", nowAsISOTime);
+        newObject.setStringProperty("datetimefield", nowAsISODateTime);
+        newObject.setStringProperty("geofield", "10.11, 20.22");
+        newObject.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
             add("val1");
-            add(500);
+            add("500");
             add("false");
         }});
 
@@ -165,10 +168,10 @@ public class ObjectTest {
         AppacitiveObject object = getRandomObject();
         getRandomObject().createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
-                result.setProperty("intfield", 200);
-                result.setProperty("decimalfield", 40.50200);
-                result.setProperty("boolfield", false);
-                result.setProperty("stringfield", "hello world again !!");
+                result.setIntProperty("intfield", 200);
+                result.setDoubleProperty("decimalfield", 40.50200);
+                result.setBoolProperty("boolfield", false);
+                result.setStringProperty("stringfield", "hello world again !!");
                 final Date date = new Date();
                 TimeZone tz = TimeZone.getTimeZone("UTC");
                 final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -177,14 +180,14 @@ public class ObjectTest {
                 final String nowAsISODate = df.format(date);
                 final String nowAsISOTime = tf.format(date);
                 final String nowAsISODateTime = dtf.format(date);
-                result.setProperty("datefield", nowAsISODate);
-                result.setProperty("timefield", nowAsISOTime);
-                result.setProperty("datetimefield", nowAsISODateTime);
-                result.setProperty("geofield", "15.55, 33.88");
-                result.setProperty("multifield", new ArrayList<Object>() {{
+                result.setStringProperty("datefield", nowAsISODate);
+                result.setStringProperty("timefield", nowAsISOTime);
+                result.setStringProperty("datetimefield", nowAsISODateTime);
+                result.setStringProperty("geofield", "15.55, 33.88");
+                result.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
                     add("val2");
-                    add(800);
-                    add(true);
+                    add("800");
+                    add("true");
                 }});
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
@@ -193,19 +196,15 @@ public class ObjectTest {
                         assertTrue(result.getPropertyAsInt("intfield") == 200);
                         assertTrue(result.getPropertyAsDouble("decimalfield") == 40.502d);
                         assertTrue(!result.getPropertyAsBoolean("boolfield"));
-                        try {
-                            assertTrue(df.format(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
-                            assertTrue(tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
-                            assertTrue(dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
-                        } catch (ParseException pe) {
-                            Assert.fail(pe.getMessage());
-                        }
+                        assertTrue((result.getPropertyAsString("datefield")).equals(nowAsISODate));
+                        assertTrue((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
+                        assertTrue((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
                         assertTrue(result.getPropertyAsGeo("geofield")[0] == 15.55d);
                         assertTrue(result.getPropertyAsGeo("geofield")[1] == 33.88d);
-                        assertTrue(result.getPropertyAsMultiValued("multifield").size() == 3);
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(0).equals("val2")));
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(1).equals("800")));
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(2).equals("True")));
+                        assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
                     }
 
                     @Override
@@ -227,36 +226,36 @@ public class ObjectTest {
 
     }
 
-    @Test
-    public void updateObjectPropertyAsNull() throws Exception {
-        AppacitiveObject appacitiveObject = getRandomObject();
-        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
-            @Override
-            public void success(AppacitiveObject result) {
-                result.setProperty("intfield", null);
-                result.setProperty("decimalfield", null);
-                result.setProperty("boolfield", null);
-                result.setProperty("stringfield", null);
-                result.setProperty("textfield", null);
-                result.setProperty("datefield", null);
-                result.setProperty("timefield", null);
-                result.setProperty("datetimefield", null);
-                result.setProperty("geofield", null);
-                result.setProperty("multifield", null);
-                result.updateInBackground(false, new Callback<AppacitiveObject>() {
-                    @Override
-                    public void success(AppacitiveObject result) {
-                        assert result.getRevision() == 2;
-                    }
-
-                    @Override
-                    public void failure(AppacitiveObject result, Exception e) {
-                        Assert.fail(e.getMessage());
-                    }
-                });
-            }
-        });
-    }
+//    @Test
+//    public void updateObjectPropertyAsNull() throws Exception {
+//        AppacitiveObject appacitiveObject = getRandomObject();
+//        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+//            @Override
+//            public void success(AppacitiveObject result) {
+//                result.setIntProperty("intfield", null);
+//                result.setDoubleProperty("decimalfield", null);
+//                result.setBoolProperty("boolfield", null);
+//                result.setStringProperty("stringfield", null);
+//                result.setStringProperty("textfield", null);
+//                result.setDateProperty("datefield", null);
+//                result.setTimeProperty("timefield", null);
+//                result.setDateTimeProperty("datetimefield", null);
+//                result.setGeoProperty("geofield", null);
+//                result.setPropertyAsMultiValuedString("multifield", null);
+//                result.updateInBackground(false, new Callback<AppacitiveObject>() {
+//                    @Override
+//                    public void success(AppacitiveObject result) {
+//                        assert result.getRevision() == 2;
+//                    }
+//
+//                    @Override
+//                    public void failure(AppacitiveObject result, Exception e) {
+//                        Assert.fail(e.getMessage());
+//                    }
+//                });
+//            }
+//        });
+//    }
 
     @Test
     public void updateEmptyObjectTest() throws ValidationException {
@@ -264,10 +263,10 @@ public class ObjectTest {
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
-                result.setProperty("intfield", 200);
-                result.setProperty("decimalfield", 40.50200);
-                result.setProperty("boolfield", false);
-                result.setProperty("stringfield", "hello world again !!");
+                result.setIntProperty("intfield", 200);
+                result.setDoubleProperty("decimalfield", 40.50200);
+                result.setBoolProperty("boolfield", false);
+                result.setStringProperty("stringfield", "hello world again !!");
                 final Date date = new Date();
                 TimeZone tz = TimeZone.getTimeZone("UTC");
                 final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -276,14 +275,14 @@ public class ObjectTest {
                 final String nowAsISODate = df.format(date);
                 final String nowAsISOTime = tf.format(date);
                 final String nowAsISODateTime = dtf.format(date);
-                result.setProperty("datefield", nowAsISODate);
-                result.setProperty("timefield", nowAsISOTime);
-                result.setProperty("datetimefield", nowAsISODateTime);
-                result.setProperty("geofield", "15.55, 33.88");
-                result.setProperty("multifield", new ArrayList<Object>() {{
+                result.setStringProperty("datefield", nowAsISODate);
+                result.setStringProperty("timefield", nowAsISOTime);
+                result.setStringProperty("datetimefield", nowAsISODateTime);
+                result.setStringProperty("geofield", "15.55, 33.88");
+                result.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
                     add("val2");
-                    add(800);
-                    add(true);
+                    add("800");
+                    add("true");
                 }});
 
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
@@ -293,19 +292,18 @@ public class ObjectTest {
                         assertTrue(result.getPropertyAsInt("intfield") == 200);
                         assertTrue(result.getPropertyAsDouble("decimalfield") == 40.502d);
                         assertTrue(!result.getPropertyAsBoolean("boolfield"));
-                        try {
-                            assertTrue(df.format(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
-                            assertTrue(tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
-                            assertTrue(dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
-                        } catch (ParseException pe) {
-                            assert false;
-                        }
+
+
+                        assertTrue((result.getPropertyAsString("datefield")).equals(nowAsISODate));
+                        assertTrue((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
+                        assertTrue((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
+
                         assertTrue(result.getPropertyAsGeo("geofield")[0] == 15.55d);
                         assertTrue(result.getPropertyAsGeo("geofield")[1] == 33.88d);
-                        assertTrue(result.getPropertyAsMultiValued("multifield").size() == 3);
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(0).equals("val2")));
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(1).equals("800")));
-                        assertTrue((result.getPropertyAsMultiValued("multifield").get(2).equals("True")));
+                        assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
+                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
                     }
 
                     @Override
@@ -382,49 +380,48 @@ public class ObjectTest {
 
     }
 
-    @Test
-    public void updateExistingNullValuesToNullTest() throws ValidationException {
-        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
-        appacitiveObject.setProperty("intfield", null);
-        appacitiveObject.setProperty("decimalfield", null);
-        appacitiveObject.setProperty("boolfield", null);
-        appacitiveObject.setProperty("stringfield", null);
-        appacitiveObject.setProperty("textfield", null);
-        appacitiveObject.setProperty("datefield", null);
-        appacitiveObject.setProperty("timefield", null);
-        appacitiveObject.setProperty("datetimefield", null);
-        appacitiveObject.setProperty("geofield", null);
-        appacitiveObject.setProperty("multifield", null);
-        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
-            @Override
-            public void success(AppacitiveObject result) {
-                result.setProperty("intfield", null);
-                result.setProperty("decimalfield", null);
-                result.setProperty("boolfield", null);
-                result.setProperty("stringfield", null);
-                result.setProperty("textfield", null);
-                result.setProperty("datefield", null);
-                result.setProperty("timefield", null);
-                result.setProperty("datetimefield", null);
-                result.setProperty("geofield", null);
-                result.setProperty("multifield", null);
-                result.updateInBackground(false, new Callback<AppacitiveObject>() {
-                    @Override
-                    public void success(AppacitiveObject result) {
-                        assert result.getRevision() == 2;
-                    }
+//    @Test
+//    public void updateExistingNullValuesToNullTest() throws ValidationException {
+//        AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+//        appacitiveObject.setIntProperty("intfield", 0);
+//        appacitiveObject.setProperty("decimalfield", null);
+//        appacitiveObject.setProperty("boolfield", null);
+//        appacitiveObject.setProperty("stringfield", null);
+//        appacitiveObject.setProperty("textfield", null);
+//        appacitiveObject.setProperty("datefield", null);
+//        appacitiveObject.setProperty("timefield", null);
+//        appacitiveObject.setProperty("datetimefield", null);
+//        appacitiveObject.setProperty("geofield", null);
+//        appacitiveObject.setProperty("multifield", null);
+//        appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+//            @Override
+//            public void success(AppacitiveObject result) {
+//                result.setProperty("intfield", null);
+//                result.setProperty("decimalfield", null);
+//                result.setProperty("boolfield", null);
+//                result.setProperty("stringfield", null);
+//                result.setProperty("textfield", null);
+//                result.setProperty("datefield", null);
+//                result.setProperty("timefield", null);
+//                result.setProperty("datetimefield", null);
+//                result.setProperty("geofield", null);
+//                result.setProperty("multifield", null);
+//                result.updateInBackground(false, new Callback<AppacitiveObject>() {
+//                    @Override
+//                    public void success(AppacitiveObject result) {
+//                        assert result.getRevision() == 2;
+//                    }
+//
+//                    @Override
+//                    public void failure(AppacitiveObject result, Exception e) {
+//                        Assert.fail(e.getMessage());
+//                    }
+//                });
+//            }
+//        });
+//    }
 
-                    @Override
-                    public void failure(AppacitiveObject result, Exception e) {
-                        Assert.fail(e.getMessage());
-                    }
-                });
-            }
-        });
-    }
-
     @Test
-//    @Ignore
     public void updateAttributesTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "vx");
@@ -457,12 +454,12 @@ public class ObjectTest {
                         result.updateInBackground(false, new Callback<AppacitiveObject>() {
                             @Override
                             public void failure(AppacitiveObject result, Exception e) {
-                                assert true;
+                                assert false;
                             }
 
                             @Override
                             public void success(AppacitiveObject result) {
-                                assert false;
+                                assert true;
                             }
                         });
                     }
@@ -557,11 +554,11 @@ public class ObjectTest {
                     AppacitiveObject.getInBackground("object", result.getId(), fields, new Callback<AppacitiveObject>() {
                         @Override
                         public void success(AppacitiveObject result) {
-                            assert result.getProperty("intfield") != null;
-                            assert result.getProperty("geofield") != null;
+                            assert result.getPropertyAsString("intfield") != null;
+                            assert result.getPropertyAsString("geofield") != null;
 
-                            assert result.getProperty("stringfield") == null;
-                            assert result.getProperty("textfield") == null;
+                            assert result.getPropertyAsString("stringfield") == null;
+                            assert result.getPropertyAsString("textfield") == null;
 
                             assert result.getAllTags().size() == 0;
                             assert result.getAllAttributes().size() != 0;
@@ -709,10 +706,10 @@ public class ObjectTest {
     @Test
     public void findObjectsWithPropertyFilterTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
-        appacitiveObject.setProperty("stringfield", "hello world123");
-        appacitiveObject.setProperty("intfield", 2005);
-        appacitiveObject.setProperty("boolfield", false);
-        appacitiveObject.setProperty("geofield", "11.11, 22.22");
+        appacitiveObject.setStringProperty("stringfield", "hello world123");
+        appacitiveObject.setIntProperty("intfield", 2005);
+        appacitiveObject.setBoolProperty("boolfield", false);
+        appacitiveObject.setStringProperty("geofield", "11.11, 22.22");
         final Date date = new Date();
         TimeZone tz = TimeZone.getTimeZone("UTC");
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -721,9 +718,9 @@ public class ObjectTest {
         final String nowAsISODate = df.format(date);
         final String nowAsISOTime = tf.format(date);
         final String nowAsISODateTime = dtf.format(date);
-        appacitiveObject.setProperty("datefield", nowAsISODate);
-        appacitiveObject.setProperty("timefield", nowAsISOTime);
-        appacitiveObject.setProperty("datetimefield", nowAsISODateTime);
+        appacitiveObject.setStringProperty("datefield", nowAsISODate);
+        appacitiveObject.setStringProperty("timefield", nowAsISOTime);
+        appacitiveObject.setStringProperty("datetimefield", nowAsISODateTime);
 
         final AppacitiveQuery query = new AppacitiveQuery();
         final Query q1 = new PropertyFilter("stringfield").isEqualTo("hello world123");
@@ -765,7 +762,6 @@ public class ObjectTest {
     }
 
     @Test
-    @Ignore
     public void findObjectsWithAttributeFilterTest() throws ValidationException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "v1");

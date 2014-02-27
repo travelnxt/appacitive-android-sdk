@@ -108,9 +108,9 @@ public class AppacitivePushNotification implements Serializable {
 
     public int expiryInSeconds;
 
-    private List<String> deviceIds = new ArrayList<String>();
+    public List<String> deviceIds = new ArrayList<String>();
 
-    private List<String> channels = new ArrayList<String>();
+    public List<String> channels = new ArrayList<String>();
 
     public Map<String, String> data = new HashMap<String, String>();
 

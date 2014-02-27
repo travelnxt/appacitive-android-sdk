@@ -27,7 +27,7 @@ public class APContainer {
 
         // TODO add validations
 
-        registrations.putAll(registrations);
+        APContainer.registrations.putAll(registrations);
     }
 
     public static final <T> T build(Class<? super T> interfaceObject) {

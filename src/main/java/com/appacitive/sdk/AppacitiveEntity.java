@@ -5,6 +5,7 @@ package com.appacitive.sdk;
 
 import com.appacitive.sdk.infra.APSerializable;
 import com.appacitive.sdk.infra.SystemDefinedProperties;
+import com.sun.istack.internal.Nullable;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -12,7 +13,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public abstract class AppacitiveEntity  implements Serializable, APSerializable  {
+public abstract class AppacitiveEntity implements Serializable, APSerializable {
+
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+
+    private static final DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
 
 //    public AppacitiveEntity(Map<String, Object> entity) {
 //        this.setSelf(entity);
@@ -106,13 +113,37 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
         return nativeMap;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setRevision(long revision) {
+        this.revision = revision;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public void setUtcDateCreated(Date utcDateCreated) {
+        this.utcDateCreated = utcDateCreated;
+    }
+
+    public void setUtcLastUpdated(Date utcLastUpdated) {
+        this.utcLastUpdated = utcLastUpdated;
+    }
+
     private Map<String, Object> properties = new HashMap<String, Object>();
 
     private Map<String, String> attributes = new HashMap<String, String>();
 
     private List<String> tags = new ArrayList<String>();
 
-    public long id = 0;
+    private long id = 0;
 
     private long revision = 0;
 
@@ -144,58 +175,120 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
         return this.tags;
     }
 
-    public void setProperty(String propertyName, Object propertyValue) {
+//    public void setProperty(String propertyName, Object propertyValue) {
+//
+//        this.properties.put(propertyName, propertyValue);
+//        this.propertiesChanged.put(propertyName, propertyValue);
+//    }
+
+    public void setStringProperty(String propertyName, @Nullable String propertyValue) {
 
         this.properties.put(propertyName, propertyValue);
         this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public String getProperty(String propertyName) {
-        if(this.properties.containsKey(propertyName) && this.properties.get(propertyName) != null)
+    public void setIntProperty(String propertyName, int propertyValue) {
+
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public void setDoubleProperty(String propertyName, double propertyValue) {
+
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public void setBoolProperty(String propertyName, boolean propertyValue) {
+
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public void setDateProperty(String propertyName, Date propertyValue) {
+
+        this.setStringProperty(propertyName, dateFormat.format(propertyValue));
+    }
+
+    public void setTimeProperty(String propertyName, Date propertyValue) {
+
+        this.setStringProperty(propertyName, timeFormat.format(propertyValue));
+    }
+
+    public void setDateTimeProperty(String propertyName, Date propertyValue) {
+
+        this.setStringProperty(propertyName, dateTimeFormat.format(propertyValue));
+    }
+
+    public void setGeoProperty(String propertyName, double[] coordinates) {
+        this.setStringProperty(propertyName, String.valueOf(coordinates[0]) + "," + coordinates[1]);
+    }
+
+    public String getPropertyAsString(String propertyName) {
+        if (this.properties.containsKey(propertyName) == true)
             return String.valueOf(this.properties.get(propertyName));
         return null;
     }
 
     public int getPropertyAsInt(String propertyName) {
-        return Integer.parseInt(this.getProperty(propertyName));
+        return Integer.parseInt(this.getPropertyAsString(propertyName));
     }
 
-    public double getPropertyAsDouble(String propertyName) {
-        return Double.parseDouble(this.getProperty(propertyName));
+    public Double getPropertyAsDouble(String propertyName) {
+        return Double.parseDouble(this.getPropertyAsString(propertyName));
     }
 
-    public boolean getPropertyAsBoolean(String propertyName) {
-        return Boolean.parseBoolean(this.getProperty(propertyName));
+    public Boolean getPropertyAsBoolean(String propertyName) {
+        return Boolean.parseBoolean(this.getPropertyAsString(propertyName));
     }
 
     public Date getPropertyAsDate(String propertyName) throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.parse(this.getProperty(propertyName));
+        return dateFormat.parse(this.getPropertyAsString(propertyName));
     }
 
     public Date getPropertyAsTime(String propertyName) throws ParseException {
-        DateFormat format = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-        return format.parse(this.getProperty(propertyName));
+        return timeFormat.parse(this.getPropertyAsString(propertyName));
     }
 
     public Date getPropertyAsDateTime(String propertyName) throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        return format.parse(this.getProperty(propertyName));
+        return dateTimeFormat.parse(this.getPropertyAsString(propertyName));
     }
 
     public double[] getPropertyAsGeo(String propertyName) {
-        String[] strCoordinates = this.getProperty(propertyName).split(",");
+        String[] strCoordinates = this.getPropertyAsString(propertyName).split(",");
         return new double[]{Double.parseDouble(strCoordinates[0]), Double.parseDouble(strCoordinates[1])};
     }
 
-    public void setPropertyAsGeo(String propertyName, double[] coordinates)
-    {
-        this.properties.put(propertyName, String.valueOf(coordinates[0]) + "," + coordinates[1]);
+    public void setPropertyAsMultiValuedString(String propertyName, List<String> propertyValue) {
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public List<String> getPropertyAsMultiValued(String propertyName) {
-        if(this.properties.containsKey(propertyName) && this.properties.get(propertyName) != null)
-            return (ArrayList<String>) (this.properties.get(propertyName));
+    public List<String> getPropertyAsMultiValuedString(String propertyName) {
+        if (this.properties.containsKey(propertyName) == true)
+            return (List<String>) (this.properties.get(propertyName));
+        return null;
+    }
+
+    public void setPropertyAsMultiValuedInt(String propertyName, List<Integer> propertyValue) {
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public List<Integer> getPropertyAsMultiValuedInt(String propertyName) {
+        if (this.properties.containsKey(propertyName) == true)
+            return (List<Integer>) (this.properties.get(propertyName));
+        return null;
+    }
+
+    public void setPropertyAsMultiValuedDouble(String propertyName, List<Double> propertyValue) {
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public List<Double> getPropertyAsMultiValuedDouble(String propertyName) {
+        if (this.properties.containsKey(propertyName) == true)
+            return (List<Double>) (this.properties.get(propertyName));
         return null;
     }
 
@@ -221,8 +314,8 @@ public abstract class AppacitiveEntity  implements Serializable, APSerializable 
     }
 
     public void removeTag(String tag) {
-            this.tags.remove(tag);
-            this.tagsRemoved.add(tag);
+        this.tags.remove(tag);
+        this.tagsRemoved.add(tag);
     }
 
     public void addTags(List<String> tags) {

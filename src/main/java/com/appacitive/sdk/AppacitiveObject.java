@@ -60,6 +60,14 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         return nativeMap;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setTypeId(long typeId) {
+        this.typeId = typeId;
+    }
+
     private String type = null;
 
     private long typeId = 0;

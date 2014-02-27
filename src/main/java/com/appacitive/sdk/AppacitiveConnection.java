@@ -69,6 +69,14 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         return nativeMap;
     }
 
+    public void setRelationType(String relationType) {
+        this.relationType = relationType;
+    }
+
+    public void setRelationId(long relationId) {
+        this.relationId = relationId;
+    }
+
     public String relationType = null;
 
     public long relationId = 0;

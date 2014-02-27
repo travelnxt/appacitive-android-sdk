@@ -73,14 +73,14 @@ public class NodeHelper {
         AppacitiveConnection connection = new AppacitiveConnection("");
         connection.setSelf(edgeClone);
         connection.relationType = relationType;
-        connection.id = connectionId;
+        connection.setId(connectionId);
         connection.endpointA.object = parentObject;
         connection.endpointA.label = parentLabel;
-        connection.endpointA.objectId = parentObject.id;
+        connection.endpointA.objectId = parentObject.getId();
 
         connection.endpointB.label = label;
         connection.endpointB.object = currentObject;
-        connection.endpointB.objectId = currentObject.id;
+        connection.endpointB.objectId = currentObject.getId();
 
         return connection;
     }

@@ -57,6 +57,14 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         return nativeMap;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setTypeId(long typeId) {
+        this.typeId = typeId;
+    }
+
     private String type = null;
 
     private long typeId = 0;
@@ -70,74 +78,74 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
     }
 
     public String getPhone() {
-        return this.getProperty("phone");
+        return this.getPropertyAsString("phone");
     }
 
     public void setPhone(String phone) {
-        this.setProperty("phone", phone);
+        this.setStringProperty("phone", phone);
 
     }
 
     public String getPassword() {
-        return this.getProperty("password");
+        return this.getPropertyAsString("password");
     }
 
     public void setPassword(String password) {
-        this.setProperty("password", password);
+        this.setStringProperty("password", password);
 
     }
 
     public String getSecretQuestion() {
-        return this.getProperty("secretquestion");
+        return this.getPropertyAsString("secretquestion");
     }
 
     public void setSecretQuestion(String secretQuestion) {
-        this.setProperty("secretquestion", secretQuestion);
+        this.setStringProperty("secretquestion", secretQuestion);
 
     }
 
     public String getSecretAnswer() {
-        return this.getProperty("secretanswer");
+        return this.getPropertyAsString("secretanswer");
     }
 
     public void setSecretAnswer(String secretAnswer) {
-        this.setProperty("secretanswer", secretAnswer);
+        this.setStringProperty("secretanswer", secretAnswer);
 
     }
 
     public String getFirstName() {
-        return this.getProperty("firstname");
+        return this.getPropertyAsString("firstname");
     }
 
     public void setFirstName(String firstName) {
-        this.setProperty("firstname", firstName);
+        this.setStringProperty("firstname", firstName);
 
     }
 
     public String getLastName() {
-        return this.getProperty("lastname");
+        return this.getPropertyAsString("lastname");
     }
 
     public void setLastName(String lastName) {
-        this.setProperty("lastname", lastName);
+        this.setStringProperty("lastname", lastName);
 
     }
 
     public String getEmail() {
-        return this.getProperty("email");
+        return this.getPropertyAsString("email");
     }
 
     public void setEmail(String email) {
-        this.setProperty("email", email);
+        this.setStringProperty("email", email);
 
     }
 
     public String getUsername() {
-        return this.getProperty("username");
+        return this.getPropertyAsString("username");
     }
 
     public void setUsername(String username) {
-        this.setProperty("username", username);
+        this.setStringProperty("username", username);
 
     }
 
@@ -146,7 +154,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
     }
 
     public void setBirthDate(Date birthDate) {
-        this.setProperty("birthdate", birthDate);
+        this.setDateProperty("birthdate", birthDate);
 
     }
 
@@ -154,8 +162,8 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         return this.getPropertyAsGeo("location");
     }
 
-    public void setLocation(String location) {
-        this.setProperty("location", location);
+    public void setLocation(double[] location) {
+        this.setGeoProperty("location", location);
     }
 
     public void signupInBackground(Callback<AppacitiveUser> callback) throws ValidationException {
@@ -168,7 +176,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         }};
         List<String> missingFields = new ArrayList<String>();
         for (String field : mandatoryFields) {
-            if (this.getProperty(field) == null) {
+            if (this.getPropertyAsString(field) == null) {
                 missingFields.add(field);
             }
         }

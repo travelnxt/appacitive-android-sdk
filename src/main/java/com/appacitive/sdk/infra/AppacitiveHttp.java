@@ -61,7 +61,7 @@ public class AppacitiveHttp implements Http {
         try {
             response = client.execute(request);
         } finally {
-            request.releaseConnection();
+//            request.releaseConnection();
         }
         return getMap(response);
     }
@@ -77,7 +77,7 @@ public class AppacitiveHttp implements Http {
         try {
             response = client.execute(request);
         } finally {
-            request.releaseConnection();
+//            request.releaseConnection();
         }
         return getMap(response);
     }
@@ -99,7 +99,7 @@ public class AppacitiveHttp implements Http {
         try {
             response = client.execute(request);
         } finally {
-            request.releaseConnection();
+//            request.releaseConnection();
         }
         return getMap(response);
     }
@@ -119,7 +119,7 @@ public class AppacitiveHttp implements Http {
         try {
             response = client.execute(request);
         } finally {
-            request.releaseConnection();
+//            request.releaseConnection();
         }
         return getMap(response);
     }
