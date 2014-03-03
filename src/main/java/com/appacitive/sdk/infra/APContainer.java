@@ -1,7 +1,6 @@
 package com.appacitive.sdk.infra;
 
-import com.appacitive.sdk.interfaces.Http;
-
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,30 +9,32 @@ import java.util.Map;
  */
 public class APContainer {
 
-    private static final Map<Class<?>, Class<?>> registrations = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, ObjectFactory<?>> registrations = new HashMap<Class<?>, ObjectFactory<?>>();
 
     public APContainer() {
     }
 
-    public static final synchronized void register(Class<?> interfaceObject, Class<?> implementationObject) {
-        if (interfaceObject.isInterface() == false)
+    public static final synchronized void register(Class<?> interfaceObject, ObjectFactory<?> implementationObject) {
+        if (interfaceObject.isInterface() == false && Modifier.isAbstract(interfaceObject.getModifiers()) == false)
             throw new IllegalArgumentException("interfaceObject is not a valid interface.");
-        if (implementationObject.isAssignableFrom(interfaceObject) == false)
+        if (implementationObject.get().getClass().isAssignableFrom(interfaceObject) == false)
             throw new IllegalArgumentException("implementationObject should be assignable from interfaceObject.");
         registrations.put(interfaceObject, implementationObject);
     }
 
-    public static final synchronized void registerAll(Map<Class<?>, Class<?>> registrations) {
+    public static final synchronized void registerAll(Map<Class<?>, ObjectFactory<?>> registrations) {
 
-        // TODO add validations
-
+//        for(Class<?> interfaceObject:registrations.keySet())
+//        {
+//            register(interfaceObject, registrations.get(interfaceObject));
+//        }
         APContainer.registrations.putAll(registrations);
     }
 
     public static final <T> T build(Class<? super T> interfaceObject) {
         try {
             if (registrations.containsKey(interfaceObject))
-                return (T) registrations.get(interfaceObject).newInstance();
+                return (T) registrations.get(interfaceObject).get();
         } catch (Exception e) {
             return null;
         }

@@ -3,10 +3,7 @@ package com.appacitive.sdk;
 import com.appacitive.sdk.exceptions.AppacitiveException;
 import com.appacitive.sdk.exceptions.UserAuthException;
 import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.APSerializable;
-import com.appacitive.sdk.infra.APContainer;
-import com.appacitive.sdk.infra.Headers;
-import com.appacitive.sdk.infra.Urls;
+import com.appacitive.sdk.infra.*;
 import com.appacitive.sdk.interfaces.Http;
 import com.appacitive.sdk.model.AppacitiveStatus;
 import com.appacitive.sdk.model.Callback;
@@ -386,6 +383,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
             @Override
             public Map<String, Object> call() throws Exception {
                 return APContainer.build(Http.class).post(url, headers, payload);
+//                return new AppacitiveHttp().post(url, headers, payload);
             }
         });
         boolean isSuccessful;

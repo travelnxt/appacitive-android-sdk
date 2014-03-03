@@ -12,58 +12,64 @@ import java.io.Serializable;
  */
 public class AppacitiveContext implements Serializable {
 
-    private static final Double[] currentLocation = new Double[2];
+    private volatile static Double[] currentLocation = new Double[2];
     private static String loggedInUserToken;
     private static String apiKey;
     private static String environment;
     private static boolean isInitialized = false;
 
-    public static final String getLoggedInUserToken() {
+    public static synchronized String getLoggedInUserToken() {
         return loggedInUserToken;
     }
 
-    public static final void setLoggedInUserToken(String userToken) {
+    public static synchronized void setLoggedInUserToken(String userToken) {
         AppacitiveContext.loggedInUserToken = userToken;
     }
 
-    public static final void initialize(String apiKey, Environment environment, Platform platform) {
+    public static synchronized void initialize(String apiKey, Environment environment) {
         AppacitiveContext.apiKey = apiKey;
         AppacitiveContext.environment = environment.name();
-        if (platform == null)
-            APContainer.registerAll(new JavaPlatform().getRegistrations());
-
-        else
-            APContainer.registerAll(platform.getRegistrations());
+        APContainer.registerAll(new JavaPlatform().getRegistrations());
         ExecutorServiceWrapper.init();
         isInitialized = true;
     }
 
-    public static final void logout() {
+    public static synchronized void initialize(String apiKey, Environment environment, Platform platform){
+        AppacitiveContext.apiKey = apiKey;
+        AppacitiveContext.environment = environment.name();
+        if(platform == null)
+            throw new IllegalArgumentException("Please specify platform or use the overload which does not need it.");
+        APContainer.registerAll(platform.getRegistrations());
+        ExecutorServiceWrapper.init();
+        isInitialized = true;
+    }
+
+    public static synchronized void logout() {
         setLoggedInUserToken(null);
     }
 
-    public static final boolean isInitialized() {
+    public static boolean isInitialized() {
         return isInitialized;
     }
 
-    public static void shutdown() {
+    public static synchronized void shutdown() {
         ExecutorServiceWrapper.shutdown();
     }
 
-    public static final Double[] getCurrentLocation() {
+    public static synchronized Double[] getCurrentLocation() {
         return currentLocation;
     }
 
-    public static final void setCurrentLocation(Double latitude, Double longitude) {
+    public static synchronized void setCurrentLocation(Double latitude, Double longitude) {
         AppacitiveContext.currentLocation[0] = latitude;
         AppacitiveContext.currentLocation[1] = longitude;
     }
 
-    public static String getApiKey() {
+    public static synchronized String getApiKey() {
         return apiKey;
     }
 
-    public static String getEnvironment() {
+    public static synchronized String getEnvironment() {
         return environment;
     }
 }

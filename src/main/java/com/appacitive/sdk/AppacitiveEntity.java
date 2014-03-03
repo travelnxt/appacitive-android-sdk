@@ -76,9 +76,9 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
             for (Map.Entry<String, Object> property : entity.entrySet()) {
                 if (SystemDefinedProperties.ConnectionSystemProperties.contains(property.getKey()) == false && SystemDefinedProperties.ObjectSystemProperties.contains(property.getKey()) == false) {
 
-                    if (property.getValue().getClass().getCanonicalName().equals(this.tags.getClass().getCanonicalName()))
-                        this.properties.put(property.getKey(), property.getValue());
-                    else
+//                    if (property.getValue().getClass().getCanonicalName().equals(this.tags.getClass().getCanonicalName()))
+//                        this.properties.put(property.getKey(), property.getValue());
+//                    else
                         this.properties.put(property.getKey(), property.getValue());
                 }
             }

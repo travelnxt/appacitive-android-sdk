@@ -27,10 +27,6 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
-//    public AppacitiveConnection(Map<String, Object> connection) {
-//        this.setSelf(connection);
-//    }
-
     public AppacitiveConnection(String relationType) {
         this.relationType = relationType;
     }

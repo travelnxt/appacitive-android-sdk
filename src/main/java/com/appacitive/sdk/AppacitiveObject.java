@@ -118,8 +118,6 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             else
                 callback.failure(null, exception);
         }
-
-
     }
 
     public static void getInBackground(String type, long id, List<String> fields, Callback<AppacitiveObject> callback) throws ValidationException {

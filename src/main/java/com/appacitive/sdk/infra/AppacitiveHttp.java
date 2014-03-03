@@ -27,7 +27,8 @@ public class AppacitiveHttp implements Http {
     private final static Logger LOGGER = Logger.getLogger(Package.class.getName());
 
     private final static HttpClient getHttpClient() {
-        return new DefaultHttpClient();
+        return APContainer.build(HttpClient.class);
+//        return new DefaultHttpClient();
     }
 
     private static Map<String, Object> getMap(HttpResponse response) throws IOException {
@@ -58,11 +59,7 @@ public class AppacitiveHttp implements Http {
         for (Map.Entry<String, String> header : headers.entrySet()) {
             request.addHeader(header.getKey(), header.getValue());
         }
-        try {
-            response = client.execute(request);
-        } finally {
-//            request.releaseConnection();
-        }
+        response = client.execute(request);
         return getMap(response);
     }
 
@@ -74,11 +71,7 @@ public class AppacitiveHttp implements Http {
         for (Map.Entry<String, String> header : headers.entrySet()) {
             request.addHeader(header.getKey(), header.getValue());
         }
-        try {
-            response = client.execute(request);
-        } finally {
-//            request.releaseConnection();
-        }
+        response = client.execute(request);
         return getMap(response);
     }
 
@@ -94,13 +87,8 @@ public class AppacitiveHttp implements Http {
 
             request.addHeader(header.getKey(), header.getValue());
         }
-
         request.setEntity(entity);
-        try {
-            response = client.execute(request);
-        } finally {
-//            request.releaseConnection();
-        }
+        response = client.execute(request);
         return getMap(response);
     }
 
@@ -114,13 +102,8 @@ public class AppacitiveHttp implements Http {
         for (Map.Entry<String, String> header : headers.entrySet()) {
             request.addHeader(header.getKey(), header.getValue());
         }
-
         request.setEntity(entity);
-        try {
-            response = client.execute(request);
-        } finally {
-//            request.releaseConnection();
-        }
+        response = client.execute(request);
         return getMap(response);
     }
 }

@@ -2,6 +2,8 @@ import com.appacitive.sdk.AppacitiveContext;
 import com.appacitive.sdk.AppacitiveEmail;
 import com.appacitive.sdk.infra.JavaPlatform;
 import com.appacitive.sdk.model.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
