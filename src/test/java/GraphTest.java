@@ -1,22 +1,22 @@
-import com.appacitive.sdk.AppacitiveConnection;
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveGraphSearch;
-import com.appacitive.sdk.AppacitiveObject;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.AppacitiveGraphNode;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PlatformType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveConnection;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveGraphSearch;
+import com.appacitive.core.AppacitiveObject;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.AppacitiveGraphNode;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 
 /**
 * Created by sathley.
@@ -25,7 +25,7 @@ public class GraphTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass
@@ -36,6 +36,13 @@ public class GraphTest {
     private String getRandomString()
     {
         return UUID.randomUUID().toString();
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     @Test
@@ -57,6 +64,7 @@ public class GraphTest {
                             public void success(List<Long> result) {
                                 assert result.size() == 1;
                                 assert result.get(0) == parent.getId();
+                                somethingHappened.set(true);
                             }
 
                             @Override
@@ -67,6 +75,7 @@ public class GraphTest {
                 );
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -116,6 +125,7 @@ public class GraphTest {
                                         assert level2children.get(0).connection.getId() == level2edge.getId();
                                         assert level2children.get(0).connection.endpointA.objectId == level1child.getId();
                                         assert level2children.get(0).connection.endpointB.objectId == level2child.getId();
+                                        somethingHappened.set(true);
                                     }
 
                                     @Override
@@ -132,6 +142,6 @@ public class GraphTest {
                 }
             }
         });
-
+        await().untilTrue(somethingHappened);
     }
 }

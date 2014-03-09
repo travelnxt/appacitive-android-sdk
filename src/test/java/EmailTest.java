@@ -1,15 +1,15 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveEmail;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveEmail;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.*;
+import com.jayway.awaitility.Awaitility;
+import org.junit.*;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
 
 /**
  * Created by sathley.
@@ -18,7 +18,8 @@ public class EmailTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -26,12 +27,18 @@ public class EmailTest {
         // one-time cleanup code
     }
 
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
+    }
+
     private static final String testEmail = "test@appacitive.com";
 
     @Test
-    public void sendRawEmailTest()
-    {
-        AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
+    public void sendRawEmailTest() throws Exception {
+        final AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
         email.to.add(testEmail);
         email.cc.add(testEmail);
         email.bcc.add(testEmail);
@@ -41,19 +48,23 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
             }
 
             @Override
             public void failure(AppacitiveEmail result, Exception e) {
                 Assert.fail(e.getMessage());
+                System.out.println(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendTemplatedEmailTest()
-    {
-        TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>(){{put("username", "cobra");}}, false);
+    public void sendTemplatedEmailTest() {
+        TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>() {{
+            put("username", "cobra");
+        }}, false);
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(body);
         email.to.add(testEmail);
         email.cc.add(testEmail);
@@ -64,6 +75,14 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
+                assert result.to.size() ==1;
+                assert result.cc.size() ==1;
+                assert result.bcc.size() ==1;
+                assert result.fromAddress != null;
+                assert result.to != null;
+                assert result.body != null;
+                assert ((TemplatedEmailBody)(result.body)).getData().size() ==1;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -71,11 +90,11 @@ public class EmailTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendRawEmailWithCustomSmtpTest()
-    {
+    public void sendRawEmailWithCustomSmtpTest() {
         SmtpSettings settings = new SmtpSettings("username", "password", "smtp.gmail.com", 465, true);
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false)).withSmtp(settings);
         email.to.add(testEmail);
@@ -87,6 +106,7 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -94,13 +114,15 @@ public class EmailTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendTemplatedEmailWithSmtpTest()
-    {
+    public void sendTemplatedEmailWithSmtpTest() {
         SmtpSettings settings = new SmtpSettings("username", "password", "smtp.gmail.com", 465, true);
-        TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>(){{put("username", "cobra");}}, false);
+        TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>() {{
+            put("username", "cobra");
+        }}, false);
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(body).withSmtp(settings);
         email.to.add(testEmail);
         email.cc.add(testEmail);
@@ -111,6 +133,7 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -118,11 +141,11 @@ public class EmailTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendRawEmailTestSample()
-    {
+    public void sendRawEmailTestSample() throws InterruptedException {
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
         email.to.add(testEmail);
         email.cc.add(testEmail);
@@ -133,6 +156,7 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -140,6 +164,7 @@ public class EmailTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
 }

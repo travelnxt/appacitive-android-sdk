@@ -1,20 +1,21 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveDevice;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PagedList;
-import com.appacitive.sdk.model.PlatformType;
-import com.appacitive.sdk.query.AppacitiveQuery;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveDevice;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.appacitive.core.model.PagedList;
+import com.appacitive.core.query.AppacitiveQuery;
+import com.appacitive.java.JavaPlatform;
+import com.jayway.awaitility.Awaitility;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
 
 /**
 * Created by sathley.
@@ -23,12 +24,19 @@ public class DeviceTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     private AppacitiveDevice getRandomDevice() {
@@ -71,6 +79,7 @@ public class DeviceTest {
                 assert result.getIsActive() == true;
                 assert result.getCreatedBy() != null && result.getCreatedBy().isEmpty() == false;
                 assert result.getLastModifiedBy() != null && result.getLastModifiedBy().isEmpty() == false;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -78,6 +87,7 @@ public class DeviceTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -91,6 +101,7 @@ public class DeviceTest {
                         @Override
                         public void success(AppacitiveDevice result) {
                             assert result.getId() == result1.getId();
+                            somethingHappened.set(true);
                         }
 
                         @Override
@@ -103,6 +114,7 @@ public class DeviceTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -124,6 +136,8 @@ public class DeviceTest {
 
                         assert result1.getDeviceType().equals("android");
                         assert result1.getDeviceToken().equals(newToken);
+
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -133,6 +147,7 @@ public class DeviceTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -156,6 +171,7 @@ public class DeviceTest {
                                         public void success(Void result3) {
                                             assert result.getDeviceToken().equals(newToken);
                                             assert result.getDeviceType().equals("android");
+                                            somethingHappened.set(true);
                                         }
 
                                         @Override
@@ -163,6 +179,11 @@ public class DeviceTest {
                                             Assert.fail(e.getMessage());
                                         }
                                     });
+                                }
+
+                                @Override
+                                public void failure(AppacitiveDevice result, Exception e) {
+                                    Assert.fail(e.getMessage());
                                 }
                             });
 
@@ -173,6 +194,7 @@ public class DeviceTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -194,6 +216,7 @@ public class DeviceTest {
                                 @Override
                                 public void failure(AppacitiveDevice result, Exception e) {
                                     assert true;
+                                    somethingHappened.set(true);
                                 }
                             });
                         } catch (ValidationException e) {
@@ -208,7 +231,7 @@ public class DeviceTest {
                 });
             }
         });
-
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -223,6 +246,7 @@ public class DeviceTest {
                     @Override
                     public void success(PagedList<AppacitiveDevice> result) {
                         assert result.results.size() > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -232,6 +256,7 @@ public class DeviceTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
 }

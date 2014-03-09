@@ -1,38 +1,44 @@
-import com.appacitive.sdk.AppacitiveConnection;
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveDevice;
-import com.appacitive.sdk.AppacitiveObject;
-import com.appacitive.sdk.AppacitiveUser;
-import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.ErrorCodes;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PlatformType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.*;
+import com.appacitive.core.exceptions.AppacitiveException;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.core.infra.ErrorCodes;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.jayway.awaitility.Awaitility;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.jayway.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 //@Ignore
 public class ConnectionTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new com.appacitive.java.JavaPlatform());
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     private String getRandomString() {
@@ -68,6 +74,8 @@ public class ConnectionTest {
                                     @Override
                                     public void success(AppacitiveConnection result) {
                                         assert result.getId() > 0;
+                                        somethingHappened.set(true);
+
                                     }
 
                                     @Override
@@ -87,6 +95,7 @@ public class ConnectionTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -107,6 +116,7 @@ public class ConnectionTest {
                 assert result.getId() > 0;
                 assert result.endpointA.object instanceof AppacitiveDevice;
                 assert result.endpointB.object instanceof AppacitiveUser;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -114,6 +124,7 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -138,6 +149,7 @@ public class ConnectionTest {
                                     @Override
                                     public void success(AppacitiveConnection result) {
                                         assert result.getId() > 0;
+                                        somethingHappened.set(true);
                                     }
 
                                     @Override
@@ -155,6 +167,7 @@ public class ConnectionTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -183,6 +196,7 @@ public class ConnectionTest {
                                     @Override
                                     public void success(AppacitiveConnection result) {
                                         assert result.getId() > 0;
+                                        somethingHappened.set(true);
                                     }
 
                                     @Override
@@ -200,6 +214,7 @@ public class ConnectionTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -217,6 +232,7 @@ public class ConnectionTest {
                         @Override
                         public void success(AppacitiveConnection result) {
                             assert result.getId() > 0;
+                            somethingHappened.set(true);
 //                            assert child.getId() > 0;
 //                            assert result.endpointB.objectId == child.getId();
                         }
@@ -231,6 +247,7 @@ public class ConnectionTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -241,6 +258,7 @@ public class ConnectionTest {
             @Override
             public void success(AppacitiveConnection result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
 //                assert parent.getId() > 0;
 //                assert child.getId() > 0;
 //                assert result.endpointA.objectId == parent.getId();
@@ -252,6 +270,7 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -266,6 +285,7 @@ public class ConnectionTest {
                         @Override
                         public void success(AppacitiveConnection result2) {
                             assert result1.getId() == result2.getId();
+                            somethingHappened.set(true);
                         }
 
                         @Override
@@ -278,10 +298,12 @@ public class ConnectionTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
     public void multiGetConnectionTest() throws ValidationException, InterruptedException {
+        final AtomicInteger count = new AtomicInteger(0);
         final List<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
             final AppacitiveObject parent = new AppacitiveObject("object");
@@ -290,14 +312,16 @@ public class ConnectionTest {
                 @Override
                 public void success(AppacitiveConnection result) {
                     ids.add(result.getId());
+                    count.incrementAndGet();
                 }
             });
         }
-        Thread.sleep(5000);
+        await().untilAtomic(count, equalTo(3));
         AppacitiveConnection.multiGetInBackground("sibling", ids, null, new Callback<List<AppacitiveConnection>>() {
             @Override
             public void success(List<AppacitiveConnection> result) {
                 assert result.size() == 3;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -305,6 +329,7 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -318,6 +343,7 @@ public class ConnectionTest {
                     @Override
                     public void success(Void result) {
                         assert true;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -327,10 +353,12 @@ public class ConnectionTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
     public void multiDeleteConnectionsTest() throws ValidationException, InterruptedException {
+        final AtomicInteger count = new AtomicInteger(0);
         final List<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
             final AppacitiveObject parent = new AppacitiveObject("object");
@@ -339,10 +367,11 @@ public class ConnectionTest {
                 @Override
                 public void success(AppacitiveConnection result) {
                     ids.add(result.getId());
+                    count.incrementAndGet();
                 }
             });
         }
-        Thread.sleep(5000);
+        await().untilAtomic(count, equalTo(3));
         AppacitiveConnection.bulkDeleteInBackground("sibling", ids, new Callback<Void>() {
             @Override
             public void success(Void result) {
@@ -358,6 +387,7 @@ public class ConnectionTest {
                             public void failure(AppacitiveConnection result, Exception e) {
                                 AppacitiveException ae = (AppacitiveException) e;
                                 assert ae.code.equals(ErrorCodes.NOT_FOUND);
+                                count.decrementAndGet();
                             }
                         });
                     } catch (ValidationException e) {
@@ -371,6 +401,8 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilAtomic(count, equalTo(0));
     }
+
 
 }

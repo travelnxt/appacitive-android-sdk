@@ -1,33 +1,42 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveUser;
-import com.appacitive.sdk.exceptions.UserAuthException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PlatformType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveUser;
+import com.appacitive.core.exceptions.UserAuthException;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.jayway.awaitility.Awaitility;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 public class UserTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     private String getRandomString() {
@@ -45,6 +54,7 @@ public class UserTest {
             @Override
             public void success(AppacitiveUser result) {
                 assert result.getId() > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -52,6 +62,7 @@ public class UserTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -69,6 +80,7 @@ public class UserTest {
                     @Override
                     public void success(String result) {
                         assert result != null && result.isEmpty() == false;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -78,6 +90,37 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
+    }
+
+    @Test
+    public void loginWithUsernamePasswordTest
+            () throws ValidationException {
+        final String username = getRandomString();
+        final String password = getRandomString();
+        AppacitiveUser user = new AppacitiveUser();
+        user.setEmail(getRandomString().concat("@gmail.com"));
+        user.setFirstName(getRandomString());
+        user.setUsername(username);
+        user.setPassword(password);
+        user.signupInBackground(new Callback<AppacitiveUser>() {
+            @Override
+            public void success(final AppacitiveUser result) {
+                AppacitiveUser.loginInBackground(username, password, -1,-1, new Callback<AppacitiveUser>() {
+                    @Override
+                    public void success(AppacitiveUser result1) {
+                        assert result.getId() == result1.getId();
+                        somethingHappened.set(true);
+                    }
+
+                    @Override
+                    public void failure(AppacitiveUser result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
+            }
+        });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -118,6 +161,7 @@ public class UserTest {
                                                 public void success(List<AppacitiveUser> result) {
                                                     assert result != null;
                                                     assert result.size() == 3;
+                                                    somethingHappened.set(true);
                                                 }
 
                                                 @Override
@@ -140,6 +184,7 @@ public class UserTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -170,6 +215,7 @@ public class UserTest {
                                             @Override
                                             public void failure(AppacitiveUser result, Exception e) {
                                                 assert true;
+                                                somethingHappened.set(true);
                                             }
                                         });
                                     } catch (Exception e) {
@@ -187,9 +233,9 @@ public class UserTest {
                         }
                     }
                 });
-
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -216,6 +262,7 @@ public class UserTest {
                                         @Override
                                         public void success(String result) {
                                             assert result != null && result.isEmpty() == false;
+                                            somethingHappened.set(true);
                                         }
 
                                         @Override
@@ -237,6 +284,7 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -255,6 +303,7 @@ public class UserTest {
                     @Override
                     public void success(Void result) {
                         assert true;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -264,6 +313,7 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -285,6 +335,7 @@ public class UserTest {
                                 @Override
                                 public void success(Void result) {
                                     assert true;
+                                    somethingHappened.set(true);
                                 }
 
                                 @Override
@@ -299,6 +350,7 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -324,12 +376,13 @@ public class UserTest {
                                         AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
                                             @Override
                                             public void success(Void result) {
-                                                assert false;
+                                                Assert.fail();
                                             }
 
                                             @Override
                                             public void failure(Void result, Exception e) {
                                                 assert true;
+                                                somethingHappened.set(true);
                                             }
                                         });
                                     } catch (UserAuthException e) {
@@ -350,6 +403,7 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -375,10 +429,11 @@ public class UserTest {
                                 @Override
                                 public void success(Void result) {
                                     assert true;
-                                    Double[] geo = AppacitiveContext.getCurrentLocation();
+                                    Double[] geo = AppacitiveContextBase.getCurrentLocation();
                                     assert geo != null;
                                     assert geo[0].equals(10.11);
                                     assert geo[1].equals(20.22);
+                                    somethingHappened.set(true);
                                 }
 
                                 @Override
@@ -393,5 +448,6 @@ public class UserTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 }

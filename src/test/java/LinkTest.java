@@ -1,32 +1,40 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveUser;
-import com.appacitive.sdk.exceptions.UserAuthException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.Link;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveUser;
+import com.appacitive.core.exceptions.UserAuthException;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.appacitive.core.model.Link;
+import org.junit.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Created by sathley.
- */
+* Created by sathley.
+*/
 public class LinkTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     private final static String fbToken = "CAACEdEose0cBACxiLXShRg8OicLZAgzFMZCbqh3YulBwBYZBZC2MPX3K8slSXZBFamDqaQ0wfZBa8Bf9wgfVJ0elb8bA3G6WW0EYZCmAKKo6rta7neBRGNxlgRBY6i8vFPCWN2dDedUZBVzSiF3tDtOiUNJ1QLlodgp6USfmZAaZBKZCyBst1ZCVWecZA86lGABpB2kRf0CQ1MuS94QZDZD";
@@ -72,6 +80,7 @@ public class LinkTest {
                                                         @Override
                                                         public void success(Void result) {
                                                             assert true;
+                                                            somethingHappened.set(true);
                                                         }
 
                                                         @Override
@@ -107,6 +116,7 @@ public class LinkTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -132,6 +142,7 @@ public class LinkTest {
                                                         @Override
                                                         public void success(Void result) {
                                                             assert true;
+                                                            somethingHappened.set(true);
                                                         }
 
                                                         @Override
@@ -166,6 +177,7 @@ public class LinkTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -198,6 +210,7 @@ public class LinkTest {
                                                                             @Override
                                                                             public void success(Void result) {
                                                                                 assert true;
+                                                                                somethingHappened.set(true);
                                                                             }
 
                                                                             @Override
@@ -237,5 +250,6 @@ public class LinkTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 }

@@ -1,14 +1,15 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveFile;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.FileUploadUrlResponse;
-import com.appacitive.sdk.model.PlatformType;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveFile;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.appacitive.core.model.FileUploadUrlResponse;
+import org.junit.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 
 /**
 * Created by sathley.
@@ -18,12 +19,19 @@ public class FileTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     @Test
@@ -34,6 +42,7 @@ public class FileTest {
             public void success(FileUploadUrlResponse result) {
                 assert result.fileId != null && result.fileId.isEmpty() == false;
                 assert result.url != null && result.url.isEmpty() == false;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -41,6 +50,7 @@ public class FileTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -50,6 +60,7 @@ public class FileTest {
             @Override
             public void success(String result) {
                 assert result != null && result.isEmpty() ==false;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -57,6 +68,7 @@ public class FileTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -66,6 +78,7 @@ public class FileTest {
             @Override
             public void success(Void result) {
                 assert true;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -73,5 +86,6 @@ public class FileTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 }

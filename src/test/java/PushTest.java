@@ -1,30 +1,32 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitivePushNotification;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PlatformType;
-import com.appacitive.sdk.push.*;
-import com.appacitive.sdk.query.BooleanOperator;
-import com.appacitive.sdk.query.PropertyFilter;
-import com.appacitive.sdk.query.Query;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitivePushNotification;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.Environment;
+import com.appacitive.core.push.*;
+import com.appacitive.core.query.BooleanOperator;
+import com.appacitive.core.query.PropertyFilter;
+import com.appacitive.core.query.Query;
+import com.jayway.awaitility.Awaitility;
+import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 public class PushTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -32,9 +34,15 @@ public class PushTest {
         // one-time cleanup code
     }
 
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
+    }
+
     @Test
-    public void broadcastPushTest()
-    {
+    public void broadcastPushTest() {
         AppacitivePushNotification.Broadcast("helo world").withBadge("+1").withExpiry(500).withData(new HashMap<String, String>() {{
             put("a1", "v1");
             put("a2", "v2");
@@ -42,6 +50,7 @@ public class PushTest {
             @Override
             public void success(String result) {
                 assert Long.valueOf(result) > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -49,16 +58,22 @@ public class PushTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendToDevicesTest()
-    {
-        AppacitivePushNotification.ToDeviceIds("hello guys", new ArrayList<String>(){{add("1");add("2");}}).withData(new HashMap<String, String>(){{put("a1","v1");}}).sendInBackground(
+    public void sendToDevicesTest() {
+        AppacitivePushNotification.ToDeviceIds("hello guys", new ArrayList<String>() {{
+            add("1");
+            add("2");
+        }}).withData(new HashMap<String, String>() {{
+            put("a1", "v1");
+        }}).sendInBackground(
                 new Callback<String>() {
                     @Override
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -67,19 +82,22 @@ public class PushTest {
                     }
                 }
         );
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendToChannelsTest()
-    {
+    public void sendToChannelsTest() {
         AppacitivePushNotification.ToChannels("hello guys", new ArrayList<String>() {{
             add("channel1");
             add("channel2");
-        }}).withData(new HashMap<String, String>(){{put("a1","v1");}}).sendInBackground(
+        }}).withData(new HashMap<String, String>() {{
+            put("a1", "v1");
+        }}).sendInBackground(
                 new Callback<String>() {
                     @Override
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -88,20 +106,24 @@ public class PushTest {
                     }
                 }
         );
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void sendUsingQueryTest()
-    {
+    public void sendUsingQueryTest() {
 
-        AppacitivePushNotification.ToQueryResult("hello guys", BooleanOperator.and(new ArrayList<Query>(){{add(new PropertyFilter("devicetype").isEqualTo("ios"));add(new PropertyFilter("isactive").isEqualTo(true));}}))
+        AppacitivePushNotification.ToQueryResult("hello guys", BooleanOperator.and(new ArrayList<Query>() {{
+            add(new PropertyFilter("devicetype").isEqualTo("ios"));
+            add(new PropertyFilter("isactive").isEqualTo(true));
+        }}))
                 .withData(new HashMap<String, String>() {{
-        put("a1", "v1");
-    }}).sendInBackground(
+                    put("a1", "v1");
+                }}).sendInBackground(
                 new Callback<String>() {
                     @Override
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -110,11 +132,11 @@ public class PushTest {
                     }
                 }
         );
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void iosAndAndroidOptionsTest()
-    {
+    public void iosAndAndroidOptionsTest() {
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(new IosOptions("soundfile"))
                 .withPlatformOptions(new AndroidOptions("title"))
@@ -122,6 +144,7 @@ public class PushTest {
                     @Override
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -130,11 +153,11 @@ public class PushTest {
 
                     }
                 });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void wpToastOptionsTest()
-    {
+    public void wpToastOptionsTest() {
         WindowsPhoneOptions options = new WindowsPhoneOptions(new ToastNotification("text1", "text2", "path"));
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(options)
@@ -142,6 +165,7 @@ public class PushTest {
                     @Override
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -150,11 +174,11 @@ public class PushTest {
 
                     }
                 });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void wpRawOptionsTest()
-    {
+    public void wpRawOptionsTest() {
         WindowsPhoneOptions options = new WindowsPhoneOptions(new RawNotification("raw data"));
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(options)
@@ -164,6 +188,7 @@ public class PushTest {
             @Override
             public void success(String result) {
                 assert Long.valueOf(result) > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -172,11 +197,11 @@ public class PushTest {
 
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void wpFlipTileOptionsTest()
-    {
+    public void wpFlipTileOptionsTest() {
         FlipTile tile = new FlipTile();
         tile.backBackgroundImage = "bbimage";
         tile.backContent = "back content";
@@ -198,6 +223,7 @@ public class PushTest {
             @Override
             public void success(String result) {
                 assert Long.valueOf(result) > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -206,11 +232,11 @@ public class PushTest {
 
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void wpIconicTileOptionsTest()
-    {
+    public void wpIconicTileOptionsTest() {
         FlipTile flipTile = new FlipTile();
         flipTile.backBackgroundImage = "bbimage";
         flipTile.backContent = "back content";
@@ -238,6 +264,7 @@ public class PushTest {
             @Override
             public void success(String result) {
                 assert Long.valueOf(result) > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -246,11 +273,11 @@ public class PushTest {
 
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
-    public void wpCyclicTileOptionsTest()
-    {
+    public void wpCyclicTileOptionsTest() {
         FlipTile flipTile = new FlipTile();
         flipTile.backBackgroundImage = "bbimage";
         flipTile.backContent = "back content";
@@ -267,7 +294,7 @@ public class PushTest {
         CyclicTile cyclicTile = new CyclicTile();
         cyclicTile.frontTitle = "front title";
         cyclicTile.tileId = "id";
-        List<String> images = new ArrayList<String>(){{
+        List<String> images = new ArrayList<String>() {{
             add("img1");
             add("img2");
             add("img3");
@@ -282,6 +309,7 @@ public class PushTest {
             @Override
             public void success(String result) {
                 assert Long.valueOf(result) > 0;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -290,6 +318,7 @@ public class PushTest {
 
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
 }

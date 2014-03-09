@@ -1,15 +1,14 @@
-import com.appacitive.sdk.AppacitiveContext;
-import com.appacitive.sdk.AppacitiveObject;
-import com.appacitive.sdk.exceptions.AppacitiveException;
-import com.appacitive.sdk.exceptions.ValidationException;
-import com.appacitive.sdk.infra.ErrorCodes;
-import com.appacitive.sdk.infra.JavaPlatform;
-import com.appacitive.sdk.infra.SystemDefinedProperties;
-import com.appacitive.sdk.model.Callback;
-import com.appacitive.sdk.model.ConnectedObjectsResponse;
-import com.appacitive.sdk.model.Environment;
-import com.appacitive.sdk.model.PagedList;
-import com.appacitive.sdk.query.*;
+import com.appacitive.core.*;
+import com.appacitive.core.exceptions.AppacitiveException;
+import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.core.infra.ErrorCodes;
+import com.appacitive.core.infra.SystemDefinedProperties;
+import com.appacitive.java.JavaPlatform;
+import com.appacitive.core.model.Callback;
+import com.appacitive.core.model.ConnectedObjectsResponse;
+import com.appacitive.core.model.Environment;
+import com.appacitive.core.model.PagedList;
+import com.appacitive.core.query.*;
 import org.junit.*;
 
 import java.io.IOException;
@@ -17,7 +16,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.jayway.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,12 +31,20 @@ public class ObjectTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContext.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
+    }
+
+    private static AtomicBoolean somethingHappened;
+
+    @Before
+    public void beforeTest() {
+        somethingHappened = new AtomicBoolean(false);
     }
 
     private String getRandomString() {
@@ -96,6 +107,7 @@ public class ObjectTest {
                 assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val1")));
                 assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("500")));
                 assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("false")));
+                somethingHappened.set(true);
             }
 
             @Override
@@ -104,7 +116,9 @@ public class ObjectTest {
             }
         });
 
+        await().untilTrue(somethingHappened);
     }
+
 
     @Test
     public void multiLingualObjectCreateTest() throws ValidationException {
@@ -118,12 +132,15 @@ public class ObjectTest {
                 assertTrue(result.getId() > 0);
                 assertTrue(result.getPropertyAsString("stringfield").toString().equals(randomString1));
                 assertTrue(result.getPropertyAsString("textfield").toString().equals(randomString2));
+
+                somethingHappened.set(true);
             }
 
             public void failure(AppacitiveObject result, AppacitiveException e) {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     private static AppacitiveObject getRandomObject() {
@@ -205,6 +222,7 @@ public class ObjectTest {
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -214,16 +232,8 @@ public class ObjectTest {
                 });
             }
         });
-        getRandomObject().createInBackground(new Callback<AppacitiveObject>() {
-            public void success(AppacitiveObject result) {
 
-            }
-
-            public void failure(AppacitiveObject result, AppacitiveException e) {
-                Assert.fail(e.getMessage());
-            }
-        });
-
+        await().untilTrue(somethingHappened);
     }
 
 //    @Test
@@ -304,6 +314,7 @@ public class ObjectTest {
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
                         assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -313,6 +324,8 @@ public class ObjectTest {
                 });
             }
         });
+
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -329,6 +342,7 @@ public class ObjectTest {
                     @Override
                     public void success(AppacitiveObject result) {
                         assert result.getRevision() == 2;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -338,6 +352,8 @@ public class ObjectTest {
                 });
             }
         });
+
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -365,6 +381,7 @@ public class ObjectTest {
                                         public void failure(AppacitiveObject result, Exception e) {
                                             AppacitiveException ae = (AppacitiveException) e;
                                             assert ae.code.equals(ErrorCodes.INCORRECT_REVISION);
+                                            somethingHappened.set(true);
                                         }
                                     });
                                 }
@@ -376,7 +393,7 @@ public class ObjectTest {
                 }
             }
         });
-
+        await().untilTrue(somethingHappened);
 
     }
 
@@ -437,7 +454,7 @@ public class ObjectTest {
                 assert result.getAllAttributes().containsKey("a3");
                 assert result.getAttribute("a1").equals("v1");
 
-                result.setAttribute("a1", null);
+                result.removeAttribute("a1");
                 result.removeAttribute("a2");
                 result.setAttribute("a3", "vv3");
 
@@ -460,6 +477,7 @@ public class ObjectTest {
                             @Override
                             public void success(AppacitiveObject result) {
                                 assert true;
+                                somethingHappened.set(true);
                             }
                         });
                     }
@@ -471,6 +489,7 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -500,6 +519,7 @@ public class ObjectTest {
                         assert tags.size() == 4;
                         assert result.tagExists("t3") == false;
                         assert result.tagExists("t6") == false;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -509,10 +529,12 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
     public void multiGetObjectsTest() throws IOException, ValidationException, InterruptedException {
+        final AtomicInteger createdObjectsCount = new AtomicInteger(0);
         final ArrayList<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
             AppacitiveObject appacitiveObject = new AppacitiveObject("object");
@@ -520,14 +542,17 @@ public class ObjectTest {
                 @Override
                 public void success(AppacitiveObject result) {
                     ids.add(result.getId());
+                    createdObjectsCount.incrementAndGet();
                 }
             });
         }
-        Thread.sleep(5000);
+        await().untilAtomic(createdObjectsCount, equalTo(3));
+
         AppacitiveObject.multiGetInBackground("object", ids, null, new Callback<List<AppacitiveObject>>() {
             @Override
             public void success(List<AppacitiveObject> result) {
                 assert result.size() == 3;
+                somethingHappened.set(true);
             }
 
             @Override
@@ -535,6 +560,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -562,6 +588,7 @@ public class ObjectTest {
 
                             assert result.getAllTags().size() == 0;
                             assert result.getAllAttributes().size() != 0;
+                            somethingHappened.set(true);
                         }
 
                         @Override
@@ -574,6 +601,7 @@ public class ObjectTest {
                 }
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -596,6 +624,7 @@ public class ObjectTest {
                                 public void failure(AppacitiveObject result, Exception e) {
                                     AppacitiveException ae = (AppacitiveException) e;
                                     assert ae.code.equals(ErrorCodes.NOT_FOUND);
+                                    somethingHappened.set(true);
                                 }
                             });
                         } catch (ValidationException e) {
@@ -610,10 +639,12 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
     public void multiDeleteObjectTest() throws ValidationException, InterruptedException {
+        final AtomicInteger count = new AtomicInteger(0);
         final List<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
             AppacitiveObject appacitiveObject = new AppacitiveObject("object");
@@ -621,10 +652,11 @@ public class ObjectTest {
                 @Override
                 public void success(AppacitiveObject result) {
                     ids.add(result.getId());
+                    count.incrementAndGet();
                 }
             });
         }
-        Thread.sleep(10000);
+        await().untilAtomic(count, equalTo(3));
         AppacitiveObject.bulkDeleteInBackground("object", ids, new Callback<Void>() {
             @Override
             public void success(Void result) {
@@ -639,6 +671,7 @@ public class ObjectTest {
                             @Override
                             public void failure(AppacitiveObject result, Exception e) {
                                 assert true;
+                                count.decrementAndGet();
                             }
                         });
                     } catch (ValidationException e) {
@@ -652,7 +685,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-
+        await().untilAtomic(count, equalTo(0));
     }
 
     @Test
@@ -666,6 +699,7 @@ public class ObjectTest {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -675,6 +709,7 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -692,6 +727,7 @@ public class ObjectTest {
                         assert result.results.size() == 15;
                         assert result.pagingInfo.pageSize == 15;
                         assert result.pagingInfo.pageNumber == 2;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -701,6 +737,7 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -750,6 +787,7 @@ public class ObjectTest {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -759,6 +797,7 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -786,6 +825,7 @@ public class ObjectTest {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
                         assert result.results.size() > 0;
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -795,6 +835,7 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -836,6 +877,7 @@ public class ObjectTest {
                             assert obj.tagExists("tag2") == true;
                             assert obj.tagExists("tag4") == true || obj.tagExists("tag6") == true || obj.tagExists("tag7") == true;
                         }
+                        somethingHappened.set(true);
                     }
 
                     @Override
@@ -845,21 +887,42 @@ public class ObjectTest {
                 });
             }
         });
+        await().untilTrue(somethingHappened);
     }
 
     @Test
     public void getConnectedObjectsTest() throws ValidationException {
-        AppacitiveObject.getConnectedObjectsInBackground("my_device", "user", 50933461752611232L, null, null, new Callback<ConnectedObjectsResponse>() {
-            @Override
-            public void success(ConnectedObjectsResponse result) {
-                super.success(result);
-            }
+        AppacitiveUser user = new AppacitiveUser();
+        user.setFirstName(getRandomString());
+        user.setUsername(getRandomString());
+        user.setPassword(getRandomString());
+        user.setEmail(getRandomString().concat("@gmail.com"));
 
+        AppacitiveDevice device = new AppacitiveDevice();
+        device.setDeviceType("ios");
+        device.setDeviceToken(getRandomString());
+
+        new AppacitiveConnection("my_device").fromNewDevice("device", device).toNewUser("user", user).createInBackground(new Callback<AppacitiveConnection>() {
             @Override
-            public void failure(ConnectedObjectsResponse result, Exception e) {
-                Assert.fail(e.getMessage());
+            public void success(AppacitiveConnection result) {
+                AppacitiveObject.getConnectedObjectsInBackground("my_device", "user", result.endpointB.objectId, null, null, new Callback<ConnectedObjectsResponse>() {
+                    @Override
+                    public void success(ConnectedObjectsResponse result) {
+                        assert result.results.size() > 0;
+                        assert result.results.get(0).object != null;
+                        assert result.results.get(0).connection != null;
+                        assert result.results.get(0).object.getType().equals("device");
+                        somethingHappened.set(true);
+                    }
+
+                    @Override
+                    public void failure(ConnectedObjectsResponse result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
             }
         });
+        await().untilTrue(somethingHappened);
 
     }
 

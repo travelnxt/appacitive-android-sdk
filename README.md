@@ -6,12 +6,3 @@ appacitive-android-sdk
 
 Official Android and Java SDK for Appacitive.
 
-
-
-TODO
-
-
-Add file upload support
-IOC support
-Android support
-make object extendable
