@@ -1,6 +1,7 @@
+package com.appacitive.java;
+
 import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveEmail;
-import com.appacitive.java.JavaPlatform;
 import com.appacitive.core.model.*;
 import com.jayway.awaitility.Awaitility;
 import org.junit.*;

@@ -1,9 +1,10 @@
+package com.appacitive.java;
+
 import com.appacitive.core.*;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.ErrorCodes;
 import com.appacitive.core.infra.SystemDefinedProperties;
-import com.appacitive.java.JavaPlatform;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;

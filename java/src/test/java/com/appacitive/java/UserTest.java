@@ -1,8 +1,9 @@
+package com.appacitive.java;
+
 import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.exceptions.UserAuthException;
 import com.appacitive.core.exceptions.ValidationException;
-import com.appacitive.java.JavaPlatform;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.jayway.awaitility.Awaitility;

@@ -1,3 +1,5 @@
+package com.appacitive.java;
+
 import com.appacitive.core.*;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
@@ -25,7 +27,7 @@ public class ConnectionTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new com.appacitive.java.JavaPlatform());
+        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
         Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 

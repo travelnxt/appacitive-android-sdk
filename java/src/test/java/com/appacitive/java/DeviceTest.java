@@ -1,3 +1,5 @@
+package com.appacitive.java;
+
 import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveDevice;
 import com.appacitive.core.exceptions.ValidationException;
@@ -5,7 +7,6 @@ import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.AppacitiveQuery;
-import com.appacitive.java.JavaPlatform;
 import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 

@@ -1,6 +1,7 @@
+package com.appacitive.java;
+
 import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveFile;
-import com.appacitive.java.JavaPlatform;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.FileUploadUrlResponse;

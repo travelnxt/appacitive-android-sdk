@@ -1,9 +1,10 @@
+package com.appacitive.java;
+
 import com.appacitive.core.AppacitiveConnection;
 import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveGraphSearch;
 import com.appacitive.core.AppacitiveObject;
 import com.appacitive.core.exceptions.ValidationException;
-import com.appacitive.java.JavaPlatform;
 import com.appacitive.core.model.AppacitiveGraphNode;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
