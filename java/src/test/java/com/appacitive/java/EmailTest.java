@@ -7,7 +7,6 @@ import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -20,7 +19,7 @@ public class EmailTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
+//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -32,7 +31,7 @@ public class EmailTest {
 
     @Before
     public void beforeTest() {
-//        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private static final String testEmail = "test@appacitive.com";
@@ -78,13 +77,13 @@ public class EmailTest {
             @Override
             public void success(AppacitiveEmail result) {
                 assert result.getId() > 0;
-                assert result.to.size() ==1;
-                assert result.cc.size() ==1;
-                assert result.bcc.size() ==1;
+                assert result.to.size() == 1;
+                assert result.cc.size() == 1;
+                assert result.bcc.size() == 1;
                 assert result.fromAddress != null;
                 assert result.to != null;
                 assert result.body != null;
-                assert ((TemplatedEmailBody)(result.body)).getData().size() ==1;
+                assert ((TemplatedEmailBody) (result.body)).getData().size() == 1;
                 somethingHappened.set(true);
             }
 

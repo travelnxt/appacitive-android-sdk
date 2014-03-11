@@ -13,20 +13,19 @@ import org.junit.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 public class DeviceTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
+//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -37,7 +36,7 @@ public class DeviceTest {
 
     @Before
     public void beforeTest() {
-//        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private AppacitiveDevice getRandomDevice() {

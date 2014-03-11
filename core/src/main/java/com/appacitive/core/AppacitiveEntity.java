@@ -3,11 +3,11 @@
  */
 package com.appacitive.core;
 
-import com.appacitive.core.infra.APSerializable;
-import com.appacitive.core.infra.SystemDefinedProperties;
 import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
+import com.appacitive.core.infra.APSerializable;
+import com.appacitive.core.infra.SystemDefinedProperties;
 
 import java.io.Serializable;
 import java.text.DateFormat;

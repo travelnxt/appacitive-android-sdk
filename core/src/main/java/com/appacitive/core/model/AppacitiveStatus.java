@@ -1,8 +1,8 @@
 package com.appacitive.core.model;
 
-import com.appacitive.core.infra.APSerializable;
 import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONObject;
+import com.appacitive.core.infra.APSerializable;
 
 import java.io.Serializable;
 import java.util.ArrayList;

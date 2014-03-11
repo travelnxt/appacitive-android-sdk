@@ -14,7 +14,6 @@ import org.junit.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -27,7 +26,7 @@ public class PushTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
+//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -39,7 +38,7 @@ public class PushTest {
 
     @Before
     public void beforeTest() {
-//        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     @Test

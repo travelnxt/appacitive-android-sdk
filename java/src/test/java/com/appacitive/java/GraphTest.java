@@ -8,6 +8,7 @@ import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.model.AppacitiveGraphNode;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
+import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class GraphTest {
 
     @Before
     public void beforeTest() {
-//        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     @Test
@@ -145,23 +146,4 @@ public class GraphTest {
         });
         await().untilTrue(somethingHappened);
     }
-
-    @Test
-    public void MiscGetObjectTest() throws ValidationException {
-        AppacitiveContextBase.initialize("OucpFOfXszNgDj3/Ct6YLXIg0FvY9b/b0UBxVqtd8do=", Environment.sandbox, new JavaPlatform());
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
-        AppacitiveObject.getInBackground("tasks", 51345230877819994L, null, new Callback<AppacitiveObject>() {
-            @Override
-            public void success(AppacitiveObject result) {
-                assert result.getId() > 0;
-
-            }
-
-            @Override
-            public void failure(AppacitiveObject result, Exception e) {
-            }
-        });
-        await().untilTrue(somethingHappened);
-    }
-
 }

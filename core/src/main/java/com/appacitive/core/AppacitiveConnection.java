@@ -1,12 +1,12 @@
 package com.appacitive.core;
 
+import com.appacitive.core.apjson.APJSONArray;
+import com.appacitive.core.apjson.APJSONException;
+import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
-import com.appacitive.core.apjson.APJSONArray;
-import com.appacitive.core.apjson.APJSONException;
-import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.model.AppacitiveEndpoint;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;

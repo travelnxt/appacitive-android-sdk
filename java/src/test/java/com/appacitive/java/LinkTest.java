@@ -7,6 +7,7 @@ import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.Link;
+import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 
 import java.util.List;
@@ -14,11 +15,10 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
 
 /**
-* Created by sathley.
-*/
+ * Created by sathley.
+ */
 public class LinkTest {
 
     @BeforeClass
@@ -35,7 +35,7 @@ public class LinkTest {
 
     @Before
     public void beforeTest() {
-//        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private final static String fbToken = "CAACEdEose0cBACxiLXShRg8OicLZAgzFMZCbqh3YulBwBYZBZC2MPX3K8slSXZBFamDqaQ0wfZBa8Bf9wgfVJ0elb8bA3G6WW0EYZCmAKKo6rta7neBRGNxlgRBY6i8vFPCWN2dDedUZBVzSiF3tDtOiUNJ1QLlodgp6USfmZAaZBKZCyBst1ZCVWecZA86lGABpB2kRf0CQ1MuS94QZDZD";

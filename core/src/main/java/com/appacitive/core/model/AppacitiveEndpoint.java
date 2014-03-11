@@ -4,10 +4,10 @@ import com.appacitive.core.AppacitiveDevice;
 import com.appacitive.core.AppacitiveEntity;
 import com.appacitive.core.AppacitiveObject;
 import com.appacitive.core.AppacitiveUser;
-import com.appacitive.core.infra.APSerializable;
-import com.appacitive.core.infra.SystemDefinedProperties;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
+import com.appacitive.core.infra.APSerializable;
+import com.appacitive.core.infra.SystemDefinedProperties;
 
 import java.io.Serializable;
 

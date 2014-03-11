@@ -1,12 +1,12 @@
 package com.appacitive.core;
 
+import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.infra.APCallback;
 import com.appacitive.core.infra.APContainer;
 import com.appacitive.core.infra.Headers;
 import com.appacitive.core.infra.Urls;
 import com.appacitive.core.interfaces.AsyncHttp;
-import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.FileUploadUrlResponse;
