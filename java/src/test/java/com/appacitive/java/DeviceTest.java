@@ -33,11 +33,11 @@ public class DeviceTest {
     public static void oneTimeTearDown() {
         // one-time cleanup code
     }
-    private static AtomicBoolean somethingHappened;
+//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+//        somethingHappened = new AtomicBoolean(false);
     }
 
     private AppacitiveDevice getRandomDevice() {
@@ -68,6 +68,7 @@ public class DeviceTest {
 
     @Test
     public void registerDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
@@ -93,6 +94,7 @@ public class DeviceTest {
 
     @Test
     public void getDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
@@ -120,6 +122,7 @@ public class DeviceTest {
 
     @Test
     public void updateDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
@@ -153,6 +156,7 @@ public class DeviceTest {
 
     @Test
     public void fetchLatestTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveDevice device = getRandomDevice();
         final String newToken = UUID.randomUUID().toString();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
@@ -200,6 +204,7 @@ public class DeviceTest {
 
     @Test
     public void deleteDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
@@ -237,6 +242,7 @@ public class DeviceTest {
 
     @Test
     public void findDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveDevice device = getRandomDevice();
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override

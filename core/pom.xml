@@ -11,6 +11,7 @@
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.core</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <url>http://appacitive.com/</url>
     <packaging>jar</packaging>
 
 </project>

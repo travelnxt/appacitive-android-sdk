@@ -33,11 +33,9 @@ public class UserTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
-
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private String getRandomString() {
@@ -46,6 +44,7 @@ public class UserTest {
 
     @Test
     public void signupUserTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -68,6 +67,7 @@ public class UserTest {
 
     @Test
     public void loginUserTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -97,6 +97,7 @@ public class UserTest {
     @Test
     public void loginWithUsernamePasswordTest
             () throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final String username = getRandomString();
         final String password = getRandomString();
         AppacitiveUser user = new AppacitiveUser();
@@ -126,6 +127,7 @@ public class UserTest {
 
     @Test
     public void multiGetUsersTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final List<Long> ids = new ArrayList<Long>();
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
@@ -190,6 +192,7 @@ public class UserTest {
 
     @Test
     public void deleteUserTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -241,6 +244,7 @@ public class UserTest {
 
     @Test
     public void changePasswordTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -290,6 +294,7 @@ public class UserTest {
 
     @Test
     public void sendResetPasswordTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -319,6 +324,7 @@ public class UserTest {
 
     @Test
     public void validateSessionTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -356,6 +362,7 @@ public class UserTest {
 
     @Test
     public void invalidateSessionTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -409,6 +416,7 @@ public class UserTest {
 
     @Test
     public void checkinTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());

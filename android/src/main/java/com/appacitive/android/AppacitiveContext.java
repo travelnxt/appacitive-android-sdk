@@ -8,18 +8,16 @@ import com.appacitive.core.model.Environment;
  * Created by sathley.
  */
 public class AppacitiveContext extends AppacitiveContextBase {
+
     private static Context applicationContext = null;
 
-    public static synchronized void initialize(String apiKey, Environment environment, Context applicationContext) {
+    public static void initialize(String apiKey, Environment environment, Context applicationContext) {
         AppacitiveContextBase.initialize(apiKey, environment, new AndroidPlatform());
-        AppacitiveContext.setApplicationContext(applicationContext);
+        AppacitiveContext.applicationContext = applicationContext;
     }
 
     public static Context getApplicationContext() {
         return AppacitiveContext.applicationContext;
     }
 
-    public static synchronized void setApplicationContext(Context applicationContext) {
-        AppacitiveContext.applicationContext = applicationContext;
-    }
 }

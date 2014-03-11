@@ -31,11 +31,11 @@ public class LinkTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
+//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+//        somethingHappened = new AtomicBoolean(false);
     }
 
     private final static String fbToken = "CAACEdEose0cBACxiLXShRg8OicLZAgzFMZCbqh3YulBwBYZBZC2MPX3K8slSXZBFamDqaQ0wfZBa8Bf9wgfVJ0elb8bA3G6WW0EYZCmAKKo6rta7neBRGNxlgRBY6i8vFPCWN2dDedUZBVzSiF3tDtOiUNJ1QLlodgp6USfmZAaZBKZCyBst1ZCVWecZA86lGABpB2kRf0CQ1MuS94QZDZD";
@@ -60,6 +60,7 @@ public class LinkTest {
 
     @Test
     public void linkTwitterAccountTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
@@ -122,6 +123,7 @@ public class LinkTest {
 
     @Test
     public void linkFacebookAccountTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
@@ -183,6 +185,7 @@ public class LinkTest {
 
     @Test
     public void getAllLinkedAccountsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override

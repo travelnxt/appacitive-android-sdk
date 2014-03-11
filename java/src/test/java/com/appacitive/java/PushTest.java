@@ -35,15 +35,16 @@ public class PushTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
+//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+//        somethingHappened = new AtomicBoolean(false);
     }
 
     @Test
     public void broadcastPushTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitivePushNotification.Broadcast("helo world").withBadge("+1").withExpiry(500).withData(new HashMap<String, String>() {{
             put("a1", "v1");
             put("a2", "v2");
@@ -64,6 +65,7 @@ public class PushTest {
 
     @Test
     public void sendToDevicesTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitivePushNotification.ToDeviceIds("hello guys", new ArrayList<String>() {{
             add("1");
             add("2");
@@ -88,6 +90,7 @@ public class PushTest {
 
     @Test
     public void sendToChannelsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitivePushNotification.ToChannels("hello guys", new ArrayList<String>() {{
             add("channel1");
             add("channel2");
@@ -112,6 +115,7 @@ public class PushTest {
 
     @Test
     public void sendUsingQueryTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
 
         AppacitivePushNotification.ToQueryResult("hello guys", BooleanOperator.and(new ArrayList<Query>() {{
             add(new PropertyFilter("devicetype").isEqualTo("ios"));
@@ -138,6 +142,7 @@ public class PushTest {
 
     @Test
     public void iosAndAndroidOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(new IosOptions("soundfile"))
                 .withPlatformOptions(new AndroidOptions("title"))
@@ -159,6 +164,7 @@ public class PushTest {
 
     @Test
     public void wpToastOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         WindowsPhoneOptions options = new WindowsPhoneOptions(new ToastNotification("text1", "text2", "path"));
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(options)
@@ -180,6 +186,7 @@ public class PushTest {
 
     @Test
     public void wpRawOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         WindowsPhoneOptions options = new WindowsPhoneOptions(new RawNotification("raw data"));
         AppacitivePushNotification.Broadcast("hi ios & android")
                 .withPlatformOptions(options)
@@ -203,6 +210,7 @@ public class PushTest {
 
     @Test
     public void wpFlipTileOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         FlipTile tile = new FlipTile();
         tile.backBackgroundImage = "bbimage";
         tile.backContent = "back content";
@@ -238,6 +246,7 @@ public class PushTest {
 
     @Test
     public void wpIconicTileOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         FlipTile flipTile = new FlipTile();
         flipTile.backBackgroundImage = "bbimage";
         flipTile.backContent = "back content";
@@ -279,6 +288,7 @@ public class PushTest {
 
     @Test
     public void wpCyclicTileOptionsTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         FlipTile flipTile = new FlipTile();
         flipTile.backBackgroundImage = "bbimage";
         flipTile.backContent = "back content";

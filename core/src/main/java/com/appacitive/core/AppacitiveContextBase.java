@@ -1,6 +1,10 @@
 package com.appacitive.core;
 
 import com.appacitive.core.infra.APContainer;
+import com.appacitive.core.infra.ObjectFactory;
+import com.appacitive.core.interfaces.LogLevel;
+import com.appacitive.core.interfaces.Logger;
+import com.appacitive.core.interfaces.UserContextProvider;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.Platform;
 
@@ -9,46 +13,67 @@ import java.io.Serializable;
 /**
  * Created by sathley.
  */
-public abstract class AppacitiveContextBase implements Serializable {
+public class AppacitiveContextBase implements Serializable {
 
-    private volatile static Double[] currentLocation = new Double[2];
-    private static String loggedInUserToken;
     private static String apiKey;
     private static String environment;
     private static boolean isInitialized = false;
+    private static UserContextProvider userContextProvider = null;
+    private static Logger logger;
+
+    public static void setLogger(Logger logger) {
+        AppacitiveContextBase.logger = logger;
+    }
 
     public static String getLoggedInUserToken() {
-        return loggedInUserToken;
+        return userContextProvider.getCurrentlyLoggedInUserToken();
     }
 
-    public static synchronized void setLoggedInUserToken(String userToken) {
-        AppacitiveContextBase.loggedInUserToken = userToken;
+    public static AppacitiveUser getLoggedInUser() {
+        return userContextProvider.getLoggedInUser();
     }
 
-    public static synchronized void initialize(String apiKey, Environment environment, Platform platform) {
+
+    public static void setLoggedInUserToken(String userToken) {
+        userContextProvider.setCurrentlyLoggedInUserToken(userToken);
+    }
+
+    public static void setLoggedInUser(AppacitiveUser user) {
+        userContextProvider.setLoggedInUser(user);
+    }
+
+    public static void initialize(String apiKey, Environment environment, Platform platform) {
         AppacitiveContextBase.apiKey = apiKey;
         AppacitiveContextBase.environment = environment.name();
-        if (platform == null)
-            throw new IllegalArgumentException("Please specify platform.");
-        APContainer.registerAll(platform.getRegistrations());
+        if (platform != null)
+            APContainer.registerAll(platform.getRegistrations());
+
+
+        AppacitiveContextBase.logger = APContainer.build(Logger.class);
+        AppacitiveContextBase.userContextProvider = APContainer.build(UserContextProvider.class);
+
         isInitialized = true;
     }
 
-    public static synchronized void logout() {
+    public static void register(Class<?> interfaceObject, ObjectFactory<?> objectFactory)
+    {
+        APContainer.register(interfaceObject, objectFactory);
+    }
+
+    public static void logout() {
         setLoggedInUserToken(null);
     }
 
-    public static synchronized boolean isInitialized() {
+    public static boolean isInitialized() {
         return isInitialized;
     }
 
     public static Double[] getCurrentLocation() {
-        return currentLocation;
+        return userContextProvider.getCurrentLocation();
     }
 
-    public static synchronized void setCurrentLocation(Double latitude, Double longitude) {
-        AppacitiveContextBase.currentLocation[0] = latitude;
-        AppacitiveContextBase.currentLocation[1] = longitude;
+    public static void setCurrentLocation(Double latitude, Double longitude) {
+        userContextProvider.setCurrentLocation(latitude, longitude);
     }
 
     public static String getApiKey() {
@@ -57,5 +82,11 @@ public abstract class AppacitiveContextBase implements Serializable {
 
     public static String getEnvironment() {
         return environment;
+    }
+
+    public static void setLogLevel(LogLevel logLevel) {
+        if (AppacitiveContextBase.logger != null) {
+            AppacitiveContextBase.logger.setLogLevel(logLevel);
+        }
     }
 }

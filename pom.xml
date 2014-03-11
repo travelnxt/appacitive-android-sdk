@@ -8,6 +8,9 @@
     <artifactId>com.appacitive.parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <name>Appacitive SDK</name>
+    <url>http://appacitive.com/</url>
+
     <modules>
         <module>core</module>
         <module>java</module>
@@ -27,6 +30,7 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.jayway.awaitility</groupId>
             <artifactId>awaitility</artifactId>
@@ -35,10 +39,7 @@
         </dependency>
 
     </dependencies>
-    <build>
-        <plugins>
-        </plugins>
-    </build>
+
     <organization>
         <name>Appacitive, Inc.</name>
         <url>http://www.appacitive.com</url>
@@ -53,4 +54,5 @@
             </roles>
         </developer>
     </developers>
+    <description>Official Java/Android SDK for Appacitive.</description>
 </project>

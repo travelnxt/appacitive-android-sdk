@@ -10,6 +10,7 @@ import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.*;
+import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +35,7 @@ public class ObjectTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
+        Awaitility.setDefaultTimeout(10, TimeUnit.SECONDS);
     }
 
     @AfterClass
@@ -41,11 +43,10 @@ public class ObjectTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private String getRandomString() {
@@ -54,6 +55,7 @@ public class ObjectTest {
 
     @Test
     public void createFullObjectTest() throws ValidationException, ParseException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
 
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setIntProperty("intfield", 100);
@@ -123,6 +125,7 @@ public class ObjectTest {
 
     @Test
     public void multiLingualObjectCreateTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject newObject = new AppacitiveObject("object");
         final String randomString1 = " 以下便是有关此问题的所有信息";
         final String randomString2 = " ä»¥ä¸ä¾¿æ¯æå³æ­¤é®é¢çææä¿¡æ¯";
@@ -183,6 +186,7 @@ public class ObjectTest {
 
     @Test
     public void updateObjectTest() throws Exception {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject object = getRandomObject();
         getRandomObject().createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
@@ -270,6 +274,7 @@ public class ObjectTest {
 
     @Test
     public void updateEmptyObjectTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -331,6 +336,7 @@ public class ObjectTest {
 
     @Test
     public void updateWithValidRevisionTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -359,6 +365,7 @@ public class ObjectTest {
 
     @Test
     public void updateWithInvalidRevisionTest() throws Exception {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
 
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -441,6 +448,7 @@ public class ObjectTest {
 
     @Test
     public void updateAttributesTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "vx");
         appacitiveObject.setAttribute("a2", "v2");
@@ -495,6 +503,7 @@ public class ObjectTest {
 
     @Test
     public void updateTagsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.addTag("t1");
         appacitiveObject.addTag("t2");
@@ -535,6 +544,7 @@ public class ObjectTest {
 
     @Test
     public void multiGetObjectsTest() throws IOException, ValidationException, InterruptedException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AtomicInteger createdObjectsCount = new AtomicInteger(0);
         final ArrayList<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
@@ -566,6 +576,7 @@ public class ObjectTest {
 
     @Test
     public void fieldsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = getRandomObject();
         appacitiveObject.setAttribute("aa", "vv");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -607,6 +618,7 @@ public class ObjectTest {
 
     @Test
     public void deleteObjectTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject object = new AppacitiveObject("object");
         object.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
@@ -691,6 +703,7 @@ public class ObjectTest {
 
     @Test
     public void findObjectsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         final AppacitiveQuery query = new AppacitiveQuery();
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -715,6 +728,7 @@ public class ObjectTest {
 
     @Test
     public void findObjectsTestWithPagination() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         final AppacitiveQuery query = new AppacitiveQuery();
         query.pageNumber = 2;
@@ -743,6 +757,7 @@ public class ObjectTest {
 
     @Test
     public void findObjectsWithPropertyFilterTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setStringProperty("stringfield", "hello world123");
         appacitiveObject.setIntProperty("intfield", 2005);
@@ -803,6 +818,7 @@ public class ObjectTest {
 
     @Test
     public void findObjectsWithAttributeFilterTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "v1");
         appacitiveObject.setAttribute("a2", "v2");
@@ -841,6 +857,7 @@ public class ObjectTest {
 
     @Test
     public void findObjectsWithTagsFilterTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         List<String> tags = new ArrayList<String>() {{
             add("tag1");
@@ -869,6 +886,7 @@ public class ObjectTest {
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
+                final AtomicBoolean somethingHappened = new AtomicBoolean(false);
                 AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
@@ -893,6 +911,7 @@ public class ObjectTest {
 
     @Test
     public void getConnectedObjectsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());

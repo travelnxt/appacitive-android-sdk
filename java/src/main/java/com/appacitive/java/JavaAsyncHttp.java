@@ -23,6 +23,11 @@ public class JavaAsyncHttp implements AsyncHttp {
 
     private static final String UTF8_BOM = "\uFEFF";
 
+    private static String processResponse(String response)
+    {
+        return response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1);
+    }
+
     @Override
     public Future<String> get(String url, Map<String, String> headers) {
 

@@ -4,5 +4,18 @@ package com.appacitive.core.interfaces;
  * Created by sathley.
  */
 public interface Logger {
-    public void log(String message);
+
+    public String TAG = "APPACITIVE";
+
+    public void setLogLevel(LogLevel logLevel);
+
+    public void Assert(String message);
+
+    public void error(String message);
+
+    public void info(String message);
+
+    public void verbose(String message);
+
+    public void warn(String message);
 }

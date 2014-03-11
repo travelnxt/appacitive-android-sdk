@@ -36,11 +36,9 @@ public class ConnectionTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
-
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+        Awaitility.reset();
     }
 
     private String getRandomString() {
@@ -49,6 +47,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenNewObjects() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");
         parent.createInBackground(new Callback<AppacitiveObject>() {
@@ -102,6 +101,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenNewUserAndDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setPassword(getRandomString());
         user.setUsername(getRandomString());
@@ -131,6 +131,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenExistingUserAndDeviceTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveUser user = new AppacitiveUser();
         user.setPassword(getRandomString());
         user.setUsername(getRandomString());
@@ -174,6 +175,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenNewObjectsUsingFluentSyntaxTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");
         parent.createInBackground(new Callback<AppacitiveObject>() {
@@ -221,6 +223,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenNewAndExistingObjectTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         parent.addTag("parent");
         final AppacitiveObject child = new AppacitiveObject("object");
@@ -254,6 +257,7 @@ public class ConnectionTest {
 
     @Test
     public void createConnectionBetweenNewAndNewObjectsTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");
         new AppacitiveConnection("sibling").fromNewObject("object", parent).toNewObject("object", child).createInBackground(new Callback<AppacitiveConnection>() {
@@ -277,6 +281,7 @@ public class ConnectionTest {
 
     @Test
     public void getConnectionTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");
         new AppacitiveConnection("sibling").fromNewObject("object", parent).toNewObject("object", child).createInBackground(new Callback<AppacitiveConnection>() {
@@ -305,6 +310,7 @@ public class ConnectionTest {
 
     @Test
     public void multiGetConnectionTest() throws ValidationException, InterruptedException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AtomicInteger count = new AtomicInteger(0);
         final List<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
@@ -336,6 +342,7 @@ public class ConnectionTest {
 
     @Test
     public void deleteConnectionTest() throws ValidationException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");
         new AppacitiveConnection("sibling").fromNewObject("object", parent).toNewObject("object", child).createInBackground(new Callback<AppacitiveConnection>() {
@@ -360,6 +367,7 @@ public class ConnectionTest {
 
     @Test
     public void multiDeleteConnectionsTest() throws ValidationException, InterruptedException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AtomicInteger count = new AtomicInteger(0);
         final List<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {

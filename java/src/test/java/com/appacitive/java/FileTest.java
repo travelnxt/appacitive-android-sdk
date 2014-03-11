@@ -28,16 +28,17 @@ public class FileTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
+//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+//        somethingHappened = new AtomicBoolean(false);
     }
 
     @Test
     public void getUploadUrlTest()
     {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveFile.getUploadUrlInBackground("image/png", "abc.png", 10, new Callback<FileUploadUrlResponse>() {
             @Override
             public void success(FileUploadUrlResponse result) {
@@ -57,6 +58,7 @@ public class FileTest {
     @Test
     public void getDownloadUrlTest()
     {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveFile.getDownloadUrlInBackground("abc.png", 10, new Callback<String>() {
             @Override
             public void success(String result) {
@@ -75,6 +77,7 @@ public class FileTest {
     @Test
     public void deleteFileTest()
     {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveFile.deleteFileInBackground("abc.png", new Callback<Void>() {
             @Override
             public void success(Void result) {

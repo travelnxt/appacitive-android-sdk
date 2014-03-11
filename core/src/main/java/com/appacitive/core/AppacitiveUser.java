@@ -339,6 +339,8 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
                         AppacitiveUser user = new AppacitiveUser();
                         user.setSelf(jsonObject.optJSONObject("user"));
+
+                        AppacitiveContextBase.setLoggedInUser(user);
                         if (callback != null)
                             callback.success(user);
                     } else {

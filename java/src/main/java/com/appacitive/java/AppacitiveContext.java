@@ -11,7 +11,6 @@ public class AppacitiveContext extends AppacitiveContextBase {
 
     public static synchronized void initialize(String apiKey, Environment environment) {
         AppacitiveContextBase.initialize(apiKey, environment, new JavaPlatform());
-
     }
 
 }

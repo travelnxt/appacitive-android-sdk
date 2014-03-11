@@ -28,17 +28,18 @@ public class EmailTest {
         // one-time cleanup code
     }
 
-    private static AtomicBoolean somethingHappened;
+//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
-        somethingHappened = new AtomicBoolean(false);
+//        somethingHappened = new AtomicBoolean(false);
     }
 
     private static final String testEmail = "test@appacitive.com";
 
     @Test
     public void sendRawEmailTest() throws Exception {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
         email.to.add(testEmail);
         email.cc.add(testEmail);
@@ -63,6 +64,7 @@ public class EmailTest {
 
     @Test
     public void sendTemplatedEmailTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>() {{
             put("username", "cobra");
         }}, false);
@@ -96,6 +98,7 @@ public class EmailTest {
 
     @Test
     public void sendRawEmailWithCustomSmtpTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         SmtpSettings settings = new SmtpSettings("username", "password", "smtp.gmail.com", 465, true);
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false)).withSmtp(settings);
         email.to.add(testEmail);
@@ -120,6 +123,7 @@ public class EmailTest {
 
     @Test
     public void sendTemplatedEmailWithSmtpTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         SmtpSettings settings = new SmtpSettings("username", "password", "smtp.gmail.com", 465, true);
         TemplatedEmailBody body = new TemplatedEmailBody("sample", new HashMap<String, String>() {{
             put("username", "cobra");
@@ -147,6 +151,7 @@ public class EmailTest {
 
     @Test
     public void sendRawEmailTestSample() throws InterruptedException {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
         email.to.add(testEmail);
         email.cc.add(testEmail);

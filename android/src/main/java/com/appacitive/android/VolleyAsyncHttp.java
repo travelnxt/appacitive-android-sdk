@@ -37,6 +37,11 @@ public class VolleyAsyncHttp implements AsyncHttp {
         return headers;
     }
 
+    private static String processResponse(String response)
+    {
+        return response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1);
+    }
+
     @Override
     public Future<String> get(String s, Map<String, String> stringStringMap) {
         return null;
@@ -48,7 +53,7 @@ public class VolleyAsyncHttp implements AsyncHttp {
             @Override
             public void onResponse(String response) {
                 if (callback != null)
-                    callback.success(response);
+                    callback.success(processResponse(response));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -77,7 +82,7 @@ public class VolleyAsyncHttp implements AsyncHttp {
             @Override
             public void onResponse(String response) {
                 if (callback != null)
-                    callback.success(response);
+                    callback.success(processResponse(response));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -106,7 +111,7 @@ public class VolleyAsyncHttp implements AsyncHttp {
             @Override
             public void onResponse(String response) {
                 if (callback != null)
-                    callback.success(response);
+                    callback.success(processResponse(response));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -141,7 +146,7 @@ public class VolleyAsyncHttp implements AsyncHttp {
             @Override
             public void onResponse(String response) {
                 if (callback != null)
-                    callback.success(response);
+                    callback.success(processResponse(response));
             }
         }, new Response.ErrorListener() {
             @Override

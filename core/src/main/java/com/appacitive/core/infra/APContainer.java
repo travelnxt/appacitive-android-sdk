@@ -28,7 +28,6 @@ public class APContainer implements Serializable {
         for (Class<?> interfaceObject : registrations.keySet()) {
             register(interfaceObject, registrations.get(interfaceObject));
         }
-//        APContainer.registrations.putAll(registrations);
     }
 
     public static final <T> T build(Class<? super T> interfaceObject) {
