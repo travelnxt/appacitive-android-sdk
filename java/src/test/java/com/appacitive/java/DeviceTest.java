@@ -98,7 +98,7 @@ public class DeviceTest {
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
             public void success(final AppacitiveDevice result1) {
-                try {
+
                     AppacitiveDevice.getInBackground(result1.getId(), new Callback<AppacitiveDevice>() {
                         @Override
                         public void success(AppacitiveDevice result) {
@@ -111,9 +111,7 @@ public class DeviceTest {
                             Assert.fail(e.getMessage());
                         }
                     });
-                } catch (ValidationException e) {
-                    Assert.fail(e.getMessage());
-                }
+
             }
         });
         await().untilTrue(somethingHappened);
@@ -161,7 +159,7 @@ public class DeviceTest {
         device.registerInBackground(new Callback<AppacitiveDevice>() {
             @Override
             public void success(final AppacitiveDevice result) {
-                try {
+
                     AppacitiveDevice.getInBackground(result.getId(), new Callback<AppacitiveDevice>() {
                         @Override
                         public void success(final AppacitiveDevice result1) {
@@ -193,9 +191,7 @@ public class DeviceTest {
 
                         }
                     });
-                } catch (ValidationException e) {
-                    Assert.fail(e.getMessage());
-                }
+
             }
         });
         await().untilTrue(somethingHappened);
@@ -211,7 +207,7 @@ public class DeviceTest {
                 device.deleteInBackground(false, new Callback<Void>() {
                     @Override
                     public void success(Void result) {
-                        try {
+
                             AppacitiveDevice.getInBackground(device.getId(), new Callback<AppacitiveDevice>() {
                                 @Override
                                 public void success(AppacitiveDevice result) {
@@ -224,9 +220,7 @@ public class DeviceTest {
                                     somethingHappened.set(true);
                                 }
                             });
-                        } catch (ValidationException e) {
-                            Assert.fail(e.getMessage());
-                        }
+
                     }
 
                     @Override

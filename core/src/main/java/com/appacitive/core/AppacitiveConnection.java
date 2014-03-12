@@ -506,7 +506,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
-    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, final Callback<AppacitiveConnection> callback) throws ValidationException {
+    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, final Callback<AppacitiveConnection> callback)  {
         final String url = Urls.ForConnection.findForObjectsAndRelationUrl(relationType, objectId1, objectId2, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 

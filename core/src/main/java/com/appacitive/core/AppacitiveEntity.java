@@ -315,6 +315,17 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         return propertyValue;
     }
 
+    public <T> List<T> getPropertyAsMultivalued(String propertyName) {
+        List<T> propertyValue = null;
+        if (this.properties.containsKey(propertyName) == true) {
+            propertyValue = new ArrayList<T>();
+            APJSONArray values = (APJSONArray) properties.get(propertyName);
+            for (int i = 0; i < values.length(); i++)
+                propertyValue.add((T) (values.opt(i)));
+        }
+        return propertyValue;
+    }
+
     public void setAttribute(String attributeName, String attributeValue) {
         if (attributeName == null)
             throw new IllegalArgumentException("Attribute name cannot be null.");

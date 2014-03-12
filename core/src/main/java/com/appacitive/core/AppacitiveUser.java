@@ -219,7 +219,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         });
     }
 
-    public static void signupWithFacebookInBackground(final String facebookAccessToken, final Callback<AppacitiveUser> callback) throws ValidationException {
+    public static void signupWithFacebookInBackground(final String facebookAccessToken, final Callback<AppacitiveUser> callback) {
 
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
@@ -231,7 +231,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         final APJSONObject payload = new APJSONObject(payloadMap);
 
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
-        asyncHttp.put(url, headers, payload.toString(), new APCallback() {
+        asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
                 try {
@@ -261,7 +261,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         });
     }
 
-    public static void getByIdInBackground(long userId, List<String> fields, final Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
+    public static void getByIdInBackground(long userId, List<String> fields, final Callback<AppacitiveUser> callback) throws  UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -276,7 +276,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
             throw new UserAuthException();
     }
 
-    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
+    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws  UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(username, UserIdType.username, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -284,7 +284,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         getInBackgroundHelper(url, headers, callback);
     }
 
-    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws ValidationException, UserAuthException {
+    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws  UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -460,7 +460,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         });
     }
 
-    public static void multiGetInBackground(List<Long> ids, List<String> fields, final Callback<List<AppacitiveUser>> callback) throws ValidationException, UserAuthException {
+    public static void multiGetInBackground(List<Long> ids, List<String> fields, final Callback<List<AppacitiveUser>> callback) throws UserAuthException {
 
         final String url = Urls.ForUser.multiGetUserUrl(ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();

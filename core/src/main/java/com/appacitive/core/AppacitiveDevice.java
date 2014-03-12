@@ -185,7 +185,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void getInBackground(long deviceId, final Callback<AppacitiveDevice> callback) throws ValidationException {
+    public static void getInBackground(long deviceId, final Callback<AppacitiveDevice> callback)  {
 
         final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(deviceId)).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -254,7 +254,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void multiGetInBackground(List<Long> ids, List<String> fields, final Callback<List<AppacitiveDevice>> callback) throws ValidationException {
+    public static void multiGetInBackground(List<Long> ids, List<String> fields, final Callback<List<AppacitiveDevice>> callback) {
 
         final String url = Urls.ForObject.multiGetObjectUrl("device", ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
