@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class AppacitiveQuery implements Serializable {
 
-    public int pageNumber = 0;
+    public long pageNumber = 0;
 
-    public int pageSize = 0;
+    public long pageSize = 0;
 
     public String orderBy = null;
 

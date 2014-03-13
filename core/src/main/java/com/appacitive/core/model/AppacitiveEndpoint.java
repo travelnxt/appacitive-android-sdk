@@ -57,7 +57,7 @@ public class AppacitiveEndpoint implements Serializable, APSerializable {
                         this.object = new AppacitiveDevice();
                         this.object.setSelf(object);
                     } else {
-                        this.object = new AppacitiveObject("");
+                        this.object = new AppacitiveObject();
                         this.object.setSelf(object);
                     }
                 } else

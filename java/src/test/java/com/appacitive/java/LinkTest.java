@@ -76,7 +76,7 @@ public class LinkTest {
                                         result.getLinkedAccountInBackground("twitter", new Callback<Link>() {
                                             @Override
                                             public void success(Link result3) {
-                                                assert result3.username.equals("SushantAthley");
+                                                assert result3.getUsername().equals("SushantAthley");
                                                 try {
                                                     result.deleteInBackground(true, new Callback<Void>() {
                                                         @Override
@@ -139,7 +139,7 @@ public class LinkTest {
                                         result.getLinkedAccountInBackground("facebook", new Callback<Link>() {
                                             @Override
                                             public void success(Link result3) {
-                                                assert result3.username.equals("sushant.athley");
+                                                assert result3.getUsername().equals("sushant.athley");
                                                 try {
                                                     result.deleteInBackground(true, new Callback<Void>() {
                                                         @Override

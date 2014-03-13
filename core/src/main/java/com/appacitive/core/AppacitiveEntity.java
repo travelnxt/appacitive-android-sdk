@@ -35,6 +35,10 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         tagsRemoved = new ArrayList<String>();
     }
 
+    public AppacitiveEntity(long entityId) {
+        this.id = entityId;
+    }
+
     public void setSelf(APJSONObject entity) {
         if (entity != null) {
             //  Wipe out previous data

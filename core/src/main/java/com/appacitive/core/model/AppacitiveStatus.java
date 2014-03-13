@@ -22,15 +22,35 @@ public class AppacitiveStatus implements Serializable, APSerializable {
         this.setSelf(jsonObject);
     }
 
-    public String code = null;
+    public String getCode() {
+        return code;
+    }
 
-    public String message = null;
+    public String getMessage() {
+        return message;
+    }
 
-    public String referenceId = null;
+    public String getReferenceId() {
+        return referenceId;
+    }
 
-    public String version = null;
+    public String getVersion() {
+        return version;
+    }
 
-    public List<String> additionalMessages = null;
+    public List<String> getAdditionalMessages() {
+        return additionalMessages;
+    }
+
+    private String code = null;
+
+    private String message = null;
+
+    private String referenceId = null;
+
+    private String version = null;
+
+    private List<String> additionalMessages = null;
 
     public boolean isSuccessful() {
         return code != null && code.matches("2..");

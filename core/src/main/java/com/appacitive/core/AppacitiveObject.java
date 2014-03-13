@@ -39,8 +39,11 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         this.type = type;
     }
 
-    public AppacitiveObject(long typeId) {
-        this.typeId = typeId;
+    public AppacitiveObject(long objectId) {
+        super(objectId);
+    }
+
+    public AppacitiveObject() {
     }
 
     public APJSONObject getMap() throws APJSONException {
@@ -110,7 +113,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -131,8 +134,12 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                     APJSONObject jsonObject = new APJSONObject(result);
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
-                        AppacitiveObject object = new AppacitiveObject("");
-                        object.setSelf(jsonObject.optJSONObject("object"));
+                        AppacitiveObject object = null;
+                        APJSONObject objectJson = jsonObject.optJSONObject("object");
+                        if (objectJson != null) {
+                            object = new AppacitiveObject();
+                            object.setSelf(jsonObject.optJSONObject("connection"));
+                        }
                         if (callback != null)
                             callback.success(object);
                     } else {
@@ -148,7 +155,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -179,7 +186,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -222,7 +229,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -262,7 +269,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -296,7 +303,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -317,7 +324,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                     if (status.isSuccessful()) {
                         APJSONArray objectsArray = jsonObject.optJSONArray("objects");
                         for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject("");
+                            AppacitiveObject object = new AppacitiveObject();
                             object.setSelf(objectsArray.optJSONObject(i));
                             returnObjects.add(object);
                         }
@@ -334,7 +341,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -354,7 +361,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                     if (status.isSuccessful()) {
                         APJSONArray objectsArray = jsonObject.optJSONArray("objects");
                         for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject("");
+                            AppacitiveObject object = new AppacitiveObject();
                             object.setSelf(objectsArray.optJSONObject(i));
                             returnObjects.add(object);
                         }
@@ -373,7 +380,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -393,7 +400,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                     if (status.isSuccessful()) {
                         APJSONArray objectsArray = jsonObject.optJSONArray("objects");
                         for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject("");
+                            AppacitiveObject object = new AppacitiveObject();
                             object.setSelf(objectsArray.optJSONObject(i));
                             returnObjects.add(object);
                         }
@@ -412,7 +419,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
     }
@@ -437,11 +444,11 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                                 ConnectedObject connectedObject = new ConnectedObject();
                                 APJSONObject nodeObject = nodesArray.optJSONObject(i);
                                 if (nodeObject.isNull("__edge") == false) {
-                                    connectedObject.connection = new AppacitiveConnection("");
+                                    connectedObject.connection = new AppacitiveConnection();
                                     connectedObject.connection.setSelf(nodeObject.optJSONObject("__edge"));
                                     nodeObject.remove("__edge");
                                 }
-                                connectedObject.object = new AppacitiveObject("");
+                                connectedObject.object = new AppacitiveObject();
                                 connectedObject.object.setSelf(nodeObject);
                                 connectedObjectsResponse.results.add(connectedObject);
                             }
@@ -462,7 +469,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
             @Override
             public void failure(Exception e) {
                 if (callback != null)
-                    callback.failure(null,e);
+                    callback.failure(null, e);
             }
         });
 //        Future<Map<String, Object>> future = ExecutorServiceWrapper.submit(new Callable<Map<String, Object>>() {
@@ -490,7 +497,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
 //                        Map<String, Object> obj_n = (Map<String, Object>) n;
 //                        ConnectedObject connectedObject = new ConnectedObject();
 //                        if (obj_n.containsKey("__edge")) {
-//                            connectedObject.connection = new AppacitiveConnection("");
+//                            connectedObject.connection = new AppacitiveConnection();
 //                            connectedObject.connection.setSelf((Map<String, Object>) obj_n.get("__edge"));
 //                            obj_n.remove("__edge");
 //                        }

@@ -387,7 +387,7 @@ public class ObjectTest {
                                         @Override
                                         public void failure(AppacitiveObject result, Exception e) {
                                             AppacitiveException ae = (AppacitiveException) e;
-                                            assert ae.code.equals(ErrorCodes.INCORRECT_REVISION);
+                                            assert ae.getCode().equals(ErrorCodes.INCORRECT_REVISION);
                                             somethingHappened.set(true);
                                         }
                                     });
@@ -635,7 +635,7 @@ public class ObjectTest {
                                 @Override
                                 public void failure(AppacitiveObject result, Exception e) {
                                     AppacitiveException ae = (AppacitiveException) e;
-                                    assert ae.code.equals(ErrorCodes.NOT_FOUND);
+                                    assert ae.getCode().equals(ErrorCodes.NOT_FOUND);
                                     somethingHappened.set(true);
                                 }
                             });

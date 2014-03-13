@@ -29,6 +29,10 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
     }
 
+    public AppacitiveUser(long userId) {
+        super(userId);
+    }
+
     public void setSelf(APJSONObject user) {
 
         super.setSelf(user);
@@ -261,7 +265,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         });
     }
 
-    public static void getByIdInBackground(long userId, List<String> fields, final Callback<AppacitiveUser> callback) throws  UserAuthException {
+    public static void getByIdInBackground(long userId, List<String> fields, final Callback<AppacitiveUser> callback) throws UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -276,7 +280,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
             throw new UserAuthException();
     }
 
-    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws  UserAuthException {
+    public static void getByUsernameInBackground(String username, List<String> fields, Callback<AppacitiveUser> callback) throws UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl(username, UserIdType.username, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -284,7 +288,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         getInBackgroundHelper(url, headers, callback);
     }
 
-    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws  UserAuthException {
+    public static void getLoggedInUserInBackground(List<String> fields, Callback<AppacitiveUser> callback) throws UserAuthException {
 
         final String url = Urls.ForUser.getUserUrl("me", UserIdType.token, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -302,8 +306,12 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                     APJSONObject jsonObject = new APJSONObject(result);
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
-                        AppacitiveUser user = new AppacitiveUser();
-                        user.setSelf(jsonObject.optJSONObject("user"));
+                        AppacitiveUser user = null;
+                        APJSONObject userJson = jsonObject.optJSONObject("user");
+                        if (userJson != null) {
+                            user = new AppacitiveUser();
+                            user.setSelf(jsonObject.optJSONObject("connection"));
+                        }
                         if (callback != null)
                             callback.success(user);
                     } else {

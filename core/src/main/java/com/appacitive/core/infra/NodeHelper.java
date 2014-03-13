@@ -32,7 +32,7 @@ public class NodeHelper {
         if (nodeClone.has("__children"))
             nodeClone.remove("__children");
 
-        current.object = new AppacitiveObject("");
+        current.object = new AppacitiveObject();
         current.object.setSelf(nodeClone);
 
         if (parent != null && node.has("__edge")) {
@@ -80,7 +80,7 @@ public class NodeHelper {
         String relationType = edgeClone.optString(SystemDefinedProperties.relationType, null);
         long connectionId = Long.valueOf(edgeClone.optString(SystemDefinedProperties.id, "0"));
 
-        AppacitiveConnection connection = new AppacitiveConnection("");
+        AppacitiveConnection connection = new AppacitiveConnection();
         connection.setSelf(edgeClone);
         connection.relationType = relationType;
         connection.setId(connectionId);

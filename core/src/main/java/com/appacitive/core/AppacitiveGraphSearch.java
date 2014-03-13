@@ -30,7 +30,8 @@ public class AppacitiveGraphSearch implements Serializable {
 
         APJSONObject payload = new APJSONObject();
         try {
-            payload.put("placeholders", new APJSONObject(placeHolders));
+            if (placeHolders != null)
+                payload.put("placeholders", new APJSONObject(placeHolders));
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }
@@ -79,8 +80,10 @@ public class AppacitiveGraphSearch implements Serializable {
 
         APJSONObject payload = new APJSONObject();
         try {
-            payload.put("placeholders", new APJSONObject(placeHolders));
-            payload.put("ids", new APJSONArray(strIds));
+            if (placeHolders != null)
+                payload.put("placeholders", new APJSONObject(placeHolders));
+            if (ids != null)
+                payload.put("ids", new APJSONArray(strIds));
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }

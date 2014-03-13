@@ -11,12 +11,12 @@ import java.util.List;
 public class AppacitiveException extends Exception implements Serializable {
 
     public AppacitiveException(AppacitiveStatus status) {
-        super(status.message);
+        super(status.getMessage());
         if (status != null) {
-            code = status.code;
-            referenceId = status.referenceId;
-            apiVersion = status.version;
-            additionalMessages = status.additionalMessages;
+            code = status.getCode();
+            referenceId = status.getReferenceId();
+            apiVersion = status.getVersion();
+            additionalMessages = status.getAdditionalMessages();
         }
     }
 
@@ -24,17 +24,32 @@ public class AppacitiveException extends Exception implements Serializable {
         super(message);
     }
 
-    public AppacitiveException(Throwable throwable)
-    {
+    public AppacitiveException(Throwable throwable) {
         super(throwable);
     }
 
-    public String code;
+    private String code;
 
-    public List<String> additionalMessages;
+    private List<String> additionalMessages;
 
-    public String referenceId;
+    private String referenceId;
 
-    public String apiVersion;
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public List<String> getAdditionalMessages() {
+        return additionalMessages;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    private String apiVersion;
 }
 

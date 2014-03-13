@@ -28,6 +28,10 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     public AppacitiveDevice() {
     }
 
+    public AppacitiveDevice(long deviceId) {
+        super(deviceId);
+    }
+
     public void setSelf(APJSONObject device) {
 
         super.setSelf(device);
@@ -185,7 +189,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void getInBackground(long deviceId, final Callback<AppacitiveDevice> callback)  {
+    public static void getInBackground(long deviceId, final Callback<AppacitiveDevice> callback) {
 
         final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(deviceId)).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -198,8 +202,12 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
                     APJSONObject jsonObject = new APJSONObject(result);
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
-                        AppacitiveDevice device = new AppacitiveDevice();
-                        device.setSelf(jsonObject.optJSONObject("device"));
+                        AppacitiveDevice device = null;
+                        APJSONObject deviceJson = jsonObject.optJSONObject("device");
+                        if (deviceJson != null) {
+                            device = new AppacitiveDevice();
+                            device.setSelf(jsonObject.optJSONObject("connection"));
+                        }
                         if (callback != null)
                             callback.success(device);
                     } else {

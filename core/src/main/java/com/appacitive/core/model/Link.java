@@ -28,6 +28,7 @@ public class Link implements Serializable, APSerializable {
 
             if (link.isNull("username") == false)
                 this.username = link.optString("username");
+
             Iterator iterator = link.keys();
             String key;
             while (iterator.hasNext()) {
@@ -43,12 +44,28 @@ public class Link implements Serializable, APSerializable {
         return null;
     }
 
-    public String name = null;
+    private String name = null;
 
-    public String authType = null;
+    private String authType = null;
 
-    public String username = null;
+    public String getUsername() {
+        return username;
+    }
 
-    public Map<String, String> attributes = new HashMap<String, String>();
+    public String getName() {
+        return name;
+    }
+
+    public String getAuthType() {
+        return authType;
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    private String username = null;
+
+    private Map<String, String> attributes = new HashMap<String, String>();
 
 }

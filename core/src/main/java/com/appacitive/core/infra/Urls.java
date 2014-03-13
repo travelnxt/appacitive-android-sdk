@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class Urls {
 
-    private final static String baseURL = "https://apis.appacitive.com/v1.0";
+    private final static String BASE_URL = "https://apis.appacitive.com/v1.0";
 
     public static class ForObject {
         private final static String endpoint = "object";
@@ -23,7 +23,7 @@ public class Urls {
             if (fields != null && fields.size() > 0) {
                 qsp.put("fields", StringUtils.join(fields, ","));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url multiGetObjectUrl(String type, List<Long> objectIds, List<String> fields) {
@@ -37,21 +37,21 @@ public class Urls {
             if (fields != null && fields.size() > 0) {
                 qsp.put("fields", StringUtils.join(fields, ","));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url createObjectUrl(String type) {
-            return new Url(baseURL, endpoint, type, null);
+            return new Url(BASE_URL, endpoint, type, null);
         }
 
         public static Url deleteObjectUrl(String type, long id, boolean deleteConnections) {
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("deleteconnections", String.valueOf(deleteConnections));
-            return new Url(baseURL, endpoint, String.format("%s/%s", type, id), qsp);
+            return new Url(BASE_URL, endpoint, String.format("%s/%s", type, id), qsp);
         }
 
         public static Url bulkDeleteObjectUrl(String type) {
-            return new Url(baseURL, endpoint, String.format("%s/bulkdelete", type), null);
+            return new Url(BASE_URL, endpoint, String.format("%s/bulkdelete", type), null);
         }
 
         public static Url updateObjectUrl(String type, long objectId, boolean withRevision, long revision) {
@@ -60,7 +60,7 @@ public class Urls {
             if (withRevision) {
                 qsp.put("revision", String.valueOf(revision));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url findObjectsUrl(String type, final AppacitiveQuery query, List<String> fields) {
@@ -72,7 +72,7 @@ public class Urls {
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
-            return new Url(baseURL, endpoint, type + "/find/all", qsp);
+            return new Url(BASE_URL, endpoint, type + "/find/all", qsp);
         }
 
         public static Url findBetweenTwoObjectsUrl(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields) {
@@ -80,7 +80,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
-            return new Url(baseURL, endpoint, String.format("%s/%s/%s/%s/%s/%s/%s", type, String.valueOf(objectAId), relationA, labelA, String.valueOf(objectBId), relationB, labelB), qsp);
+            return new Url(BASE_URL, endpoint, String.format("%s/%s/%s/%s/%s/%s/%s", type, String.valueOf(objectAId), relationA, labelA, String.valueOf(objectBId), relationB, labelB), qsp);
         }
     }
 
@@ -88,7 +88,7 @@ public class Urls {
         private final static String endpoint = "connection";
 
         public static Url createConnectionUrl(String relationType) {
-            return new Url(baseURL, endpoint, relationType, null);
+            return new Url(BASE_URL, endpoint, relationType, null);
         }
 
         public static Url getConnectionUrl(String relationType, long connectionId, List<String> fields) {
@@ -97,7 +97,7 @@ public class Urls {
             if (fields != null && fields.size() > 0) {
                 qsp.put("fields", StringUtils.join(fields, ","));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url multiGetConnectionUrl(String relationType, List<Long> connectionIds, List<String> fields) {
@@ -111,15 +111,15 @@ public class Urls {
             if (fields != null && fields.size() > 0) {
                 qsp.put("fields", StringUtils.join(fields, ","));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url deleteConnectionUrl(String relationType, long connectionId) {
-            return new Url(baseURL, endpoint, String.format("%s/%s", relationType, connectionId), null);
+            return new Url(BASE_URL, endpoint, String.format("%s/%s", relationType, connectionId), null);
         }
 
         public static Url bulkDeleteConnectionUrl(String relationType) {
-            return new Url(baseURL, endpoint, String.format("%s/bulkdelete", relationType), null);
+            return new Url(BASE_URL, endpoint, String.format("%s/bulkdelete", relationType), null);
         }
 
         public static Url updateConnectionUrl(String relationType, long connectionId, boolean withRevision, long revision) {
@@ -128,7 +128,7 @@ public class Urls {
             if (withRevision) {
                 qsp.put("revision", String.valueOf(revision));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url findConnectionsUrl(String relationType, final AppacitiveQuery query, final List<String> fields) {
@@ -140,14 +140,14 @@ public class Urls {
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
-            return new Url(baseURL, endpoint, relationType + "/find/all", qsp);
+            return new Url(BASE_URL, endpoint, relationType + "/find/all", qsp);
         }
 
         public static Url findForObjectsUrl(long objectId1, long objectId2, List<String> fields) {
             Map<String, String> qsp = new HashMap<String, String>();
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
-            return new Url(baseURL, endpoint, String.format("find/%s/%s", String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
+            return new Url(BASE_URL, endpoint, String.format("find/%s/%s", String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
 
         }
 
@@ -155,7 +155,7 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
-            return new Url(baseURL, endpoint, String.format("%s/find/%s/%s", relationType, String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
+            return new Url(BASE_URL, endpoint, String.format("%s/find/%s/%s", relationType, String.valueOf(objectId1), String.valueOf(objectId2)), qsp);
         }
 
         public static Url findInterconnectsUrl(List<String> fields) {
@@ -163,7 +163,7 @@ public class Urls {
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
-            return new Url(baseURL, endpoint, "interconnects", qsp);
+            return new Url(BASE_URL, endpoint, "interconnects", qsp);
         }
 
         public static Url findByObjectAndLabelUrl(String relationType, final long objectId, final String label, List<String> fields) {
@@ -172,7 +172,7 @@ public class Urls {
                 qsp.put("fields", StringUtils.join(fields, ","));
             qsp.put("objectid", String.valueOf(objectId));
             qsp.put("label", label);
-            return new Url(baseURL, endpoint, "find", qsp);
+            return new Url(BASE_URL, endpoint, "find", qsp);
         }
 
         public static Url findByObjectAndLabelUrl123(String relationType, final long objectId, final String label, List<String> fields) {
@@ -181,7 +181,7 @@ public class Urls {
                 qsp.put("fields", StringUtils.join(fields, ","));
             qsp.put("objectid", String.valueOf(objectId));
             qsp.put("label", label);
-            return new Url(baseURL, endpoint, "find", qsp);
+            return new Url(BASE_URL, endpoint, "find", qsp);
         }
 
         public static Url getConnectedObjectsUrl(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields) {
@@ -194,7 +194,7 @@ public class Urls {
             if (fields != null && fields.size() > 0)
                 qsp.put("fields", StringUtils.join(fields, ","));
 
-            return new Url(baseURL, endpoint, String.format("%s/%s/%s/find", relationType, objectType, objectId), qsp);
+            return new Url(BASE_URL, endpoint, String.format("%s/%s/%s/find", relationType, objectType, objectId), qsp);
         }
     }
 
@@ -222,7 +222,7 @@ public class Urls {
                     qsp.put("useridtype", "token");
                     break;
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url multiGetUserUrl(List<Long> userIds, List<String> fields) {
@@ -230,7 +230,7 @@ public class Urls {
         }
 
         public static Url createUserUrl() {
-            return new Url(baseURL, endpoint, "create", null);
+            return new Url(BASE_URL, endpoint, "create", null);
         }
 
         public static Url deleteObjectUrl(String userId, UserIdType type, boolean deleteConnections) {
@@ -251,7 +251,7 @@ public class Urls {
                     qsp.put("useridtype", "token");
                     break;
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url updateUserUrl(long userId, boolean withRevision, long revision) {
@@ -260,31 +260,31 @@ public class Urls {
             if (withRevision) {
                 qsp.put("revision", String.valueOf(revision));
             }
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url authenticateUserUrl() {
             String suffix = "authenticate";
-            return new Url(baseURL, endpoint, suffix, null);
+            return new Url(BASE_URL, endpoint, suffix, null);
         }
 
         public static Url updatePasswordUrl(Long userId) {
             String suffix = String.format("%s/%s", String.valueOf(userId), "changepassword");
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("useridtype", "id");
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
         }
 
         public static Url sendResetPasswordEmailUrl() {
-            return new Url(baseURL, endpoint, "sendresetpasswordemail", null);
+            return new Url(BASE_URL, endpoint, "sendresetpasswordemail", null);
         }
 
         public static Url validateSessionUrl() {
-            return new Url(baseURL, endpoint, "validate", null);
+            return new Url(BASE_URL, endpoint, "validate", null);
         }
 
         public static Url invalidateSessionUrl() {
-            return new Url(baseURL, endpoint, "invalidate", null);
+            return new Url(BASE_URL, endpoint, "invalidate", null);
         }
 
         public static Url checkInUserUrl(long userId, double[] coordinates) {
@@ -292,46 +292,46 @@ public class Urls {
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("lat", String.valueOf(coordinates[0]));
             qsp.put("long", String.valueOf(coordinates[1]));
-            return new Url(baseURL, endpoint, suffix, qsp);
+            return new Url(BASE_URL, endpoint, suffix, qsp);
 
         }
 
         public static Url linkAccountUrl(long userId) {
             String suffix = String.format("%s/%s", String.valueOf(userId), "link");
-            return new Url(baseURL, endpoint, suffix, null);
+            return new Url(BASE_URL, endpoint, suffix, null);
         }
 
         public static Url delinkAccountUrl(long userId, String linkName) {
             String suffix = String.format("%s/%s/%s", String.valueOf(userId), linkName, "delink");
-            return new Url(baseURL, endpoint, suffix, null);
+            return new Url(BASE_URL, endpoint, suffix, null);
         }
 
         public static Url getLinkAccountUrl(long userId, String linkName) {
             String suffix = String.format("%s/%s/%s", String.valueOf(userId), "linkedaccounts", linkName);
-            return new Url(baseURL, endpoint, suffix, null);
+            return new Url(BASE_URL, endpoint, suffix, null);
         }
 
         public static Url getAllLinkAccountUrl(long userId) {
             String suffix = String.format("%s/%s", String.valueOf(userId), "linkedaccounts");
-            return new Url(baseURL, endpoint, suffix, null);
+            return new Url(BASE_URL, endpoint, suffix, null);
         }
     }
 
     public static class Misc {
         public static Url sendPushUrl() {
-            return new Url(baseURL, "push", "", null);
+            return new Url(BASE_URL, "push", "", null);
         }
 
         public static Url sendEmailUrl() {
-            return new Url(baseURL, "email", "send", null);
+            return new Url(BASE_URL, "email", "send", null);
         }
 
         public static Url filterQueryUrl(String queryName) {
-            return new Url(baseURL, "search", queryName + "/filter", null);
+            return new Url(BASE_URL, "search", queryName + "/filter", null);
         }
 
         public static Url projectQueryUrl(String queryName) {
-            return new Url(baseURL, "search", queryName + "/project", null);
+            return new Url(BASE_URL, "search", queryName + "/project", null);
         }
     }
 
@@ -339,18 +339,18 @@ public class Urls {
         private final static String endpoint = "file";
 
         public static Url getUploadUrl(final String contentType) {
-            return new Url(baseURL, endpoint, "uploadurl", new HashMap<String, String>() {{
+            return new Url(BASE_URL, endpoint, "uploadurl", new HashMap<String, String>() {{
                 put("contenttype", contentType);
             }});
 
         }
 
         public static Url getDownloadUrl(final String fileId) {
-            return new Url(baseURL, endpoint, "download/".concat(fileId), null);
+            return new Url(BASE_URL, endpoint, "download/".concat(fileId), null);
         }
 
         public static Url getDeleteUrl(final String fileId) {
-            return new Url(baseURL, endpoint, "delete/".concat(fileId), null);
+            return new Url(BASE_URL, endpoint, "delete/".concat(fileId), null);
         }
     }
 
@@ -358,11 +358,11 @@ public class Urls {
         private final static String endpoint = "device";
 
         public static Url getRegisterUrl() {
-            return new Url(baseURL, endpoint, "register", null);
+            return new Url(BASE_URL, endpoint, "register", null);
         }
 
         public static Url getDeviceUrl(String deviceId) {
-            return new Url(baseURL, endpoint, deviceId, null);
+            return new Url(BASE_URL, endpoint, deviceId, null);
         }
 
         public static Url updateDeviceUrl(long deviceId, boolean withRevision, long revision) {
@@ -370,13 +370,13 @@ public class Urls {
             if (withRevision == true)
                 qsp.put("revision", String.valueOf(revision));
 
-            return new Url(baseURL, endpoint, String.valueOf(deviceId), qsp);
+            return new Url(BASE_URL, endpoint, String.valueOf(deviceId), qsp);
         }
 
         public static Url deleteDeviceUrl(long deviceId, boolean deleteConnections) {
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("deleteconnections", String.valueOf(deleteConnections));
-            return new Url(baseURL, endpoint, String.valueOf(deviceId), qsp);
+            return new Url(BASE_URL, endpoint, String.valueOf(deviceId), qsp);
         }
     }
 

@@ -31,8 +31,11 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         this.relationType = relationType;
     }
 
-    public AppacitiveConnection(long relationId) {
-        this.relationId = relationId;
+    public AppacitiveConnection(long connectionId) {
+        super(connectionId);
+    }
+
+    public AppacitiveConnection() {
     }
 
     public void setSelf(APJSONObject connection) {
@@ -215,8 +218,12 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     APJSONObject jsonObject = new APJSONObject(result);
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
-                        AppacitiveConnection connection = new AppacitiveConnection("");
-                        connection.setSelf(jsonObject.optJSONObject("connection"));
+                        AppacitiveConnection connection = null;
+                        APJSONObject connectionJson = jsonObject.optJSONObject("connection");
+                        if (connectionJson != null) {
+                            connection = new AppacitiveConnection();
+                            connection.setSelf(jsonObject.optJSONObject("connection"));
+                        }
                         if (callback != null)
                             callback.success(connection);
                     } else {
@@ -404,7 +411,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
                         for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection("");
+                            AppacitiveConnection connection = new AppacitiveConnection();
                             connection.setSelf(connectionsArray.optJSONObject(i));
                             appacitiveConnections.add(connection);
                         }
@@ -442,7 +449,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
                         for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection("");
+                            AppacitiveConnection connection = new AppacitiveConnection();
                             connection.setSelf(connectionsArray.optJSONObject(i));
                             appacitiveConnections.add(connection);
                         }
@@ -482,7 +489,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
                         for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection("");
+                            AppacitiveConnection connection = new AppacitiveConnection();
                             connection.setSelf(connectionsArray.optJSONObject(i));
                             appacitiveConnections.add(connection);
                         }
@@ -506,7 +513,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
-    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, final Callback<AppacitiveConnection> callback)  {
+    public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, final Callback<AppacitiveConnection> callback) {
         final String url = Urls.ForConnection.findForObjectsAndRelationUrl(relationType, objectId1, objectId2, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -518,8 +525,12 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     APJSONObject jsonObject = new APJSONObject(result);
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
-                        AppacitiveConnection connection = new AppacitiveConnection("");
-                        connection.setSelf(jsonObject.optJSONObject("connection"));
+                        AppacitiveConnection connection = null;
+                        APJSONObject connectionJson = jsonObject.optJSONObject("connection");
+                        if (connectionJson != null) {
+                            connection = new AppacitiveConnection();
+                            connection.setSelf(jsonObject.optJSONObject("connection"));
+                        }
                         if (callback != null)
                             callback.success(connection);
                     } else {
@@ -562,7 +573,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
                         for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection("");
+                            AppacitiveConnection connection = new AppacitiveConnection();
                             connection.setSelf(connectionsArray.optJSONObject(i));
                             appacitiveConnections.add(connection);
                         }
@@ -602,7 +613,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
                         for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection("");
+                            AppacitiveConnection connection = new AppacitiveConnection();
                             connection.setSelf(connectionsArray.optJSONObject(i));
                             appacitiveConnections.add(connection);
                         }
