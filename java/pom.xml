@@ -13,7 +13,6 @@
     <version>1.0-SNAPSHOT</version>
     <url>http://www.appacitive.com/</url>
 
-    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.appacitive.sdk</groupId>

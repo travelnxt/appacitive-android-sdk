@@ -12,9 +12,6 @@
     <artifactId>com.appacitive.android</artifactId>
     <version>1.0-SNAPSHOT</version>
     <url>http://www.appacitive.com/</url>
-    <packaging>jar</packaging>
-
-
 
     <dependencies>
         <dependency>
