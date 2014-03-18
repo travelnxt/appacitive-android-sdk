@@ -27,31 +27,33 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
     public AppacitiveUser() {
 
+
+    }
+    public AppacitiveUser(long userId)
+    {
+        this();
+        this.setId(userId);
     }
 
-    public AppacitiveUser(long userId) {
-        super(userId);
-    }
-
-    public void setSelf(APJSONObject user) {
+    public synchronized void setSelf(APJSONObject user) {
 
         super.setSelf(user);
 
         if (user != null) {
 
-            if (user.isNull(SystemDefinedProperties.typeId) == false)
-                this.typeId = user.optLong(SystemDefinedProperties.typeId);
-            if (user.isNull(SystemDefinedProperties.type) == false)
-                this.type = user.optString(SystemDefinedProperties.type);
+            if (user.isNull(SystemDefinedPropertiesHelper.typeId) == false)
+                this.typeId = user.optLong(SystemDefinedPropertiesHelper.typeId);
+            if (user.isNull(SystemDefinedPropertiesHelper.type) == false)
+                this.type = user.optString(SystemDefinedPropertiesHelper.type);
 
         }
     }
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = super.getMap();
-        jsonObject.put(SystemDefinedProperties.type, this.type);
-        jsonObject.put(SystemDefinedProperties.typeId, String.valueOf(this.typeId));
+        jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
+        jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
 
         return jsonObject;
     }
@@ -227,10 +229,10 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
         final String url = Urls.ForUser.authenticateUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
-        Map<String, String> payloadMap = new HashMap<String, String>() {{
+        Map<String, Object> payloadMap = new HashMap<String, Object>() {{
             put("type", "facebook");
             put("accesstoken", facebookAccessToken);
-            put("createnew", "true");
+            put("createnew", true);
         }};
         final APJSONObject payload = new APJSONObject(payloadMap);
 
@@ -310,7 +312,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                         APJSONObject userJson = jsonObject.optJSONObject("user");
                         if (userJson != null) {
                             user = new AppacitiveUser();
-                            user.setSelf(jsonObject.optJSONObject("connection"));
+                            user.setSelf(userJson);
                         }
                         if (callback != null)
                             callback.success(user);

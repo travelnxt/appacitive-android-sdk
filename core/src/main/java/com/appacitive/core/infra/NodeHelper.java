@@ -77,8 +77,8 @@ public class NodeHelper {
     private static AppacitiveConnection parseConnection(String parentLabel, AppacitiveObject parentObject, AppacitiveObject currentObject, APJSONObject edgeClone) {
 
         String label = edgeClone.optString("__label", null);
-        String relationType = edgeClone.optString(SystemDefinedProperties.relationType, null);
-        long connectionId = Long.valueOf(edgeClone.optString(SystemDefinedProperties.id, "0"));
+        String relationType = edgeClone.optString(SystemDefinedPropertiesHelper.relationType, null);
+        long connectionId = Long.valueOf(edgeClone.optString(SystemDefinedPropertiesHelper.id, "0"));
 
         AppacitiveConnection connection = new AppacitiveConnection();
         connection.setSelf(edgeClone);

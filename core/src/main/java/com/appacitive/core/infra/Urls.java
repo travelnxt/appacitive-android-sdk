@@ -175,15 +175,6 @@ public class Urls {
             return new Url(BASE_URL, endpoint, "find", qsp);
         }
 
-        public static Url findByObjectAndLabelUrl123(String relationType, final long objectId, final String label, List<String> fields) {
-            Map<String, String> qsp = new HashMap<String, String>();
-            if (fields != null && fields.size() > 0)
-                qsp.put("fields", StringUtils.join(fields, ","));
-            qsp.put("objectid", String.valueOf(objectId));
-            qsp.put("label", label);
-            return new Url(BASE_URL, endpoint, "find", qsp);
-        }
-
         public static Url getConnectedObjectsUrl(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields) {
 
             Map<String, String> qsp = new HashMap<String, String>();

@@ -8,6 +8,7 @@ import com.appacitive.core.model.FileUploadUrlResponse;
 import com.jayway.awaitility.Awaitility;
 import org.junit.*;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -21,6 +22,7 @@ public class FileTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        Awaitility.setDefaultTimeout(10, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -32,7 +34,7 @@ public class FileTest {
 
     @Before
     public void beforeTest() {
-        Awaitility.reset();
+//        Awaitility.reset();
     }
 
     @Test

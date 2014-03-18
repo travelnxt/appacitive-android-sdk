@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class APJSONArray {
 
-    private final List<Object> values;
+    public final List<Object> values;
 
     /**
      * Creates a {@code APJSONArray} with no values.

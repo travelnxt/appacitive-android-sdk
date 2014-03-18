@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.equalTo;
 /**
  * Created by sathley.
  */
-//@Ignore
 public class ConnectionTest {
 
     @BeforeClass
@@ -288,22 +287,18 @@ public class ConnectionTest {
         new AppacitiveConnection("sibling").fromNewObject("object", parent).toNewObject("object", child).createInBackground(new Callback<AppacitiveConnection>() {
             @Override
             public void success(final AppacitiveConnection result1) {
-                try {
-                    AppacitiveConnection.getInBackground("sibling", result1.getId(), null, new Callback<AppacitiveConnection>() {
-                        @Override
-                        public void success(AppacitiveConnection result2) {
-                            assert result1.getId() == result2.getId();
-                            somethingHappened.set(true);
-                        }
+                AppacitiveConnection.getInBackground("sibling", result1.getId(), null, new Callback<AppacitiveConnection>() {
+                    @Override
+                    public void success(AppacitiveConnection result2) {
+                        assert result1.getId() == result2.getId();
+                        somethingHappened.set(true);
+                    }
 
-                        @Override
-                        public void failure(AppacitiveConnection result, Exception e) {
-                            Assert.fail(e.getMessage());
-                        }
-                    });
-                } catch (ValidationException e) {
-                    Assert.fail(e.getMessage());
-                }
+                    @Override
+                    public void failure(AppacitiveConnection result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
             }
         });
         await().untilTrue(somethingHappened);
@@ -387,23 +382,19 @@ public class ConnectionTest {
             @Override
             public void success(Void result) {
                 for (long id : ids) {
-                    try {
-                        AppacitiveConnection.getInBackground("sibling", id, null, new Callback<AppacitiveConnection>() {
-                            @Override
-                            public void success(AppacitiveConnection result) {
-                                assert false;
-                            }
+                    AppacitiveConnection.getInBackground("sibling", id, null, new Callback<AppacitiveConnection>() {
+                        @Override
+                        public void success(AppacitiveConnection result) {
+                            assert false;
+                        }
 
-                            @Override
-                            public void failure(AppacitiveConnection result, Exception e) {
-                                AppacitiveException ae = (AppacitiveException) e;
-                                assert ae.getCode().equals(ErrorCodes.NOT_FOUND);
-                                count.decrementAndGet();
-                            }
-                        });
-                    } catch (ValidationException e) {
-                        Assert.fail(e.getMessage());
-                    }
+                        @Override
+                        public void failure(AppacitiveConnection result, Exception e) {
+                            AppacitiveException ae = (AppacitiveException) e;
+                            assert ae.getCode().equals(ErrorCodes.NOT_FOUND);
+                            count.decrementAndGet();
+                        }
+                    });
                 }
             }
 

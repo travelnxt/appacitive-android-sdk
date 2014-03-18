@@ -39,7 +39,7 @@ public class DeviceTest {
         Awaitility.reset();
     }
 
-    private AppacitiveDevice getRandomDevice() {
+    public static AppacitiveDevice getRandomDevice() {
 
         AppacitiveDevice device = new AppacitiveDevice();
         device.setDeviceToken(UUID.randomUUID().toString());
@@ -99,18 +99,18 @@ public class DeviceTest {
             @Override
             public void success(final AppacitiveDevice result1) {
 
-                    AppacitiveDevice.getInBackground(result1.getId(), new Callback<AppacitiveDevice>() {
-                        @Override
-                        public void success(AppacitiveDevice result) {
-                            assert result.getId() == result1.getId();
-                            somethingHappened.set(true);
-                        }
+                AppacitiveDevice.getInBackground(result1.getId(), new Callback<AppacitiveDevice>() {
+                    @Override
+                    public void success(AppacitiveDevice result) {
+                        assert result.getId() == result1.getId();
+                        somethingHappened.set(true);
+                    }
 
-                        @Override
-                        public void failure(AppacitiveDevice result, Exception e) {
-                            Assert.fail(e.getMessage());
-                        }
-                    });
+                    @Override
+                    public void failure(AppacitiveDevice result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
 
             }
         });
@@ -160,37 +160,37 @@ public class DeviceTest {
             @Override
             public void success(final AppacitiveDevice result) {
 
-                    AppacitiveDevice.getInBackground(result.getId(), new Callback<AppacitiveDevice>() {
-                        @Override
-                        public void success(final AppacitiveDevice result1) {
-                            result1.setDeviceType("android");
-                            result1.setDeviceToken(newToken);
-                            result1.updateInBackground(false, new Callback<AppacitiveDevice>() {
-                                @Override
-                                public void success(AppacitiveDevice result2) {
-                                    result.fetchLatestInBackground(new Callback<Void>() {
-                                        @Override
-                                        public void success(Void result3) {
-                                            assert result.getDeviceToken().equals(newToken);
-                                            assert result.getDeviceType().equals("android");
-                                            somethingHappened.set(true);
-                                        }
+                AppacitiveDevice.getInBackground(result.getId(), new Callback<AppacitiveDevice>() {
+                    @Override
+                    public void success(final AppacitiveDevice result1) {
+                        result1.setDeviceType("android");
+                        result1.setDeviceToken(newToken);
+                        result1.updateInBackground(false, new Callback<AppacitiveDevice>() {
+                            @Override
+                            public void success(AppacitiveDevice result2) {
+                                result.fetchLatestInBackground(new Callback<Void>() {
+                                    @Override
+                                    public void success(Void result3) {
+                                        assert result.getDeviceToken().equals(newToken);
+                                        assert result.getDeviceType().equals("android");
+                                        somethingHappened.set(true);
+                                    }
 
-                                        @Override
-                                        public void failure(Void result, Exception e) {
-                                            Assert.fail(e.getMessage());
-                                        }
-                                    });
-                                }
+                                    @Override
+                                    public void failure(Void result, Exception e) {
+                                        Assert.fail(e.getMessage());
+                                    }
+                                });
+                            }
 
-                                @Override
-                                public void failure(AppacitiveDevice result, Exception e) {
-                                    Assert.fail(e.getMessage());
-                                }
-                            });
+                            @Override
+                            public void failure(AppacitiveDevice result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
 
-                        }
-                    });
+                    }
+                });
 
             }
         });
@@ -208,18 +208,18 @@ public class DeviceTest {
                     @Override
                     public void success(Void result) {
 
-                            AppacitiveDevice.getInBackground(device.getId(), new Callback<AppacitiveDevice>() {
-                                @Override
-                                public void success(AppacitiveDevice result) {
-                                    assert false;
-                                }
+                        AppacitiveDevice.getInBackground(device.getId(), new Callback<AppacitiveDevice>() {
+                            @Override
+                            public void success(AppacitiveDevice result) {
+                                assert false;
+                            }
 
-                                @Override
-                                public void failure(AppacitiveDevice result, Exception e) {
-                                    assert true;
-                                    somethingHappened.set(true);
-                                }
-                            });
+                            @Override
+                            public void failure(AppacitiveDevice result, Exception e) {
+                                assert true;
+                                somethingHappened.set(true);
+                            }
+                        });
 
                     }
 

@@ -17,12 +17,6 @@ public class FixedSizeImageList implements Serializable {
 
     private String[] _images;
 
-//        public String[] toArray()
-//        {
-//
-//            return _images.Where(x => string.IsNullOrWhiteSpace(x) == false).ToArray();
-//        }
-
     private void Set(int index, String image) {
         _images[index] = image;
     }

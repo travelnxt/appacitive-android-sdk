@@ -28,7 +28,7 @@ public class GraphTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(60, TimeUnit.HOURS);
+//        Awaitility.setDefaultTimeout(60, TimeUnit.HOURS);
     }
 
     @AfterClass
@@ -147,26 +147,5 @@ public class GraphTest {
             }
         });
         await().untilTrue(somethingHappened);
-    }
-
-    @Test
-    public void miscTest() {
-        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
-        AppacitiveContext.initialize("2E9+nPZ57oe7hz1AAH9WKJybNmMcUGktwZWOuCc5f8M=", Environment.sandbox);
-        AppacitiveGraphSearch.projectQueryInBackground("photo_with_likes_and_comments", new ArrayList<Long>() {{
-                    add(53384908060623240L);
-                }}, null, new Callback<List<AppacitiveGraphNode>>() {
-                    @Override
-                    public void success(List<AppacitiveGraphNode> result) {
-                        super.success(result);
-                    }
-
-                    @Override
-                    public void failure(List<AppacitiveGraphNode> result, Exception e) {
-                        super.failure(result, e);
-                    }
-                }
-        );
-        await().untilTrue(atomicBoolean);
     }
 }

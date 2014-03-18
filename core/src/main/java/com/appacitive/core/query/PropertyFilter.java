@@ -55,7 +55,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isEqualTo(Date value) {
+    public synchronized PropertyFilter isEqualTo(Date value) {
         this.operator = "==";
         this.value = dtf.format(value);
         return this;
@@ -91,7 +91,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isNotEqualTo(Date value) {
+    public synchronized PropertyFilter isNotEqualTo(Date value) {
         this.operator = "<>";
         this.value = dtf.format(value);
         return this;
@@ -109,7 +109,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter between(Date minValue, Date maxValue) {
+    public synchronized PropertyFilter between(Date minValue, Date maxValue) {
         this.operator = "between";
         this.value = String.format("(%s,%s)", dtf.format(minValue), dtf.format(maxValue));
         return this;
@@ -139,7 +139,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isGreaterThan(Date value) {
+    public synchronized PropertyFilter isGreaterThan(Date value) {
         this.operator = ">";
         this.value = dtf.format(value);
         return this;
@@ -169,7 +169,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isGreaterThanEqualTo(Date value) {
+    public synchronized PropertyFilter isGreaterThanEqualTo(Date value) {
         this.operator = ">=";
         this.value = dtf.format(value);
         return this;
@@ -199,7 +199,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isLessThan(Date value) {
+    public synchronized PropertyFilter isLessThan(Date value) {
         this.operator = "<";
         this.value = dtf.format(value);
         return this;
@@ -229,7 +229,7 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
-    public PropertyFilter isLessThanEqualTo(Date value) {
+    public synchronized PropertyFilter isLessThanEqualTo(Date value) {
         this.operator = "<=";
         this.value = dtf.format(value);
         return this;

@@ -7,14 +7,14 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-public class SystemDefinedProperties implements Serializable {
+public class SystemDefinedPropertiesHelper implements Serializable {
 
     public final static List<String> ConnectionSystemProperties = Arrays.asList("__relationtype", "__relationid", "__id", "__createdby", "__lastmodifiedby",
-            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
+            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes",
             "__revision", "__endpointa", "__endpointb");
 
     public final static List<String> ObjectSystemProperties = Arrays.asList("__type", "__typeid", "__id", "__createdby", "__lastmodifiedby",
-            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes", "__properties",
+            "__utcdatecreated", "__utclastupdateddate", "__tags", "__attributes",
             "__revision");
     public final static String id = "__id";
 

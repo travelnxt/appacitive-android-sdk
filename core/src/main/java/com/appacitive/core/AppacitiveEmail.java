@@ -55,9 +55,9 @@ public class AppacitiveEmail implements Serializable {
 
     public EmailBody body = null;
 
-    private APJSONObject getMap() throws APJSONException {
+    private synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = new APJSONObject();
-//        nativeMap.put(SystemDefinedProperties.id, String.valueOf(this.id));
+//        nativeMap.put(SystemDefinedPropertiesHelper.id, String.valueOf(this.id));
         if (smtp != null)
             nativeMap.put("smtp", smtp.getMap());
         if (to != null && to.size() > 0)
@@ -77,9 +77,9 @@ public class AppacitiveEmail implements Serializable {
         return nativeMap;
     }
 
-    private void setSelf(APJSONObject email) {
+    private synchronized void setSelf(APJSONObject email) {
         if (email != null) {
-            this.id = Long.parseLong(email.optString(SystemDefinedProperties.id, "0"));
+            this.id = Long.parseLong(email.optString(SystemDefinedPropertiesHelper.id, "0"));
             this.to = new ArrayList<String>();
             if (email.isNull("to") == false) {
                 APJSONArray toArray = email.optJSONArray("to");
@@ -135,7 +135,7 @@ public class AppacitiveEmail implements Serializable {
         return this;
     }
 
-    public void sendInBackground(final Callback<AppacitiveEmail> callback) {
+    public synchronized void sendInBackground(final Callback<AppacitiveEmail> callback) {
         final String url = Urls.Misc.sendEmailUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;

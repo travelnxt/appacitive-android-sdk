@@ -39,7 +39,7 @@ public class EmailTest {
     @Test
     public void sendRawEmailTest() throws Exception {
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
-        final AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
+        AppacitiveEmail email = new AppacitiveEmail("subject").withBody(new RawEmailBody("raw content", false));
         email.to.add(testEmail);
         email.cc.add(testEmail);
         email.bcc.add(testEmail);

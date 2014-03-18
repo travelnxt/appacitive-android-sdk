@@ -28,37 +28,39 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
 
     public AppacitiveConnection(String relationType) {
-        this.relationType = relationType;
-    }
 
-    public AppacitiveConnection(long connectionId) {
-        super(connectionId);
+        this.relationType = relationType;
     }
 
     public AppacitiveConnection() {
     }
 
-    public void setSelf(APJSONObject connection) {
+    public AppacitiveConnection(String relationType, long connectionId) {
+        this(relationType);
+        this.setId(connectionId);
+    }
+
+    public synchronized void setSelf(APJSONObject connection) {
         super.setSelf(connection);
         if (connection != null) {
-            this.relationId = Long.parseLong(connection.optString(SystemDefinedProperties.relationId, "0"));
-            this.relationType = (connection.optString(SystemDefinedProperties.relationType, null));
+            this.relationId = Long.parseLong(connection.optString(SystemDefinedPropertiesHelper.relationId, "0"));
+            this.relationType = (connection.optString(SystemDefinedPropertiesHelper.relationType, null));
 
-            APJSONObject object = connection.optJSONObject(SystemDefinedProperties.endpointA);
+            APJSONObject object = connection.optJSONObject(SystemDefinedPropertiesHelper.endpointA);
             this.endpointA.setSelf(object);
 
-            object = connection.optJSONObject(SystemDefinedProperties.endpointB);
+            object = connection.optJSONObject(SystemDefinedPropertiesHelper.endpointB);
             this.endpointB.setSelf(object);
         }
     }
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
-        nativeMap.put(SystemDefinedProperties.relationType, this.relationType);
-        nativeMap.put(SystemDefinedProperties.relationId, String.valueOf(this.relationId));
-        nativeMap.put(SystemDefinedProperties.endpointA, this.endpointA.getMap());
-        nativeMap.put(SystemDefinedProperties.endpointB, this.endpointB.getMap());
+        nativeMap.put(SystemDefinedPropertiesHelper.relationType, this.relationType);
+        nativeMap.put(SystemDefinedPropertiesHelper.relationId, String.valueOf(this.relationId));
+        nativeMap.put(SystemDefinedPropertiesHelper.endpointA, this.endpointA.getMap());
+        nativeMap.put(SystemDefinedPropertiesHelper.endpointB, this.endpointB.getMap());
         return nativeMap;
     }
 
@@ -201,11 +203,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
-    public static void getInBackground(String relationType, long id, List<String> fields, final Callback<AppacitiveConnection> callback) throws ValidationException {
-        if (relationType == null || relationType.isEmpty())
-            throw new ValidationException("RelationType cannot be null or empty.");
-        if (id <= 0)
-            throw new ValidationException("Connection id should be greater than equal to 0.");
+    public static void getInBackground(String relationType, long id, List<String> fields, final Callback<AppacitiveConnection> callback) {
 
         final String url = Urls.ForConnection.getConnectionUrl(relationType, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
@@ -246,6 +244,37 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
 
     public void deleteInBackground(final Callback<Void> callback) {
         final String url = Urls.ForConnection.deleteConnectionUrl(this.relationType, this.getId()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
+        asyncHttp.delete(url, headers, new APCallback() {
+            @Override
+            public void success(String result) {
+                try {
+                    APJSONObject jsonObject = new APJSONObject(result);
+                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                    if (status.isSuccessful()) {
+                        if (callback != null)
+                            callback.success(null);
+                    } else {
+                        if (callback != null)
+                            callback.failure(null, new AppacitiveException(status));
+                    }
+                } catch (Exception e) {
+                    if (callback != null)
+                        callback.failure(null, e);
+                }
+            }
+
+            @Override
+            public void failure(Exception e) {
+                if (callback != null)
+                    callback.failure(null, e);
+            }
+        });
+    }
+
+    public static void deleteInBackground(String relationType, long connectionId, final Callback<Void> callback) {
+        final String url = Urls.ForConnection.deleteConnectionUrl(relationType, connectionId).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
         asyncHttp.delete(url, headers, new APCallback() {
@@ -394,9 +423,8 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
-    public static void multiGetInBackground(String relationType, List<Long> ids, List<String> fields, final Callback<List<AppacitiveConnection>> callback) throws ValidationException {
-        if (relationType.isEmpty())
-            throw new ValidationException("Relation Type cannot be empty.");
+    public static void multiGetInBackground(String relationType, List<Long> ids, List<String> fields, final Callback<List<AppacitiveConnection>> callback) {
+
         final String url = Urls.ForConnection.multiGetConnectionUrl(relationType, ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -488,10 +516,12 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
-                        for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection();
-                            connection.setSelf(connectionsArray.optJSONObject(i));
-                            appacitiveConnections.add(connection);
+                        if (connectionsArray != null) {
+                            for (int i = 0; i < connectionsArray.length(); i++) {
+                                AppacitiveConnection connection = new AppacitiveConnection();
+                                connection.setSelf(connectionsArray.optJSONObject(i));
+                                appacitiveConnections.add(connection);
+                            }
                         }
                         pagedResult.results = appacitiveConnections;
                         pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
@@ -572,10 +602,12 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
-                        for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection();
-                            connection.setSelf(connectionsArray.optJSONObject(i));
-                            appacitiveConnections.add(connection);
+                        if (connectionsArray != null) {
+                            for (int i = 0; i < connectionsArray.length(); i++) {
+                                AppacitiveConnection connection = new AppacitiveConnection();
+                                connection.setSelf(connectionsArray.optJSONObject(i));
+                                appacitiveConnections.add(connection);
+                            }
                         }
                         pagedResult.results = appacitiveConnections;
                         pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
@@ -612,10 +644,12 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
                         APJSONArray connectionsArray = jsonObject.optJSONArray("connections");
-                        for (int i = 0; i < connectionsArray.length(); i++) {
-                            AppacitiveConnection connection = new AppacitiveConnection();
-                            connection.setSelf(connectionsArray.optJSONObject(i));
-                            appacitiveConnections.add(connection);
+                        if (connectionsArray != null) {
+                            for (int i = 0; i < connectionsArray.length(); i++) {
+                                AppacitiveConnection connection = new AppacitiveConnection();
+                                connection.setSelf(connectionsArray.optJSONObject(i));
+                                appacitiveConnections.add(connection);
+                            }
                         }
                         pagedResult.results = appacitiveConnections;
                         pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));

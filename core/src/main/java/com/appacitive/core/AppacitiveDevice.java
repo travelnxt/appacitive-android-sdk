@@ -26,30 +26,33 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
 
     public AppacitiveDevice() {
+
     }
 
     public AppacitiveDevice(long deviceId) {
-        super(deviceId);
+        this();
+        this.setId(deviceId);
     }
 
-    public void setSelf(APJSONObject device) {
+
+    public synchronized void setSelf(APJSONObject device) {
 
         super.setSelf(device);
 
         if (device != null) {
 
-            if (device.isNull(SystemDefinedProperties.typeId) == false)
-                this.typeId = device.optLong(SystemDefinedProperties.typeId);
-            if (device.isNull(SystemDefinedProperties.type) == false)
-                this.type = device.optString(SystemDefinedProperties.type);
+            if (device.isNull(SystemDefinedPropertiesHelper.typeId) == false)
+                this.typeId = device.optLong(SystemDefinedPropertiesHelper.typeId);
+            if (device.isNull(SystemDefinedPropertiesHelper.type) == false)
+                this.type = device.optString(SystemDefinedPropertiesHelper.type);
 
         }
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = super.getMap();
-        jsonObject.put(SystemDefinedProperties.type, this.type);
-        jsonObject.put(SystemDefinedProperties.typeId, String.valueOf(this.typeId));
+        jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
+        jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
         return jsonObject;
     }
 
@@ -101,11 +104,11 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public List<String> getChannels() {
-        return this.getPropertyAsMultiValuedString("channels");
+        return this.<String>getPropertyAsMultiValuedString("channels");
     }
 
     public void setChannels(List<String> channels) {
-        this.setPropertyAsMultiValuedString("channels", channels);
+        this.setPropertyAsMultiValued("channels", channels);
 
     }
 
@@ -206,7 +209,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
                         APJSONObject deviceJson = jsonObject.optJSONObject("device");
                         if (deviceJson != null) {
                             device = new AppacitiveDevice();
-                            device.setSelf(jsonObject.optJSONObject("connection"));
+                            device.setSelf(deviceJson);
                         }
                         if (callback != null)
                             callback.success(device);
@@ -276,11 +279,12 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
                         APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveDevice device = new AppacitiveDevice();
-                            device.setSelf(objectsArray.optJSONObject(i));
-                            returnDevices.add(device);
-                        }
+                        if (objectsArray != null)
+                            for (int i = 0; i < objectsArray.length(); i++) {
+                                AppacitiveDevice device = new AppacitiveDevice();
+                                device.setSelf(objectsArray.optJSONObject(i));
+                                returnDevices.add(device);
+                            }
                         if (callback != null)
                             callback.success(returnDevices);
                     } else if (callback != null)

@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>Appacitive SDK</name>
-    <url>http://appacitive.com/</url>
-
+    <url>http://www.appacitive.com/</url>
+    <packaging>jar</packaging>
     <modules>
         <module>core</module>
         <module>java</module>

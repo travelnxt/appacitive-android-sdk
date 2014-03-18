@@ -23,33 +23,36 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
 
     public final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
 
-    public void setSelf(APJSONObject object) {
+    public synchronized void setSelf(APJSONObject object) {
 
         super.setSelf(object);
 
         if (object != null) {
-            if (object.isNull(SystemDefinedProperties.typeId) == false)
-                this.typeId = object.optLong(SystemDefinedProperties.typeId);
-            if (object.isNull(SystemDefinedProperties.type) == false)
-                this.type = object.optString(SystemDefinedProperties.type);
+            if (object.isNull(SystemDefinedPropertiesHelper.typeId) == false)
+                this.typeId = object.optLong(SystemDefinedPropertiesHelper.typeId);
+            if (object.isNull(SystemDefinedPropertiesHelper.type) == false)
+                this.type = object.optString(SystemDefinedPropertiesHelper.type);
         }
     }
 
     public AppacitiveObject(String type) {
+
         this.type = type;
     }
 
-    public AppacitiveObject(long objectId) {
-        super(objectId);
+    public AppacitiveObject(String type, long objectId) {
+        this(type);
+        this.setId(objectId);
     }
 
     public AppacitiveObject() {
+
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
-        nativeMap.put(SystemDefinedProperties.type, this.type);
-        nativeMap.put(SystemDefinedProperties.typeId, String.valueOf(this.typeId));
+        nativeMap.put(SystemDefinedPropertiesHelper.type, this.type);
+        nativeMap.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
 
         return nativeMap;
     }
@@ -118,12 +121,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void getInBackground(String type, long id, List<String> fields, final Callback<AppacitiveObject> callback) throws ValidationException {
-        if (type == null || type.isEmpty())
-            throw new ValidationException("Type cannot be empty.");
-        if (id <= 0)
-            throw new ValidationException("Object id should be greater than or equal to 0.");
-
+    public static void getInBackground(String type, long id, List<String> fields, final Callback<AppacitiveObject> callback) {
         final String url = Urls.ForObject.getObjectUrl(type, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -138,7 +136,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                         APJSONObject objectJson = jsonObject.optJSONObject("object");
                         if (objectJson != null) {
                             object = new AppacitiveObject();
-                            object.setSelf(jsonObject.optJSONObject("connection"));
+                            object.setSelf(objectJson);
                         }
                         if (callback != null)
                             callback.success(object);
@@ -162,6 +160,38 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
 
     public void deleteInBackground(boolean deleteConnections, final Callback<Void> callback) {
         final String url = Urls.ForObject.deleteObjectUrl(this.type, this.getId(), deleteConnections).toString();
+        final Map<String, String> headers = Headers.assemble();
+        AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
+        asyncHttp.delete(url, headers, new APCallback() {
+            @Override
+            public void success(String result) {
+                try {
+                    APJSONObject jsonObject = new APJSONObject(result);
+                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                    if (status.isSuccessful()) {
+                        if (callback != null)
+                            callback.success(null);
+                    } else {
+                        if (callback != null)
+                            callback.failure(null, new AppacitiveException(status));
+                    }
+                } catch (Exception e) {
+                    if (callback != null)
+                        callback.failure(null, e);
+                }
+            }
+
+            @Override
+            public void failure(Exception e) {
+                if (callback != null)
+                    callback.failure(null, e);
+            }
+        });
+    }
+
+
+    public static void deleteInBackground(String type, long objectId, boolean deleteConnections, final Callback<Void> callback) {
+        final String url = Urls.ForObject.deleteObjectUrl(type, objectId, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
         asyncHttp.delete(url, headers, new APCallback() {
@@ -308,9 +338,8 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, final Callback<List<AppacitiveObject>> callback) throws ValidationException {
-        if (type.isEmpty())
-            throw new ValidationException("Type cannot be empty.");
+    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, final Callback<List<AppacitiveObject>> callback) {
+
         final String url = Urls.ForObject.multiGetObjectUrl(type, ids, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
@@ -399,11 +428,12 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
                     AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                     if (status.isSuccessful()) {
                         APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject();
-                            object.setSelf(objectsArray.optJSONObject(i));
-                            returnObjects.add(object);
-                        }
+                        if (objectsArray != null)
+                            for (int i = 0; i < objectsArray.length(); i++) {
+                                AppacitiveObject object = new AppacitiveObject();
+                                object.setSelf(objectsArray.optJSONObject(i));
+                                returnObjects.add(object);
+                            }
                         pagedResult.results = returnObjects;
                         pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
                         if (callback != null)

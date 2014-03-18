@@ -7,7 +7,7 @@ import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.infra.APSerializable;
-import com.appacitive.core.infra.SystemDefinedProperties;
+import com.appacitive.core.infra.SystemDefinedPropertiesHelper;
 
 import java.io.Serializable;
 
@@ -49,7 +49,7 @@ public class AppacitiveEndpoint implements Serializable, APSerializable {
             APJSONObject object = endpoint.optJSONObject("object");
             if (object != null) {
                 if (this.object == null) {
-                    String type = object.optString(SystemDefinedProperties.type);
+                    String type = object.optString(SystemDefinedPropertiesHelper.type);
                     if (type.equals("user")) {
                         this.object = new AppacitiveUser();
                         this.object.setSelf(object);

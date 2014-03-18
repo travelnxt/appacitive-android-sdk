@@ -12,6 +12,7 @@ import org.junit.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -24,7 +25,7 @@ public class UserTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
+        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -107,7 +108,7 @@ public class UserTest {
         user.signupInBackground(new Callback<AppacitiveUser>() {
             @Override
             public void success(final AppacitiveUser result) {
-                AppacitiveUser.loginInBackground(username, password, -1,-1, new Callback<AppacitiveUser>() {
+                AppacitiveUser.loginInBackground(username, password, -1, -1, new Callback<AppacitiveUser>() {
                     @Override
                     public void success(AppacitiveUser result1) {
                         assert result.getId() == result1.getId();
@@ -458,4 +459,38 @@ public class UserTest {
         });
         await().untilTrue(somethingHappened);
     }
+
+    @Test
+    public void signupUserWithFacebookAccessTokenTest() {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+        final String fbToken = "CAAT61GwT5k4BAPa5xqkKIT6CUlZCEPipFM8D8XePHGAsYXgHpO8XiqVz7SvW6iz4ABAgHP7pwlZCjJUnZC4foOMeZAjnOH7ncU8wd2szDzlh9ZBZBnNt18jZCok4TrjDCOm5pmOdMEbvseZBZC9pukw19Ypoeg2IpIgGQqraVZAt6gKZBj5V8tYXLMGdyrRtGwnFpyneifDGPKmVdZAegKaJXD3YYKQqGv1NWGp5C58VSy2EQwZDZD";
+        AppacitiveUser.signupWithFacebookInBackground(fbToken, new Callback<AppacitiveUser>() {
+            @Override
+            public void success(AppacitiveUser result) {
+                assert result.getId() > 0;
+                AppacitiveUser.loginWithFacebookInBackground(fbToken, new Callback<AppacitiveUser>() {
+                    @Override
+                    public void success(AppacitiveUser result) {
+                        try {
+                            result.deleteInBackground(false, new Callback<Void>() {
+                                @Override
+                                public void success(Void result) {
+                                   somethingHappened.set(true);
+                                }
+                            });
+                        } catch (UserAuthException e) {
+                            Assert.fail(e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveUser result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+        await().untilTrue(somethingHappened);
+    }
+
 }

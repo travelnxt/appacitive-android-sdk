@@ -7,39 +7,40 @@ import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.infra.APSerializable;
-import com.appacitive.core.infra.SystemDefinedProperties;
+import com.appacitive.core.infra.SystemDefinedPropertiesHelper;
 
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AppacitiveEntity implements Serializable, APSerializable {
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-    private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-
-    private static final DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-
-    protected AppacitiveEntity() {
-        properties = new HashMap<String, Object>();
-        attributes = new HashMap<String, String>();
+    public AppacitiveEntity() {
+        properties = new ConcurrentHashMap<String, Object>();
+        attributes = new ConcurrentHashMap<String, String>();
         tags = new ArrayList<String>();
         id = 0;
         revision = 0;
-        propertiesChanged = new HashMap<String, Object>();
-        attributesChanged = new HashMap<String, String>();
+        propertiesChanged = new ConcurrentHashMap<String, Object>();
+
+        integerPropertyIncrements = new ArrayList<IntegerPropertyIncrement>();
+        integerPropertyDecrements = new ArrayList<IntegerPropertyDecrement>();
+        decimalPropertyIncrements = new ArrayList<DecimalPropertyIncrement>();
+        decimalPropertyDecrements = new ArrayList<DecimalPropertyDecrement>();
+
+        addedItemses = new ArrayList<ItemsCollection>();
+        uniquelyAddedItemses = new ArrayList<ItemsCollection>();
+        removedItemses = new ArrayList<ItemsCollection>();
+
+        attributesChanged = new ConcurrentHashMap<String, String>();
         tagsAdded = new ArrayList<String>();
         tagsRemoved = new ArrayList<String>();
     }
 
-    public AppacitiveEntity(long entityId) {
-        this.id = entityId;
-    }
-
-    public void setSelf(APJSONObject entity) {
+    public synchronized void setSelf(APJSONObject entity) {
         if (entity != null) {
             //  Wipe out previous data
             this.properties = new HashMap<String, Object>();
@@ -50,34 +51,32 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
 
             //  Read in new data
 
-            this.id = Long.parseLong(entity.optString(SystemDefinedProperties.id, "0"));
+            this.id = Long.parseLong(entity.optString(SystemDefinedPropertiesHelper.id, "0"));
 
-            this.revision = Long.parseLong(entity.optString(SystemDefinedProperties.revision, "0"));
+            this.revision = Long.parseLong(entity.optString(SystemDefinedPropertiesHelper.revision, "0"));
 
-            this.createdBy = entity.optString(SystemDefinedProperties.createdBy, null);
+            this.createdBy = entity.optString(SystemDefinedPropertiesHelper.createdBy, null);
 
-            this.lastModifiedBy = entity.optString(SystemDefinedProperties.lastModifiedBy, null);
-
-            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-
+            this.lastModifiedBy = entity.optString(SystemDefinedPropertiesHelper.lastModifiedBy, null);
+            DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
             try {
-                this.utcDateCreated = format.parse(entity.optString(SystemDefinedProperties.utcDateCreated, ""));
+                this.utcDateCreated = dateTimeFormat.parse(entity.optString(SystemDefinedPropertiesHelper.utcDateCreated, ""));
             } catch (ParseException e) {
                 this.utcDateCreated = null;
             }
             try {
-                this.utcLastUpdated = format.parse(entity.optString(SystemDefinedProperties.utcLastUpdatedDate, ""));
+                this.utcLastUpdated = dateTimeFormat.parse(entity.optString(SystemDefinedPropertiesHelper.utcLastUpdatedDate, ""));
             } catch (ParseException e) {
                 this.utcLastUpdated = null;
             }
-            if (entity.isNull(SystemDefinedProperties.tags) == false) {
-                APJSONArray tagsArray = entity.optJSONArray(SystemDefinedProperties.tags);
+            if (entity.isNull(SystemDefinedPropertiesHelper.tags) == false) {
+                APJSONArray tagsArray = entity.optJSONArray(SystemDefinedPropertiesHelper.tags);
                 for (int i = 0; i < tagsArray.length(); i++) {
                     this.tags.add(tagsArray.optString(i));
                 }
             }
-            if (entity.isNull(SystemDefinedProperties.attributes) == false) {
-                APJSONObject attributesObject = entity.optJSONObject(SystemDefinedProperties.attributes);
+            if (entity.isNull(SystemDefinedPropertiesHelper.attributes) == false) {
+                APJSONObject attributesObject = entity.optJSONObject(SystemDefinedPropertiesHelper.attributes);
                 Iterator<String> iterator = attributesObject.keys();
                 while (iterator.hasNext()) {
                     String key = iterator.next();
@@ -88,34 +87,40 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
             Iterator<String> iterator = entity.keys();
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                if (SystemDefinedProperties.ConnectionSystemProperties.contains(key) == false && SystemDefinedProperties.ObjectSystemProperties.contains(key) == false) {
+                if (SystemDefinedPropertiesHelper.ConnectionSystemProperties.contains(key) == false && SystemDefinedPropertiesHelper.ObjectSystemProperties.contains(key) == false) {
                     {
                         Object propertyValue = entity.opt(key);
-                        this.properties.put(key, propertyValue);
+                        if (propertyValue.equals(null))
+                            this.properties.put(key, null);
+                        else if (propertyValue instanceof APJSONArray)
+                            this.properties.put(key, ((APJSONArray) propertyValue).values);
+                        else this.properties.put(key, propertyValue);
                     }
                 }
             }
         }
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = new APJSONObject();
 
-        jsonObject.put(SystemDefinedProperties.id, String.valueOf(this.id));
-        jsonObject.put(SystemDefinedProperties.revision, String.valueOf(this.revision));
+        if (this.id > 0)
+            jsonObject.put(SystemDefinedPropertiesHelper.id, String.valueOf(this.id));
+        if (this.revision > 0)
+            jsonObject.put(SystemDefinedPropertiesHelper.revision, String.valueOf(this.revision));
         if (this.createdBy != null && this.createdBy.isEmpty() == false)
-            jsonObject.put(SystemDefinedProperties.createdBy, this.createdBy);
+            jsonObject.put(SystemDefinedPropertiesHelper.createdBy, this.createdBy);
         if (this.lastModifiedBy != null && this.lastModifiedBy.isEmpty() == false)
-            jsonObject.put(SystemDefinedProperties.lastModifiedBy, this.lastModifiedBy);
+            jsonObject.put(SystemDefinedPropertiesHelper.lastModifiedBy, this.lastModifiedBy);
         if (this.utcDateCreated != null)
-            jsonObject.put(SystemDefinedProperties.utcDateCreated, this.utcDateCreated);
+            jsonObject.put(SystemDefinedPropertiesHelper.utcDateCreated, this.utcDateCreated);
         if (this.utcLastUpdated != null)
-            jsonObject.put(SystemDefinedProperties.utcLastUpdatedDate, this.utcLastUpdated);
+            jsonObject.put(SystemDefinedPropertiesHelper.utcLastUpdatedDate, this.utcLastUpdated);
         if (this.tags != null && tags.size() != 0)
-            jsonObject.put(SystemDefinedProperties.tags, new APJSONArray(this.tags));
+            jsonObject.put(SystemDefinedPropertiesHelper.tags, new APJSONArray(this.tags));
 
         if (this.attributes != null && this.attributes.size() > 0)
-            jsonObject.put(SystemDefinedProperties.attributes, new APJSONObject(this.attributes));
+            jsonObject.put(SystemDefinedPropertiesHelper.attributes, new APJSONObject(this.attributes));
 
         if (this.properties != null && this.properties.size() > 0)
             for (Map.Entry<String, Object> property : this.properties.entrySet()) {
@@ -131,27 +136,27 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         return jsonObject;
     }
 
-    public void setId(long id) {
+    public synchronized void setId(long id) {
         this.id = id;
     }
 
-    public void setRevision(long revision) {
+    public synchronized void setRevision(long revision) {
         this.revision = revision;
     }
 
-    public void setCreatedBy(String createdBy) {
+    public synchronized void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
+    public synchronized void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public void setUtcDateCreated(Date utcDateCreated) {
+    public synchronized void setUtcDateCreated(Date utcDateCreated) {
         this.utcDateCreated = utcDateCreated;
     }
 
-    public void setUtcLastUpdated(Date utcLastUpdated) {
+    public synchronized void setUtcLastUpdated(Date utcLastUpdated) {
         this.utcLastUpdated = utcLastUpdated;
     }
 
@@ -175,178 +180,272 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
 
     private Map<String, Object> propertiesChanged;
 
+    private List<IntegerPropertyIncrement> integerPropertyIncrements;
+
+    private List<IntegerPropertyDecrement> integerPropertyDecrements;
+
+    private List<DecimalPropertyIncrement> decimalPropertyIncrements;
+
+    private List<DecimalPropertyDecrement> decimalPropertyDecrements;
+
+    private List<ItemsCollection> addedItemses;
+
+    private List<ItemsCollection> uniquelyAddedItemses;
+
+    private List<ItemsCollection> removedItemses;
+
     private Map<String, String> attributesChanged;
 
     private List<String> tagsAdded;
 
     private List<String> tagsRemoved;
 
-    public Map<String, Object> getAllProperties() {
+    public synchronized Map<String, Object> getAllProperties() {
         return this.properties;
     }
 
-    public Map<String, String> getAllAttributes() {
+    public synchronized Map<String, String> getAllAttributes() {
         return this.attributes;
     }
 
-    public List<String> getAllTags() {
+    public synchronized List<String> getAllTags() {
         return this.tags;
     }
 
-    public void setStringProperty(String propertyName, String propertyValue) {
+    public synchronized void setStringProperty(String propertyName, String propertyValue) {
 
         this.properties.put(propertyName, propertyValue);
         this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public void setIntProperty(String propertyName, int propertyValue) {
+    public synchronized void setIntProperty(String propertyName, int propertyValue) {
 
         this.properties.put(propertyName, propertyValue);
         this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public void setDoubleProperty(String propertyName, double propertyValue) {
+    public synchronized void setDoubleProperty(String propertyName, double propertyValue) {
+        if (Double.isInfinite(propertyValue) || Double.isNaN(propertyValue)) {
+            throw new RuntimeException("Invalid double value : " + propertyValue);
+        }
+        this.properties.put(propertyName, propertyValue);
+        this.propertiesChanged.put(propertyName, propertyValue);
+    }
+
+    public synchronized void setBoolProperty(String propertyName, boolean propertyValue) {
 
         this.properties.put(propertyName, propertyValue);
         this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public void setBoolProperty(String propertyName, boolean propertyValue) {
-
-        this.properties.put(propertyName, propertyValue);
-        this.propertiesChanged.put(propertyName, propertyValue);
-    }
-
-    public void setDateProperty(String propertyName, Date propertyValue) {
-
+    public synchronized void setDateProperty(String propertyName, Date propertyValue) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.setStringProperty(propertyName, dateFormat.format(propertyValue));
     }
 
-    public void setTimeProperty(String propertyName, Date propertyValue) {
-
+    public synchronized void setTimeProperty(String propertyName, Date propertyValue) {
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
         this.setStringProperty(propertyName, timeFormat.format(propertyValue));
     }
 
-    public void setDateTimeProperty(String propertyName, Date propertyValue) {
-
+    public synchronized void setDateTimeProperty(String propertyName, Date propertyValue) {
+        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.setStringProperty(propertyName, dateTimeFormat.format(propertyValue));
     }
 
-    public void setGeoProperty(String propertyName, double[] coordinates) {
+    public synchronized void setGeoProperty(String propertyName, double[] coordinates) {
         this.setStringProperty(propertyName, String.valueOf(coordinates[0]) + "," + coordinates[1]);
     }
 
-    public String getPropertyAsString(String propertyName) {
+    public synchronized String getPropertyAsString(String propertyName) {
         if (this.properties.containsKey(propertyName) == true)
             return String.valueOf(this.properties.get(propertyName));
         return null;
     }
 
-    public int getPropertyAsInt(String propertyName) {
-        return Integer.parseInt(this.getPropertyAsString(propertyName));
+    public synchronized Integer getPropertyAsInt(String propertyName) {
+        String intValue = this.getPropertyAsString(propertyName);
+        if (intValue == null)
+            return null;
+        return Integer.parseInt(intValue);
     }
 
-    public Double getPropertyAsDouble(String propertyName) {
-        return Double.parseDouble(this.getPropertyAsString(propertyName));
+    public synchronized Double getPropertyAsDouble(String propertyName) {
+        String doubleValue = this.getPropertyAsString(propertyName);
+        if (doubleValue == null)
+            return null;
+        return Double.parseDouble(doubleValue);
     }
 
-    public Boolean getPropertyAsBoolean(String propertyName) {
-        return Boolean.parseBoolean(this.getPropertyAsString(propertyName));
+    public synchronized Boolean getPropertyAsBoolean(String propertyName) {
+        String boolValue = this.getPropertyAsString(propertyName);
+        if (boolValue == null)
+            return null;
+        return Boolean.parseBoolean(boolValue);
     }
 
-    public Date getPropertyAsDate(String propertyName) throws ParseException {
-        return dateFormat.parse(this.getPropertyAsString(propertyName));
+    public synchronized Date getPropertyAsDate(String propertyName) throws ParseException {
+        String dateValue = this.getPropertyAsString(propertyName);
+        if (dateValue == null)
+            return null;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.parse(dateValue);
     }
 
-    public Date getPropertyAsTime(String propertyName) throws ParseException {
-        return timeFormat.parse(this.getPropertyAsString(propertyName));
+    public synchronized Date getPropertyAsTime(String propertyName) throws ParseException {
+        String timeValue = this.getPropertyAsString(propertyName);
+        if (timeValue == null)
+            return null;
+
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+        return timeFormat.parse(timeValue);
     }
 
-    public Date getPropertyAsDateTime(String propertyName) throws ParseException {
-        return dateTimeFormat.parse(this.getPropertyAsString(propertyName));
+    public synchronized Date getPropertyAsDateTime(String propertyName) throws ParseException {
+        String datetimeValue = this.getPropertyAsString(propertyName);
+        if (datetimeValue == null)
+            return null;
+
+        DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        return dateTimeFormat.parse(datetimeValue);
     }
 
-    public double[] getPropertyAsGeo(String propertyName) {
-        String[] strCoordinates = this.getPropertyAsString(propertyName).split(",");
+    public synchronized double[] getPropertyAsGeo(String propertyName) {
+        String geoValue = this.getPropertyAsString(propertyName);
+        if (geoValue == null)
+            return null;
+        String[] strCoordinates = geoValue.split(",");
         return new double[]{Double.parseDouble(strCoordinates[0]), Double.parseDouble(strCoordinates[1])};
     }
 
-    public void setPropertyAsMultiValuedString(String propertyName, List<String> propertyValue) {
-        this.properties.put(propertyName, propertyValue);
-        this.propertiesChanged.put(propertyName, propertyValue);
-    }
+    //  multi valued properties
 
-    public List<String> getPropertyAsMultiValuedString(String propertyName) {
+    public synchronized List<String> getPropertyAsMultiValuedString(String propertyName) {
         List<String> propertyValue = null;
         if (this.properties.containsKey(propertyName) == true) {
             propertyValue = new ArrayList<String>();
-            APJSONArray values = (APJSONArray) properties.get(propertyName);
-            for (int i = 0; i < values.length(); i++)
-                propertyValue.add(values.optString(i));
+            List values = (List) properties.get(propertyName);
+            for (Object value : values)
+                if (value == null || value.equals(null))
+                    propertyValue.add(null);
+                else
+                    propertyValue.add(value.toString());
         }
         return propertyValue;
     }
 
-    public void setPropertyAsMultiValuedInt(String propertyName, List<Integer> propertyValue) {
-        this.properties.put(propertyName, propertyValue);
-        this.propertiesChanged.put(propertyName, propertyValue);
-    }
-
-    public List<Integer> getPropertyAsMultiValuedInt(String propertyName) {
+    public synchronized List<Integer> getPropertyAsMultiValuedInt(String propertyName) {
         List<Integer> propertyValue = null;
         if (this.properties.containsKey(propertyName) == true) {
             propertyValue = new ArrayList<Integer>();
-            APJSONArray values = (APJSONArray) properties.get(propertyName);
-            for (int i = 0; i < values.length(); i++)
-                propertyValue.add(values.optInt(i));
+            List values = (List) properties.get(propertyName);
+            for (Object value : values)
+                if (value == null || value.equals(null))
+                    propertyValue.add(null);
+                else
+                    propertyValue.add(Integer.valueOf(value.toString()));
         }
         return propertyValue;
     }
 
-    public void setPropertyAsMultiValuedDouble(String propertyName, List<Double> propertyValue) {
-        this.properties.put(propertyName, propertyValue);
-        this.propertiesChanged.put(propertyName, propertyValue);
-    }
-
-    public List<Double> getPropertyAsMultiValuedDouble(String propertyName) {
+    public synchronized List<Double> getPropertyAsMultiValuedDouble(String propertyName) {
         List<Double> propertyValue = null;
         if (this.properties.containsKey(propertyName) == true) {
             propertyValue = new ArrayList<Double>();
-            APJSONArray values = (APJSONArray) properties.get(propertyName);
-            for (int i = 0; i < values.length(); i++)
-                propertyValue.add(values.optDouble(i));
+            List values = (List) properties.get(propertyName);
+            for (Object value : values)
+                if (value == null || value.equals(null))
+                    propertyValue.add(null);
+                else
+                    propertyValue.add(Double.valueOf(value.toString()));
         }
         return propertyValue;
     }
 
-    public <T> List<T> getPropertyAsMultivalued(String propertyName) {
-        List<T> propertyValue = null;
-        if (this.properties.containsKey(propertyName) == true) {
-            propertyValue = new ArrayList<T>();
-            APJSONArray values = (APJSONArray) properties.get(propertyName);
-            for (int i = 0; i < values.length(); i++)
-                propertyValue.add((T) (values.opt(i)));
-        }
-        return propertyValue;
+    public synchronized void setPropertyAsMultiValued(String propertyName, List<?> items) {
+        this.properties.put(propertyName, new ArrayList<Object>(items));
+        this.propertiesChanged.put(propertyName, new ArrayList<Object>(items));
     }
 
-    public void setAttribute(String attributeName, String attributeValue) {
+    public synchronized <T> void addItemsToMultiValuedProperty(String propertyName, List<?> items) {
+        if (this.properties.containsKey(propertyName)) {
+
+            ((Collection) (this.properties.get(propertyName))).addAll(items);
+        }
+        this.addedItemses.add(new ItemsCollection(propertyName, items));
+    }
+
+    public synchronized <T> void uniquelyAddItemsToMultiValuedProperty(String propertyName, List<T> items) {
+        if (this.properties.containsKey(propertyName)) {
+
+            ((Collection) (this.properties.get(propertyName))).removeAll(items);
+            ((Collection) (this.properties.get(propertyName))).addAll(items);
+        }
+        this.uniquelyAddedItemses.add(new ItemsCollection(propertyName, items));
+    }
+
+    public synchronized <T> void removeItemsFromMultiValuedProperty(String propertyName, List<T> items) {
+        if (this.properties.containsKey(propertyName)) {
+
+            ((Collection) (this.properties.get(propertyName))).removeAll(items);
+        }
+        this.removedItemses.add(new ItemsCollection(propertyName, items));
+    }
+
+    //  counters
+
+    public synchronized void incrementIntegerProperty(String propertyName, int incrementBy) {
+        Integer value = this.getPropertyAsInt(propertyName);
+        if (value != null)
+            this.setIntProperty(propertyName, value + incrementBy);
+        this.integerPropertyIncrements.add(new IntegerPropertyIncrement(propertyName, incrementBy));
+    }
+
+    public synchronized void decrementIntegerProperty(String propertyName, int decrementBy) {
+        Integer value = this.getPropertyAsInt(propertyName);
+        if (value != null)
+            this.setIntProperty(propertyName, value - decrementBy);
+        this.integerPropertyDecrements.add(new IntegerPropertyDecrement(propertyName, decrementBy));
+    }
+
+    public synchronized void incrementDecimalProperty(String propertyName, double incrementBy) {
+        Double value = this.getPropertyAsDouble(propertyName);
+        if (value != null)
+            this.setDoubleProperty(propertyName, value + incrementBy);
+        this.decimalPropertyIncrements.add(new DecimalPropertyIncrement(propertyName, incrementBy));
+    }
+
+    public synchronized void decrementDecimalProperty(String propertyName, double decrementBy) {
+        Double value = this.getPropertyAsDouble(propertyName);
+        if (value != null)
+            this.setDoubleProperty(propertyName, value - decrementBy);
+        this.decimalPropertyDecrements.add(new DecimalPropertyDecrement(propertyName, decrementBy));
+    }
+
+    public synchronized void removeProperty(String propertyName) {
+        this.properties.put(propertyName, null);
+        this.propertiesChanged.put(propertyName, null);
+    }
+
+
+    public synchronized void setAttribute(String attributeName, String attributeValue) {
         if (attributeName == null)
             throw new IllegalArgumentException("Attribute name cannot be null.");
         this.attributes.put(attributeName, attributeValue);
         this.attributesChanged.put(attributeName, attributeValue);
     }
 
-    public String getAttribute(String attributeName) {
+    public synchronized String getAttribute(String attributeName) {
         return this.attributes.get(attributeName);
     }
 
-    public void removeAttribute(String attributeName) {
+    public synchronized void removeAttribute(String attributeName) {
         this.attributes.remove(attributeName);
         this.attributesChanged.put(attributeName, null);
     }
 
-    public void addTag(String tag) {
+    public synchronized void addTag(String tag) {
         if (tag == null)
             throw new IllegalArgumentException("Tag cannot be null.");
 
@@ -356,12 +455,12 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         this.tagsAdded.add(tag);
     }
 
-    public void removeTag(String tag) {
+    public synchronized void removeTag(String tag) {
         this.tags.remove(tag);
         this.tagsRemoved.add(tag);
     }
 
-    public void addTags(List<String> tags) {
+    public synchronized void addTags(List<String> tags) {
         for (String tag : tags) {
             if (this.tags.contains(tag) == false) {
                 this.tags.add(tag);
@@ -370,24 +469,29 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         }
     }
 
-    public void removeTags(List<String> tags) {
+    public synchronized void removeTags(List<String> tags) {
         for (String tag : tags) {
             this.tags.remove(tag);
             this.tagsRemoved.add(tag);
         }
     }
 
-    public boolean tagExists(String tag) {
+    public synchronized boolean tagExists(String tag) {
         return this.tags.contains(tag);
     }
 
-    protected APJSONObject getUpdateCommand() throws APJSONException {
+    protected synchronized APJSONObject getUpdateCommand() throws APJSONException {
 
         APJSONObject updateCommand = new APJSONObject();
-        updateCommand.put("__addtags", new APJSONArray(this.tagsAdded));
-        updateCommand.put("__removetags", new APJSONArray(this.tagsRemoved));
-        APJSONObject attributesChangedJsonObject = new APJSONObject();
+
+        if (this.tagsAdded != null && this.tagsAdded.size() > 0)
+            updateCommand.put("__addtags", new APJSONArray(this.tagsAdded));
+
+        if (this.tagsRemoved != null && this.tagsRemoved.size() > 0)
+            updateCommand.put("__removetags", new APJSONArray(this.tagsRemoved));
+
         if (this.attributesChanged.size() > 0) {
+            APJSONObject attributesChangedJsonObject = new APJSONObject();
             for (Map.Entry<String, String> attribute : this.attributesChanged.entrySet()) {
                 if (attribute.getValue() == (null))
                     attributesChangedJsonObject.put(attribute.getKey(), APJSONObject.NULL);
@@ -395,48 +499,154 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
                     attributesChangedJsonObject.put(attribute.getKey(), attribute.getValue());
 
             }
+            updateCommand.put(SystemDefinedPropertiesHelper.attributes, attributesChangedJsonObject);
         }
-        updateCommand.put("__attributes", attributesChangedJsonObject);
+
 
         for (Map.Entry<String, Object> property : this.propertiesChanged.entrySet()) {
-            if (property.getValue().equals(null))
+            if (property.getValue() == null || property.getValue().equals(null))
                 updateCommand.put(property.getKey(), APJSONObject.NULL);
             else if (property.getValue() instanceof List)
                 updateCommand.put(property.getKey(), new APJSONArray((List) property.getValue()));
             else
                 updateCommand.put(property.getKey(), property.getValue());
         }
+
+        //   counters
+        for (final IntegerPropertyIncrement incr : this.integerPropertyIncrements) {
+            updateCommand.put(incr.propertyName, new APJSONObject(new HashMap() {{
+                put("incrementby", incr.increment);
+            }}));
+        }
+        for (final IntegerPropertyDecrement decr : this.integerPropertyDecrements) {
+            updateCommand.put(decr.propertyName, new APJSONObject(new HashMap() {{
+                put("decrementby", decr.decrement);
+            }}));
+        }
+
+        for (final DecimalPropertyIncrement incr : this.decimalPropertyIncrements) {
+            updateCommand.put(incr.propertyName, new APJSONObject(new HashMap() {{
+                put("incrementby", incr.increment);
+            }}));
+        }
+        for (final DecimalPropertyDecrement decr : this.decimalPropertyDecrements) {
+            updateCommand.put(decr.propertyName, new APJSONObject(new HashMap() {{
+                put("decrementby", decr.decrement);
+            }}));
+        }
+
+        //  multivalued updates
+        for (final ItemsCollection itemsCollection : this.addedItemses) {
+            updateCommand.put(itemsCollection.propertyName, new APJSONObject(new HashMap<String, Object>() {{
+                put("additems", new APJSONArray(itemsCollection.addedItems));
+            }}));
+        }
+        for (final ItemsCollection itemsCollection : this.uniquelyAddedItemses) {
+            updateCommand.put(itemsCollection.propertyName, new APJSONObject(new HashMap<String, Object>() {{
+                put("adduniqueitems", new APJSONArray(itemsCollection.addedItems));
+            }}));
+        }
+        for (final ItemsCollection itemsCollection : this.removedItemses) {
+            updateCommand.put(itemsCollection.propertyName, new APJSONObject(new HashMap<String, Object>() {{
+                put("removeitems", new APJSONArray(itemsCollection.addedItems));
+            }}));
+        }
+
         return updateCommand;
     }
 
-    protected void resetUpdateCommands() {
+    protected synchronized void resetUpdateCommands() {
         this.propertiesChanged = new HashMap<String, Object>();
         this.attributesChanged = new HashMap<String, String>();
         this.tagsAdded = new ArrayList<String>();
         this.tagsRemoved = new ArrayList<String>();
+
+        this.integerPropertyIncrements = new ArrayList<IntegerPropertyIncrement>();
+        this.integerPropertyDecrements = new ArrayList<IntegerPropertyDecrement>();
+        this.decimalPropertyIncrements = new ArrayList<DecimalPropertyIncrement>();
+        this.decimalPropertyDecrements = new ArrayList<DecimalPropertyDecrement>();
+
+        this.addedItemses = new ArrayList<ItemsCollection>();
+        this.uniquelyAddedItemses = new ArrayList<ItemsCollection>();
+        this.removedItemses = new ArrayList<ItemsCollection>();
     }
 
-    public long getId() {
+    public synchronized long getId() {
         return id;
     }
 
-    public long getRevision() {
+    public synchronized long getRevision() {
         return revision;
     }
 
-    public String getCreatedBy() {
+    public synchronized String getCreatedBy() {
         return createdBy;
     }
 
-    public String getLastModifiedBy() {
+    public synchronized String getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public Date getUtcDateCreated() {
+    public synchronized Date getUtcDateCreated() {
         return utcDateCreated;
     }
 
-    public Date getUtcLastUpdated() {
+    public synchronized Date getUtcLastUpdated() {
         return utcLastUpdated;
     }
+
+    private class IntegerPropertyIncrement {
+        public IntegerPropertyIncrement(String propertyName, int incrementBy) {
+            this.increment = incrementBy;
+            this.propertyName = propertyName;
+        }
+
+        public String propertyName;
+
+        public int increment;
+    }
+
+    private class IntegerPropertyDecrement {
+        public IntegerPropertyDecrement(String propertyName, int decrementBy) {
+            this.decrement = decrementBy;
+            this.propertyName = propertyName;
+        }
+
+        public String propertyName;
+
+        public int decrement;
+    }
+
+    private class DecimalPropertyIncrement {
+        public DecimalPropertyIncrement(String propertyName, double incrementBy) {
+            this.increment = incrementBy;
+            this.propertyName = propertyName;
+        }
+
+        public String propertyName;
+
+        public double increment;
+    }
+
+    private class DecimalPropertyDecrement {
+        public DecimalPropertyDecrement(String propertyName, double decrementBy) {
+            this.decrement = decrementBy;
+            this.propertyName = propertyName;
+        }
+
+        public String propertyName;
+
+        public double decrement;
+    }
+
+    private class ItemsCollection<T> {
+        public ItemsCollection(String propertyName, List<T> addedItems) {
+            this.propertyName = propertyName;
+            this.addedItems = addedItems;
+        }
+
+        public String propertyName;
+        public List<T> addedItems;
+    }
 }
+

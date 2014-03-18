@@ -21,28 +21,28 @@ public class AppacitiveContextBase implements Serializable {
     private static UserContextProvider userContextProvider = null;
     private static Logger logger;
 
-    public static void setLogger(Logger logger) {
+    public synchronized static void setLogger(Logger logger) {
         AppacitiveContextBase.logger = logger;
     }
 
-    public static String getLoggedInUserToken() {
+    public synchronized static String getLoggedInUserToken() {
         return userContextProvider.getCurrentlyLoggedInUserToken();
     }
 
-    public static AppacitiveUser getLoggedInUser() {
+    public synchronized static AppacitiveUser getLoggedInUser() {
         return userContextProvider.getLoggedInUser();
     }
 
 
-    public static void setLoggedInUserToken(String userToken) {
+    public synchronized static void setLoggedInUserToken(String userToken) {
         userContextProvider.setCurrentlyLoggedInUserToken(userToken);
     }
 
-    public static void setLoggedInUser(AppacitiveUser user) {
+    public synchronized static void setLoggedInUser(AppacitiveUser user) {
         userContextProvider.setLoggedInUser(user);
     }
 
-    public static void initialize(String apiKey, Environment environment, Platform platform) {
+    public synchronized static void initialize(String apiKey, Environment environment, Platform platform) {
         AppacitiveContextBase.apiKey = apiKey;
         AppacitiveContextBase.environment = environment.name();
         if (platform != null)
@@ -55,8 +55,7 @@ public class AppacitiveContextBase implements Serializable {
         isInitialized = true;
     }
 
-    public static void register(Class<?> interfaceObject, ObjectFactory<?> objectFactory)
-    {
+    public synchronized static void register(Class<?> interfaceObject, ObjectFactory<?> objectFactory) {
         APContainer.register(interfaceObject, objectFactory);
     }
 
@@ -64,27 +63,27 @@ public class AppacitiveContextBase implements Serializable {
         setLoggedInUserToken(null);
     }
 
-    public static boolean isInitialized() {
+    public synchronized static boolean isInitialized() {
         return isInitialized;
     }
 
-    public static Double[] getCurrentLocation() {
+    public synchronized static Double[] getCurrentLocation() {
         return userContextProvider.getCurrentLocation();
     }
 
-    public static void setCurrentLocation(Double latitude, Double longitude) {
+    public synchronized static void setCurrentLocation(Double latitude, Double longitude) {
         userContextProvider.setCurrentLocation(latitude, longitude);
     }
 
-    public static String getApiKey() {
+    public synchronized static String getApiKey() {
         return apiKey;
     }
 
-    public static String getEnvironment() {
+    public synchronized static String getEnvironment() {
         return environment;
     }
 
-    public static void setLogLevel(LogLevel logLevel) {
+    public synchronized static void setLogLevel(LogLevel logLevel) {
         if (AppacitiveContextBase.logger != null) {
             AppacitiveContextBase.logger.setLogLevel(logLevel);
         }

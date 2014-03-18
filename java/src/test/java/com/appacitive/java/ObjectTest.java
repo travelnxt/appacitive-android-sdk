@@ -4,13 +4,14 @@ import com.appacitive.core.*;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.ErrorCodes;
-import com.appacitive.core.infra.SystemDefinedProperties;
+import com.appacitive.core.infra.SystemDefinedPropertiesHelper;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.*;
 import com.jayway.awaitility.Awaitility;
+import com.jayway.awaitility.Duration;
 import org.junit.*;
 
 import java.io.IOException;
@@ -18,12 +19,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sathley.
@@ -34,8 +35,10 @@ public class ObjectTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(10, TimeUnit.SECONDS);
+        Awaitility.setDefaultTimeout(10, TimeUnit.MINUTES);
     }
+
+    private AtomicBoolean somethingHappened = new AtomicBoolean(false);
 
     @AfterClass
     public static void oneTimeTearDown() {
@@ -45,16 +48,20 @@ public class ObjectTest {
 
     @Before
     public void beforeTest() {
-        Awaitility.reset();
+        somethingHappened.set(false);
+    }
+
+    @After
+    public void afterTest() {
     }
 
     private String getRandomString() {
         return UUID.randomUUID().toString();
     }
 
+
     @Test
     public void createFullObjectTest() throws ValidationException, ParseException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
 
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setIntProperty("intfield", 100);
@@ -74,7 +81,7 @@ public class ObjectTest {
         newObject.setStringProperty("timefield", nowAsISOTime);
         newObject.setStringProperty("datetimefield", nowAsISODateTime);
         newObject.setStringProperty("geofield", "10.11, 20.22");
-        newObject.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
+        newObject.setPropertyAsMultiValued("multifield", new ArrayList<String>() {{
             add("val1");
             add("500");
             add("false");
@@ -92,23 +99,23 @@ public class ObjectTest {
         newObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
-                assertTrue(result.getId() > 0);
-                assertTrue(result.getPropertyAsInt("intfield") == 100);
-                assertTrue(result.getPropertyAsDouble("decimalfield") == 20.2511d);
-                assertTrue(result.getPropertyAsBoolean("boolfield"));
+                assert (result.getId() > 0);
+                assert (result.getPropertyAsInt("intfield") == 100);
+                assert (result.getPropertyAsDouble("decimalfield") == 20.2511d);
+                assert (result.getPropertyAsBoolean("boolfield"));
                 try {
-                    assertTrue(df.format(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
-                    assertTrue(tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
-                    assertTrue(dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
+                    assert (df.format(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
+                    assert (tf.format(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
+                    assert (dtf.format(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
                 } catch (ParseException pe) {
                     Assert.fail(pe.getMessage());
                 }
-                assertTrue(result.getPropertyAsGeo("geofield")[0] == 10.11d);
-                assertTrue(result.getPropertyAsGeo("geofield")[1] == 20.22d);
-                assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
-                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val1")));
-                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("500")));
-                assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("false")));
+                assert (result.getPropertyAsGeo("geofield")[0] == 10.11d);
+                assert (result.getPropertyAsGeo("geofield")[1] == 20.22d);
+                assert (result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                assert ((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val1")));
+                assert ((result.getPropertyAsMultiValuedString("multifield").get(1).equals("500")));
+                assert ((result.getPropertyAsMultiValuedString("multifield").get(2).equals("false")));
                 somethingHappened.set(true);
             }
 
@@ -117,14 +124,11 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
-
 
     @Test
     public void multiLingualObjectCreateTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject newObject = new AppacitiveObject("object");
         final String randomString1 = " 以下便是有关此问题的所有信息";
         final String randomString2 = " ä»¥ä¸ä¾¿æ¯æå³æ­¤é®é¢çææä¿¡æ¯";
@@ -132,9 +136,9 @@ public class ObjectTest {
         newObject.setStringProperty("textfield", randomString2);
         newObject.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
-                assertTrue(result.getId() > 0);
-                assertTrue(result.getPropertyAsString("stringfield").toString().equals(randomString1));
-                assertTrue(result.getPropertyAsString("textfield").toString().equals(randomString2));
+                Assert.assertTrue(result.getId() > 0);
+                assert (result.getPropertyAsString("stringfield").toString().equals(randomString1));
+                assert (result.getPropertyAsString("textfield").toString().equals(randomString2));
 
                 somethingHappened.set(true);
             }
@@ -143,10 +147,10 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
-    private static AppacitiveObject getRandomObject() {
+    private AppacitiveObject getRandomObject() {
         AppacitiveObject newObject = new AppacitiveObject("object");
         newObject.setIntProperty("intfield", 100);
         newObject.setDoubleProperty("decimalfield", 20.251100);
@@ -154,18 +158,14 @@ public class ObjectTest {
         newObject.setStringProperty("stringfield", "hello world");
         newObject.setStringProperty("textfield", "Objects represent your data stored inside the Appacitive platform. Every object is mapped to the type that you create via the designer in your management console. If we were to use conventional databases as a metaphor, then a type would correspond to a table and an object would correspond to one row inside that table. object api allows you to store, retrieve and manage all the data that you store inside Appacitive. You can retrieve individual records or lists of records based on a specific filter criteria.");
         final Date date = new Date();
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        final String nowAsISODate = df.format(date);
-        final String nowAsISOTime = tf.format(date);
-        final String nowAsISODateTime = dtf.format(date);
+        final String nowAsISODate = convertDateToString(date);
+        final String nowAsISOTime = convertTimeToString(date);
+        final String nowAsISODateTime = convertDateTimeToString(date);
         newObject.setStringProperty("datefield", nowAsISODate);
         newObject.setStringProperty("timefield", nowAsISOTime);
         newObject.setStringProperty("datetimefield", nowAsISODateTime);
         newObject.setStringProperty("geofield", "10.11, 20.22");
-        newObject.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
+        newObject.setPropertyAsMultiValued("multifield", new ArrayList<String>() {{
             add("val1");
             add("500");
             add("false");
@@ -184,9 +184,8 @@ public class ObjectTest {
     }
 
     @Test
+//    @Ignore
     public void updateObjectTest() throws Exception {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
-        AppacitiveObject object = getRandomObject();
         getRandomObject().createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
                 result.setIntProperty("intfield", 200);
@@ -194,18 +193,14 @@ public class ObjectTest {
                 result.setBoolProperty("boolfield", false);
                 result.setStringProperty("stringfield", "hello world again !!");
                 final Date date = new Date();
-                TimeZone tz = TimeZone.getTimeZone("UTC");
-                final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-                final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-                final String nowAsISODate = df.format(date);
-                final String nowAsISOTime = tf.format(date);
-                final String nowAsISODateTime = dtf.format(date);
+                final String nowAsISODate = convertDateToString(date);
+                final String nowAsISOTime = convertTimeToString(date);
+                final String nowAsISODateTime = convertDateTimeToString(date);
                 result.setStringProperty("datefield", nowAsISODate);
                 result.setStringProperty("timefield", nowAsISOTime);
                 result.setStringProperty("datetimefield", nowAsISODateTime);
                 result.setStringProperty("geofield", "15.55, 33.88");
-                result.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
+                result.setPropertyAsMultiValued("multifield", new ArrayList<String>() {{
                     add("val2");
                     add("800");
                     add("true");
@@ -213,19 +208,19 @@ public class ObjectTest {
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
                     public void success(AppacitiveObject result) {
-                        assertTrue(result.getRevision() == 2);
-                        assertTrue(result.getPropertyAsInt("intfield") == 200);
-                        assertTrue(result.getPropertyAsDouble("decimalfield") == 40.502d);
-                        assertTrue(!result.getPropertyAsBoolean("boolfield"));
-                        assertTrue((result.getPropertyAsString("datefield")).equals(nowAsISODate));
-                        assertTrue((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
-                        assertTrue((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
-                        assertTrue(result.getPropertyAsGeo("geofield")[0] == 15.55d);
-                        assertTrue(result.getPropertyAsGeo("geofield")[1] == 33.88d);
-                        assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
+                        assert (result.getRevision() == 2);
+                        assert (result.getPropertyAsInt("intfield") == 200);
+                        assert (result.getPropertyAsDouble("decimalfield") == 40.502d);
+                        assert (!result.getPropertyAsBoolean("boolfield"));
+                        assert ((result.getPropertyAsString("datefield")).equals(nowAsISODate));
+                        assert ((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
+                        assert ((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
+                        assert (result.getPropertyAsGeo("geofield")[0] == 15.55d);
+                        assert (result.getPropertyAsGeo("geofield")[1] == 33.88d);
+                        assert (result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
                         somethingHappened.set(true);
                     }
 
@@ -235,9 +230,14 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
 
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
 //    @Test
@@ -271,9 +271,36 @@ public class ObjectTest {
 //        });
 //    }
 
+    public String convertDateToString(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String result;
+        synchronized (df) {
+            result = df.format(date);
+        }
+        return result;
+    }
+
+    public String convertTimeToString(Date date) {
+        DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+        String result;
+        synchronized (tf) {
+            result = tf.format(date);
+        }
+        return result;
+    }
+
+    public String convertDateTimeToString(Date date) {
+        DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        String result;
+        synchronized (dtf) {
+            result = dtf.format(date);
+        }
+        return result;
+    }
+
     @Test
-    public void updateEmptyObjectTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+//    @Ignore
+    public void updateEmptyObjectTest() throws ValidationException, ParseException {
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -283,18 +310,15 @@ public class ObjectTest {
                 result.setBoolProperty("boolfield", false);
                 result.setStringProperty("stringfield", "hello world again !!");
                 final Date date = new Date();
-                TimeZone tz = TimeZone.getTimeZone("UTC");
-                final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-                final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-                final String nowAsISODate = df.format(date);
-                final String nowAsISOTime = tf.format(date);
-                final String nowAsISODateTime = dtf.format(date);
+
+                final String nowAsISODate = convertDateToString(date);
+                final String nowAsISOTime = convertTimeToString(date);
+                final String nowAsISODateTime = convertDateTimeToString(date);
                 result.setStringProperty("datefield", nowAsISODate);
                 result.setStringProperty("timefield", nowAsISOTime);
                 result.setStringProperty("datetimefield", nowAsISODateTime);
                 result.setStringProperty("geofield", "15.55, 33.88");
-                result.setPropertyAsMultiValuedString("multifield", new ArrayList<String>() {{
+                result.setPropertyAsMultiValued("multifield", new ArrayList<String>() {{
                     add("val2");
                     add("800");
                     add("true");
@@ -303,22 +327,22 @@ public class ObjectTest {
                 result.updateInBackground(false, new Callback<AppacitiveObject>() {
                     @Override
                     public void success(AppacitiveObject result) {
-                        assertTrue(result.getRevision() == 2);
-                        assertTrue(result.getPropertyAsInt("intfield") == 200);
-                        assertTrue(result.getPropertyAsDouble("decimalfield") == 40.502d);
-                        assertTrue(!result.getPropertyAsBoolean("boolfield"));
+                        assert (result.getRevision() == 2);
+                        assert (result.getPropertyAsInt("intfield") == 200);
+                        assert (result.getPropertyAsDouble("decimalfield") == 40.502d);
+                        assert (!result.getPropertyAsBoolean("boolfield"));
 
 
-                        assertTrue((result.getPropertyAsString("datefield")).equals(nowAsISODate));
-                        assertTrue((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
-                        assertTrue((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
+                        assert ((result.getPropertyAsString("datefield")).equals(nowAsISODate));
+                        assert ((result.getPropertyAsString("timefield")).equals(nowAsISOTime));
+                        assert ((result.getPropertyAsString("datetimefield")).equals(nowAsISODateTime));
 
-                        assertTrue(result.getPropertyAsGeo("geofield")[0] == 15.55d);
-                        assertTrue(result.getPropertyAsGeo("geofield")[1] == 33.88d);
-                        assertTrue(result.getPropertyAsMultiValuedString("multifield").size() == 3);
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
-                        assertTrue((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
+                        assert (result.getPropertyAsGeo("geofield")[0] == 15.55d);
+                        assert (result.getPropertyAsGeo("geofield")[1] == 33.88d);
+                        assert (result.getPropertyAsMultiValuedString("multifield").size() == 3);
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(0).equals("val2")));
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(1).equals("800")));
+                        assert ((result.getPropertyAsMultiValuedString("multifield").get(2).equals("true")));
                         somethingHappened.set(true);
                     }
 
@@ -330,12 +354,11 @@ public class ObjectTest {
             }
         });
 
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void updateWithValidRevisionTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
@@ -359,48 +382,48 @@ public class ObjectTest {
             }
         });
 
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void updateWithInvalidRevisionTest() throws Exception {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
 
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(final AppacitiveObject origResult) {
                 final long id = origResult.getId();
-                try {
-                    AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
-                        @Override
-                        public void success(AppacitiveObject returnOrigResult) {
-                            returnOrigResult.updateInBackground(true, new Callback<AppacitiveObject>() {
-                                @Override
-                                public void success(AppacitiveObject result) {
-                                    origResult.updateInBackground(true, new Callback<AppacitiveObject>() {
-                                        @Override
-                                        public void success(AppacitiveObject result) {
-                                            assert false;
-                                        }
+                AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
+                    @Override
+                    public void success(AppacitiveObject returnOrigResult) {
+                        returnOrigResult.updateInBackground(true, new Callback<AppacitiveObject>() {
+                            @Override
+                            public void success(AppacitiveObject result) {
+                                origResult.updateInBackground(true, new Callback<AppacitiveObject>() {
+                                    @Override
+                                    public void success(AppacitiveObject result) {
+                                        assert false;
+                                    }
 
-                                        @Override
-                                        public void failure(AppacitiveObject result, Exception e) {
-                                            AppacitiveException ae = (AppacitiveException) e;
-                                            assert ae.getCode().equals(ErrorCodes.INCORRECT_REVISION);
-                                            somethingHappened.set(true);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                } catch (ValidationException e) {
-                    Assert.fail(e.getMessage());
-                }
+                                    @Override
+                                    public void failure(AppacitiveObject result, Exception e) {
+                                        AppacitiveException ae = (AppacitiveException) e;
+                                        assert ae.getCode().equals(ErrorCodes.INCORRECT_REVISION);
+                                        somethingHappened.set(true);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
 
     }
 
@@ -447,7 +470,6 @@ public class ObjectTest {
 
     @Test
     public void updateAttributesTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "vx");
         appacitiveObject.setAttribute("a2", "v2");
@@ -495,14 +517,15 @@ public class ObjectTest {
                         Assert.fail(e.getMessage());
                     }
                 });
+
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
+//    @Ignore
     public void updateTagsTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.addTag("t1");
         appacitiveObject.addTag("t2");
@@ -537,13 +560,17 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void multiGetObjectsTest() throws IOException, ValidationException, InterruptedException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AtomicInteger createdObjectsCount = new AtomicInteger(0);
         final ArrayList<Long> ids = new ArrayList<Long>();
         for (int i = 0; i < 3; i++) {
@@ -570,12 +597,11 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void fieldsTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = getRandomObject();
         appacitiveObject.setAttribute("aa", "vv");
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -584,40 +610,40 @@ public class ObjectTest {
                 List<String> fields = new ArrayList<String>();
                 fields.add("intfield");
                 fields.add("geofield");
-                fields.add(SystemDefinedProperties.attributes);
-                fields.add(SystemDefinedProperties.lastModifiedBy);
-                fields.add(SystemDefinedProperties.utcDateCreated);
-                try {
-                    AppacitiveObject.getInBackground("object", result.getId(), fields, new Callback<AppacitiveObject>() {
-                        @Override
-                        public void success(AppacitiveObject result) {
-                            assert result.getPropertyAsString("intfield") != null;
-                            assert result.getPropertyAsString("geofield") != null;
+                fields.add(SystemDefinedPropertiesHelper.attributes);
+                fields.add(SystemDefinedPropertiesHelper.lastModifiedBy);
+                fields.add(SystemDefinedPropertiesHelper.utcDateCreated);
+                AppacitiveObject.getInBackground("object", result.getId(), fields, new Callback<AppacitiveObject>() {
+                    @Override
+                    public void success(AppacitiveObject result) {
+                        assert result.getPropertyAsString("intfield") != null;
+                        assert result.getPropertyAsString("geofield") != null;
 
-                            assert result.getPropertyAsString("stringfield") == null;
-                            assert result.getPropertyAsString("textfield") == null;
+                        assert result.getPropertyAsString("stringfield") == null;
+                        assert result.getPropertyAsString("textfield") == null;
 
-                            assert result.getAllTags().size() == 0;
-                            assert result.getAllAttributes().size() != 0;
-                            somethingHappened.set(true);
-                        }
+                        assert result.getAllTags().size() == 0;
+                        assert result.getAllAttributes().size() != 0;
+                        somethingHappened.set(true);
+                    }
 
-                        @Override
-                        public void failure(AppacitiveObject result, Exception e) {
-                            Assert.fail(e.getMessage());
-                        }
-                    });
-                } catch (ValidationException e) {
-                    Assert.fail(e.getMessage());
-                }
+                    @Override
+                    public void failure(AppacitiveObject result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void deleteObjectTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject object = new AppacitiveObject("object");
         object.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
@@ -625,55 +651,6 @@ public class ObjectTest {
                 result.deleteInBackground(false, new Callback<Void>() {
                     @Override
                     public void success(Void result) {
-                        try {
-                            AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
-                                @Override
-                                public void success(AppacitiveObject result) {
-                                    assert false;
-                                }
-
-                                @Override
-                                public void failure(AppacitiveObject result, Exception e) {
-                                    AppacitiveException ae = (AppacitiveException) e;
-                                    assert ae.getCode().equals(ErrorCodes.NOT_FOUND);
-                                    somethingHappened.set(true);
-                                }
-                            });
-                        } catch (ValidationException e) {
-                            Assert.fail(e.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void failure(Void result, Exception e) {
-                        Assert.fail(e.getMessage());
-                    }
-                });
-            }
-        });
-        await().untilTrue(somethingHappened);
-    }
-
-    @Test
-    public void multiDeleteObjectTest() throws ValidationException, InterruptedException {
-        final AtomicInteger count = new AtomicInteger(0);
-        final List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < 3; i++) {
-            AppacitiveObject appacitiveObject = new AppacitiveObject("object");
-            appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
-                @Override
-                public void success(AppacitiveObject result) {
-                    ids.add(result.getId());
-                    count.incrementAndGet();
-                }
-            });
-        }
-        await().untilAtomic(count, equalTo(3));
-        AppacitiveObject.bulkDeleteInBackground("object", ids, new Callback<Void>() {
-            @Override
-            public void success(Void result) {
-                for (long id : ids) {
-                    try {
                         AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
                             @Override
                             public void success(AppacitiveObject result) {
@@ -682,13 +659,66 @@ public class ObjectTest {
 
                             @Override
                             public void failure(AppacitiveObject result, Exception e) {
-                                assert true;
-                                count.decrementAndGet();
+                                AppacitiveException ae = (AppacitiveException) e;
+                                assert ae.getCode().equals(ErrorCodes.NOT_FOUND);
+                                somethingHappened.set(true);
                             }
                         });
-                    } catch (ValidationException e) {
+                    }
+
+                    @Override
+                    public void failure(Void result, Exception e) {
                         Assert.fail(e.getMessage());
                     }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+    }
+
+    @Test
+    public void multiDeleteObjectTest() throws ValidationException, InterruptedException {
+        final AtomicInteger createCount = new AtomicInteger(0);
+        final List<Long> ids = new ArrayList<Long>();
+        for (int i = 0; i < 3; i++) {
+            AppacitiveObject appacitiveObject = new AppacitiveObject("object");
+            appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
+                @Override
+                public void success(AppacitiveObject result) {
+                    ids.add(result.getId());
+                    createCount.incrementAndGet();
+                }
+
+                @Override
+                public void failure(AppacitiveObject result, Exception e) {
+                    Assert.fail(e.getMessage());
+                }
+            });
+        }
+        await().atMost(Duration.TEN_SECONDS).untilAtomic(createCount, equalTo(3));
+
+        final AtomicInteger deleteCount = new AtomicInteger(3);
+        AppacitiveObject.bulkDeleteInBackground("object", ids, new Callback<Void>() {
+            @Override
+            public void success(Void result) {
+                for (long id : ids) {
+                    AppacitiveObject.getInBackground("object", id, null, new Callback<AppacitiveObject>() {
+                        @Override
+                        public void success(AppacitiveObject result) {
+                            assert false;
+                        }
+
+                        @Override
+                        public void failure(AppacitiveObject result, Exception e) {
+                            assert true;
+                            deleteCount.decrementAndGet();
+                        }
+                    });
                 }
             }
 
@@ -697,12 +727,11 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().untilAtomic(count, equalTo(0));
+        await().atMost(Duration.TEN_SECONDS).untilAtomic(deleteCount, equalTo(0));
     }
 
     @Test
     public void findObjectsTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         final AppacitiveQuery query = new AppacitiveQuery();
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
@@ -721,13 +750,17 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void findObjectsTestWithPagination() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         final AppacitiveQuery query = new AppacitiveQuery();
         query.pageNumber = 2;
@@ -751,25 +784,20 @@ public class ObjectTest {
                 });
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void findObjectsWithPropertyFilterTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setStringProperty("stringfield", "hello world123");
         appacitiveObject.setIntProperty("intfield", 2005);
         appacitiveObject.setBoolProperty("boolfield", false);
         appacitiveObject.setStringProperty("geofield", "11.11, 22.22");
         final Date date = new Date();
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        final DateFormat tf = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-        final DateFormat dtf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        final String nowAsISODate = df.format(date);
-        final String nowAsISOTime = tf.format(date);
-        final String nowAsISODateTime = dtf.format(date);
+        final String nowAsISODate = convertDateToString(date);
+        final String nowAsISOTime = convertTimeToString(date);
+        final String nowAsISODateTime = convertDateTimeToString(date);
         appacitiveObject.setStringProperty("datefield", nowAsISODate);
         appacitiveObject.setStringProperty("timefield", nowAsISOTime);
         appacitiveObject.setStringProperty("datetimefield", nowAsISODateTime);
@@ -811,13 +839,18 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
+
     public void findObjectsWithAttributeFilterTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         appacitiveObject.setAttribute("a1", "v1");
         appacitiveObject.setAttribute("a2", "v2");
@@ -840,7 +873,7 @@ public class ObjectTest {
                 AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
-                        assert result.results.size() > 0;
+                        Assert.assertTrue(result.results.size() > 0);
                         somethingHappened.set(true);
                     }
 
@@ -850,13 +883,17 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
     public void findObjectsWithTagsFilterTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveObject appacitiveObject = new AppacitiveObject("object");
         List<String> tags = new ArrayList<String>() {{
             add("tag1");
@@ -885,7 +922,6 @@ public class ObjectTest {
         appacitiveObject.createInBackground(new Callback<AppacitiveObject>() {
             @Override
             public void success(AppacitiveObject result) {
-                final AtomicBoolean somethingHappened = new AtomicBoolean(false);
                 AppacitiveObject.findInBackground("object", query, null, new Callback<PagedList<AppacitiveObject>>() {
                     @Override
                     public void success(PagedList<AppacitiveObject> result) {
@@ -904,13 +940,18 @@ public class ObjectTest {
                     }
                 });
             }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
+
 
     @Test
     public void getConnectedObjectsTest() throws ValidationException {
-        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
         user.setUsername(getRandomString());
@@ -941,8 +982,122 @@ public class ObjectTest {
                 });
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
 
+    }
+
+    @Test
+    public void setMultiValuedItemsTest() throws ValidationException {
+        AppacitiveObject object = new AppacitiveObject("object");
+        List<String> stringItems = new ArrayList<String>() {{
+            add("a");
+            add(null);
+            add("b");
+            add(null);
+        }};
+        List<Integer> integerItems = new ArrayList<Integer>() {{
+            add(100);
+            add(null);
+            add(200);
+            add(null);
+        }};
+        List<Double> decimalItems = new ArrayList<Double>() {{
+            add(11.12345);
+            add(null);
+            add(22.09876);
+            add(null);
+        }};
+        object.setPropertyAsMultiValued("multi_string", stringItems);
+        object.setPropertyAsMultiValued("multi_integer", integerItems);
+        object.setPropertyAsMultiValued("multi_decimal", decimalItems);
+
+        assert object.getPropertyAsMultiValuedDouble("multi_decimal").size() == 4;
+        assert object.getPropertyAsMultiValuedInt("multi_integer").size() == 4;
+        assert object.getPropertyAsMultiValuedString("multi_string").size() == 4;
+
+        object.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                assert result.getId() > 0;
+                List<String> returnStringItems = result.getPropertyAsMultiValuedString("multi_string");
+                List<Integer> returnIntegerItems = result.getPropertyAsMultiValuedInt("multi_integer");
+                List<Double> returnDoubleItems = result.getPropertyAsMultiValuedDouble("multi_decimal");
+                assert returnStringItems.size() == 4;
+                assert returnDoubleItems.size() == 4;
+                assert returnIntegerItems.size() == 4;
+                somethingHappened.set(true);
+            }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+
+    }
+
+    @Test
+
+    public void addMultiValuedItemsTest() throws ValidationException {
+        AppacitiveObject object = new AppacitiveObject("object");
+        final List<String> stringItemsWithNulls = new ArrayList<String>() {{
+            add("a");
+            add(null);
+            add("b");
+            add(null);
+        }};
+        final List<Integer> integerItemsWithNulls = new ArrayList<Integer>() {{
+            add(100);
+            add(null);
+            add(200);
+            add(null);
+        }};
+        final List<Double> decimalItemsWithNulls = new ArrayList<Double>() {{
+            add(11.12345);
+            add(null);
+            add(22.09876);
+            add(null);
+        }};
+
+        object.setPropertyAsMultiValued("multi_string", stringItemsWithNulls);
+        object.setPropertyAsMultiValued("multi_integer", integerItemsWithNulls);
+        object.setPropertyAsMultiValued("multi_decimal", decimalItemsWithNulls);
+
+        object.createInBackground(new Callback<AppacitiveObject>() {
+            @Override
+            public void success(AppacitiveObject result) {
+                assert result.getId() > 0;
+                result.addItemsToMultiValuedProperty("multi_string", stringItemsWithNulls);
+                result.addItemsToMultiValuedProperty("multi_integer", integerItemsWithNulls);
+                result.addItemsToMultiValuedProperty("multi_decimal", decimalItemsWithNulls);
+
+                assert result.getPropertyAsMultiValuedDouble("multi_decimal").size() == 8;
+                assert result.getPropertyAsMultiValuedInt("multi_integer").size() == 8;
+                assert result.getPropertyAsMultiValuedString("multi_string").size() == 8;
+
+                result.updateInBackground(false, new Callback<AppacitiveObject>() {
+                    @Override
+                    public void success(AppacitiveObject result1) {
+                        assert result1.getPropertyAsMultiValuedDouble("multi_decimal").size() == 8;
+                        assert result1.getPropertyAsMultiValuedInt("multi_integer").size() == 8;
+                        assert result1.getPropertyAsMultiValuedString("multi_string").size() == 8;
+                        somethingHappened.set(true);
+                    }
+
+                    @Override
+                    public void failure(AppacitiveObject result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveObject result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
 }
