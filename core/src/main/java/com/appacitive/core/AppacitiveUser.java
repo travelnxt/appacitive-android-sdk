@@ -29,8 +29,8 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
 
 
     }
-    public AppacitiveUser(long userId)
-    {
+
+    public AppacitiveUser(long userId) {
         this();
         this.setId(userId);
     }
@@ -632,21 +632,31 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         postWithVoidCallbackHelper(url, headers, payload, callback);
     }
 
-    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException {
+    public static void validateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) {
         final String url = Urls.ForUser.validateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payloadMap = new HashMap<String, Object>();
-        AssertUserAuth();
+        try {
+            AssertUserAuth();
+        } catch (UserAuthException e) {
+            if (callback != null)
+                callback.failure(null, e);
+        }
         APJSONObject payload = new APJSONObject(payloadMap);
 
         postWithVoidCallbackHelper(url, headers, payload, callback);
     }
 
-    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) throws UserAuthException {
+    public static void invalidateCurrentlyLoggedInUserSessionInBackground(Callback<Void> callback) {
         final String url = Urls.ForUser.invalidateSessionUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> payloadMap = new HashMap<String, Object>();
-        AssertUserAuth();
+        try {
+            AssertUserAuth();
+        } catch (UserAuthException e) {
+            if (callback != null)
+                callback.success(null);
+        }
         APJSONObject payload = new APJSONObject(payloadMap);
 
         postWithVoidCallbackHelper(url, headers, payload, callback);

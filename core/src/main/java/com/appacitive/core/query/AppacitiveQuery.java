@@ -23,7 +23,7 @@ public class AppacitiveQuery implements Serializable {
 
     public List<String> freeTextTokens = new ArrayList<String>();
 
-    public Query query;
+    public Query filter;
 
     public Map<String, String> asQueryStringParameters() {
         Map<String, String> queryStringParameters = new HashMap<String, String>();
@@ -43,8 +43,8 @@ public class AppacitiveQuery implements Serializable {
             queryStringParameters.put("freeText", StringUtils.join(freeTextTokens, ","));
         }
 
-        if (this.query != null) {
-            queryStringParameters.put("query", this.query.asString());
+        if (this.filter != null) {
+            queryStringParameters.put("filter", this.filter.asString());
         }
 
         return queryStringParameters;

@@ -67,7 +67,7 @@ public class AppacitiveContextBase implements Serializable {
         return isInitialized;
     }
 
-    public synchronized static Double[] getCurrentLocation() {
+    public synchronized static double[] getCurrentLocation() {
         return userContextProvider.getCurrentLocation();
     }
 

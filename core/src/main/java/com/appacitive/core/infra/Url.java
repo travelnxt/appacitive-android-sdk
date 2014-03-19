@@ -24,8 +24,8 @@ public class Url implements Serializable {
         this.suffix = suffix;
         if (queryStringParameters != null)
             this.queryStringParameters = queryStringParameters;
-        Double[] location = AppacitiveContextBase.getCurrentLocation();
-        if (location[0] != null && location[1] != null && endpoint.equals("user")) {
+        double[] location = AppacitiveContextBase.getCurrentLocation();
+        if (location[0] != 0 && location[1] != 0 && endpoint.equals("user")) {
             this.queryStringParameters.put("lat", String.valueOf(location[0]));
             this.queryStringParameters.put("long", String.valueOf(location[1]));
         }

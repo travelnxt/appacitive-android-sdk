@@ -3,6 +3,7 @@ package com.appacitive.core.query;
 import com.appacitive.core.infra.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,8 +28,16 @@ public class BooleanOperator implements Query {
         return new BooleanOperator(and, filters);
     }
 
+    public static BooleanOperator and(Query[] filters) {
+        return new BooleanOperator(and, Arrays.asList(filters));
+    }
+
     public static BooleanOperator or(List<Query> filters) {
         return new BooleanOperator(or, filters);
+    }
+
+    public static BooleanOperator or(Query[] filters) {
+        return new BooleanOperator(or, Arrays.asList(filters));
     }
 
     @Override

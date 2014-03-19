@@ -337,7 +337,6 @@ public class UserTest {
                 result.loginInBackground(pwd, new Callback<String>() {
                     @Override
                     public void success(String result) {
-                        try {
                             AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
                                 @Override
                                 public void success(Void result) {
@@ -350,9 +349,6 @@ public class UserTest {
                                     Assert.fail(e.getMessage());
                                 }
                             });
-                        } catch (UserAuthException e) {
-                            Assert.fail(e.getMessage());
-                        }
                     }
                 });
             }
@@ -376,11 +372,9 @@ public class UserTest {
                     @Override
                     public void success(String result) {
                         assert result != null && result.isEmpty() == false;
-                        try {
                             AppacitiveUser.invalidateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
                                 @Override
                                 public void success(Void result) {
-                                    try {
                                         AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
                                             @Override
                                             public void success(Void result) {
@@ -393,10 +387,6 @@ public class UserTest {
                                                 somethingHappened.set(true);
                                             }
                                         });
-                                    } catch (UserAuthException e) {
-                                        Assert.fail(e.getMessage());
-                                    }
-
                                 }
 
                                 @Override
@@ -404,9 +394,6 @@ public class UserTest {
                                     Assert.fail(e.getMessage());
                                 }
                             });
-                        } catch (UserAuthException e) {
-                            Assert.fail(e.getMessage());
-                        }
                     }
                 });
             }
@@ -437,11 +424,10 @@ public class UserTest {
                             result.checkinInBackground(geo, new Callback<Void>() {
                                 @Override
                                 public void success(Void result) {
-                                    assert true;
-                                    Double[] geo = AppacitiveContextBase.getCurrentLocation();
+                                    double[] geo = AppacitiveContextBase.getCurrentLocation();
                                     assert geo != null;
-                                    assert geo[0].equals(10.11);
-                                    assert geo[1].equals(20.22);
+                                    assert geo[0] == (10.11);
+                                    assert geo[1] == (20.22);
                                     somethingHappened.set(true);
                                 }
 

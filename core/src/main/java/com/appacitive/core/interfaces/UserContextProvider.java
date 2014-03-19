@@ -17,6 +17,6 @@ public interface UserContextProvider {
 
     public void setCurrentLocation(Double latitude, Double longitude);
 
-    public Double[] getCurrentLocation();
+    public double[] getCurrentLocation();
 
 }

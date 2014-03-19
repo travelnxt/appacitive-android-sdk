@@ -42,7 +42,7 @@ public class AppacitivePushNotification implements Serializable, APSerializable 
         if (this.channels.size() > 0)
             nativeMap.put("channels", new APJSONArray(this.channels));
         if (this.query != null)
-            nativeMap.put("query", this.query);
+            nativeMap.put("filter", this.query);
         if (this.expiryInSeconds > 0)
             nativeMap.put("expireafter", this.expiryInSeconds);
 

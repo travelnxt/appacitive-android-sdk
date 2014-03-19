@@ -814,7 +814,7 @@ public class ObjectTest {
         geo[1] = 22.23d;
         final Query q7 = new GeoFilter("geofield").withinCircle(geo, 10, DistanceMetric.mi);
 
-        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+        query.filter = BooleanOperator.and(new ArrayList<Query>() {{
             add(q1);
             add(q2);
             add(q3);
@@ -861,7 +861,7 @@ public class ObjectTest {
         final AttributeFilter a2 = new AttributeFilter("a2").endsWith("2");
         final AttributeFilter a3 = new AttributeFilter("a3").startsWith("v");
         final AttributeFilter a4 = new AttributeFilter("a4").like("*acit*");
-        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+        query.filter = BooleanOperator.and(new ArrayList<Query>() {{
             add(a1);
             add(a2);
             add(a3);
@@ -914,7 +914,7 @@ public class ObjectTest {
             add("tag6");
             add("tag7");
         }});
-        query.query = BooleanOperator.and(new ArrayList<Query>() {{
+        query.filter = BooleanOperator.and(new ArrayList<Query>() {{
             add(t1);
             add(t2);
         }});

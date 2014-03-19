@@ -12,7 +12,7 @@ public class StaticUserContextProvider implements UserContextProvider {
 
     private static AppacitiveUser loggedInUser;
 
-    private static Double[] currentGeoCoordinates = new Double[2];
+    private static double[] currentGeoCoordinates = new double[2];
 
     @Override
     public String getCurrentlyLoggedInUserToken() {
@@ -43,7 +43,7 @@ public class StaticUserContextProvider implements UserContextProvider {
     }
 
     @Override
-    public Double[] getCurrentLocation() {
+    public double[] getCurrentLocation() {
 
         return currentGeoCoordinates;
     }

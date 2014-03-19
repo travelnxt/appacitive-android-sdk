@@ -9,7 +9,7 @@ public interface Logger {
 
     public void setLogLevel(LogLevel logLevel);
 
-    public void Assert(String message);
+
 
     public void error(String message);
 
