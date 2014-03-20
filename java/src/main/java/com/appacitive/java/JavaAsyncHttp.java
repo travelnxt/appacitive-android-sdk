@@ -1,7 +1,9 @@
 package com.appacitive.java;
 
 import com.appacitive.core.infra.APCallback;
+import com.appacitive.core.infra.APContainer;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.ning.http.client.*;
 import com.ning.http.client.listener.TransferCompletionHandler;
 
@@ -28,6 +30,8 @@ public class JavaAsyncHttp implements AsyncHttp {
 
     @Override
     public void get(String url, Map<String, String> headers, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("GET " + url);
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = client.prepareGet(url);
         for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -64,6 +68,8 @@ public class JavaAsyncHttp implements AsyncHttp {
 
     @Override
     public void delete(String url, Map<String, String> headers, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("DELETE " + url);
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = client.prepareDelete(url);
         for (Map.Entry<String, String> header : headers.entrySet()) {
@@ -100,6 +106,8 @@ public class JavaAsyncHttp implements AsyncHttp {
 
     @Override
     public void put(String url, Map<String, String> headers, String request, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("PUT " + url);
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = client.preparePut(url);
         builder.setBody(request);
@@ -137,6 +145,8 @@ public class JavaAsyncHttp implements AsyncHttp {
 
     @Override
     public void post(String url, Map<String, String> headers, String request, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("POST " + url);
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpClient.BoundRequestBuilder builder = client.preparePost(url);
         builder.setBody(request);

@@ -5,7 +5,9 @@ import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.appacitive.core.infra.APCallback;
+import com.appacitive.core.infra.APContainer;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +50,8 @@ public class VolleyAsyncHttp implements AsyncHttp {
 
     @Override
     public void get(String url, final Map<String, String> headers, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("GET " + url);
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -77,6 +81,8 @@ public class VolleyAsyncHttp implements AsyncHttp {
 
     @Override
     public void delete(String url, final Map<String, String> headers, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("DELETE " + url);
         StringRequest request = new StringRequest(Request.Method.DELETE, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -106,6 +112,8 @@ public class VolleyAsyncHttp implements AsyncHttp {
 
     @Override
     public void put(String url, final Map<String, String> headers, final String payload, final APCallback callback) {
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("PUT " + url);
         StringRequest request = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -140,7 +148,8 @@ public class VolleyAsyncHttp implements AsyncHttp {
 
     @Override
     public void post(String url, final Map<String, String> headers, final String payload, final APCallback callback) {
-
+        final Logger logger = APContainer.build(Logger.class);
+        logger.info("POST " + url);
         StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

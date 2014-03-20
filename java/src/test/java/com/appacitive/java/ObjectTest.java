@@ -115,7 +115,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.ONE_MINUTE).untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
@@ -916,7 +916,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.ONE_MINUTE).untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 
     @Test

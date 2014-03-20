@@ -124,6 +124,7 @@ public class LinkTest {
     }
 
     @Test
+    @Ignore
     public void linkFacebookAccountTest() throws ValidationException {
         Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
@@ -187,6 +188,7 @@ public class LinkTest {
     }
 
     @Test
+    @Ignore
     public void getAllLinkedAccountsTest() throws ValidationException {
         Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
