@@ -7,22 +7,23 @@ import com.appacitive.core.infra.APContainer;
 import com.appacitive.core.infra.Headers;
 import com.appacitive.core.infra.Urls;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.FileUploadUrlResponse;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveFile implements Serializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveFile.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public static void getUploadUrlInBackground(String contentType, String fileName, int expires, final Callback<FileUploadUrlResponse> callback) {
+        LOGGER.info("Getting upload URL.");
         String url = Urls.ForFile.getUploadUrl(contentType).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -69,6 +70,7 @@ public class AppacitiveFile implements Serializable {
     }
 
     public static void getDownloadUrlInBackground(String fileId, int expires, final Callback<String> callback) {
+        LOGGER.info("Getting download URL.");
         String url = Urls.ForFile.getDownloadUrl(fileId).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -107,6 +109,7 @@ public class AppacitiveFile implements Serializable {
     }
 
     public static void deleteFileInBackground(String fileId, final Callback<Void> callback) {
+        LOGGER.info("Deleting file.");
         final String url = Urls.ForFile.getDeleteUrl(fileId).toString();
         final Map<String, String> headers = Headers.assemble();
 

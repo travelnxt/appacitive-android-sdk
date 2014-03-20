@@ -33,7 +33,7 @@ public class WindowsPhoneOptions implements Serializable, APSerializable {
 
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = new APJSONObject();
         if (this.isEmpty() == false)
             nativeMap.put("wp", this.notification.getMap());

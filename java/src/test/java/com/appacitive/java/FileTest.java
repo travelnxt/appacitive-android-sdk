@@ -22,7 +22,6 @@ public class FileTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(10, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -30,11 +29,9 @@ public class FileTest {
         // one-time cleanup code
     }
 
-//    private static AtomicBoolean somethingHappened;
-
     @Before
     public void beforeTest() {
-//        Awaitility.reset();
+        Awaitility.reset();
     }
 
     @Test

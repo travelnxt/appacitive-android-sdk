@@ -11,12 +11,12 @@ public class AppacitiveContext extends AppacitiveContextBase {
 
     private static Context applicationContext = null;
 
-    public static void initialize(String apiKey, Environment environment, Context applicationContext) {
+    public synchronized static void initialize(String apiKey, Environment environment, Context applicationContext) {
         AppacitiveContextBase.initialize(apiKey, environment, new AndroidPlatform());
         AppacitiveContext.applicationContext = applicationContext;
     }
 
-    public static Context getApplicationContext() {
+    public synchronized static Context getApplicationContext() {
         return AppacitiveContext.applicationContext;
     }
 

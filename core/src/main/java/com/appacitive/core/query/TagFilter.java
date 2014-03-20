@@ -27,7 +27,7 @@ public class TagFilter extends Filter {
     }
 
     @Override
-    public String asString() {
+    public synchronized String asString() {
         return String.format("%s('%s')", this.operator, StringUtils.join(this.tags, ","));
     }
 }

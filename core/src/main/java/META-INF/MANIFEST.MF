@@ -1,5 +1,2 @@
 Manifest-Version: 1.0
-Class-Path: slf4j-api-1.7.5.jar netty-3.9.0.Final.jar async-http-clien
- t-1.8.3.jar
-Main-Class: 
 

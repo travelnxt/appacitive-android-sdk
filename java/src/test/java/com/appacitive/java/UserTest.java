@@ -25,7 +25,6 @@ public class UserTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
@@ -95,8 +94,7 @@ public class UserTest {
     }
 
     @Test
-    public void loginWithUsernamePasswordTest
-            () throws ValidationException {
+    public void loginWithUsernamePasswordTest() throws ValidationException {
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final String username = getRandomString();
         final String password = getRandomString();
@@ -478,5 +476,4 @@ public class UserTest {
         });
         await().untilTrue(somethingHappened);
     }
-
 }

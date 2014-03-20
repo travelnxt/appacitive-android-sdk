@@ -14,33 +14,33 @@ public class StaticUserContextProvider implements UserContextProvider {
 
     private static double[] currentGeoCoordinates = new double[2];
     @Override
-    public String getCurrentlyLoggedInUserToken() {
+    public synchronized String getCurrentlyLoggedInUserToken() {
         return StaticUserContextProvider.userToken;
     }
 
     @Override
-    public void setCurrentlyLoggedInUserToken(String userToken) {
+    public synchronized void setCurrentlyLoggedInUserToken(String userToken) {
         StaticUserContextProvider.userToken = userToken;
     }
 
     @Override
-    public AppacitiveUser getLoggedInUser() {
+    public synchronized AppacitiveUser getLoggedInUser() {
         return StaticUserContextProvider.loggedInUser;
     }
 
     @Override
-    public void setLoggedInUser(AppacitiveUser loggedInUser) {
+    public synchronized void setLoggedInUser(AppacitiveUser loggedInUser) {
         StaticUserContextProvider.loggedInUser = loggedInUser;
     }
 
     @Override
-    public void setCurrentLocation(Double latitude, Double longitude) {
+    public synchronized void setCurrentLocation(Double latitude, Double longitude) {
         StaticUserContextProvider.currentGeoCoordinates[0] = latitude;
         StaticUserContextProvider.currentGeoCoordinates[1] = longitude;
     }
 
     @Override
-    public double[] getCurrentLocation() {
+    public synchronized double[] getCurrentLocation() {
         return currentGeoCoordinates;
     }
 }

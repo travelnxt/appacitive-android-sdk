@@ -24,12 +24,12 @@ public abstract class EmailBody implements Serializable, APSerializable {
         this.isHTML = isHTML;
     }
 
-    public void setSelf(APJSONObject emailBody) {
+    public synchronized void setSelf(APJSONObject emailBody) {
         if (emailBody.isNull("ishtml") == false)
             this.isHTML = emailBody.optBoolean("ishtml");
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject object = new APJSONObject();
         object.put("ishtml", isHTML());
         return object;

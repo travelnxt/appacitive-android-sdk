@@ -17,4 +17,15 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+    public static String joinLong(List<Long> lst, String prefix) {
+        final StringBuilder sb = new StringBuilder();
+        String separator = "";
+        for (Long f : lst) {
+            sb.append(separator);
+            separator = prefix;
+            sb.append(f);
+        }
+        return sb.toString();
+    }
 }

@@ -25,14 +25,12 @@ public class DeviceTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
     }
-//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {

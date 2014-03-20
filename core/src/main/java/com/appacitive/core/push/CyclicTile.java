@@ -24,7 +24,7 @@ public class CyclicTile extends WindowsPhoneTile implements Serializable {
     public FixedSizeImageList images;
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
         nativeMap.put("tiletemplate", "cycle");
         nativeMap.put("tileid", tileId);

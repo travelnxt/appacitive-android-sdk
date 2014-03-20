@@ -28,7 +28,7 @@ public class IconicTile extends WindowsPhoneTile implements Serializable {
     public String wideContent3;
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject map = super.getMap();
 
         map.put("tiletemplate", "iconic");

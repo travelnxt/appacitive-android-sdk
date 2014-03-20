@@ -18,7 +18,7 @@ public class Link implements Serializable, APSerializable {
         add("username");
     }};
 
-    public void setSelf(APJSONObject link) {
+    public synchronized void setSelf(APJSONObject link) {
         if (link != null) {
             if (link.isNull("name") == false)
                 this.name = link.optString("name");
@@ -40,7 +40,7 @@ public class Link implements Serializable, APSerializable {
     }
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         return null;
     }
 

@@ -267,7 +267,7 @@ public class PropertyFilter extends Filter {
 
 
     @Override
-    public String asString() {
+    public synchronized String asString() {
         if (this.operator.equals("between"))
             return String.format("*%s %s %s", this.key, this.operator, this.value);
         return String.format("*%s %s '%s'", this.key, this.operator, this.value);

@@ -27,14 +27,14 @@ public class RawEmailBody extends EmailBody implements Serializable, APSerializa
     private String content = null;
 
     @Override
-    public void setSelf(APJSONObject emailBody) {
+    public synchronized void setSelf(APJSONObject emailBody) {
         super.setSelf(emailBody);
         if (emailBody.isNull("content") == false)
             this.content = emailBody.optString("content");
     }
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
         nativeMap.put("content", this.content);
         return nativeMap;

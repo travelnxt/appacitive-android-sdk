@@ -20,7 +20,7 @@ public class ToastNotification extends WindowsPhoneNotification implements Seria
     public String path;
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject map = super.getMap();
         map.put("notificationtype", "toast");
         map.put("text1", text1);

@@ -7,6 +7,7 @@ import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.*;
 import com.appacitive.core.query.AppacitiveQuery;
 
@@ -14,14 +15,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveObject extends AppacitiveEntity implements Serializable, APSerializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveObject.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public synchronized void setSelf(APJSONObject object) {
 
@@ -78,6 +78,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public void createInBackground(final Callback<AppacitiveObject> callback) throws ValidationException {
+        LOGGER.info("Creating object of type " + this.getType());
         if ((type == null || this.type.isEmpty()) && (typeId <= 0)) {
             throw new ValidationException("Type and TypeId, both cannot be missing while creating an object.");
         }
@@ -121,8 +122,9 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void getInBackground(String type, long id, List<String> fields, final Callback<AppacitiveObject> callback) {
-        final String url = Urls.ForObject.getObjectUrl(type, id, fields).toString();
+    public static void getInBackground(String type, long objectId, List<String> fields, final Callback<AppacitiveObject> callback) {
+        LOGGER.info("Fetching object of type " + type + " and id " + objectId);
+        final String url = Urls.ForObject.getObjectUrl(type, objectId, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
         asyncHttp.get(url, headers, new APCallback() {
@@ -159,6 +161,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public void deleteInBackground(boolean deleteConnections, final Callback<Void> callback) {
+        LOGGER.info("Deleting object of type " + getType() + " and id " + getId());
         final String url = Urls.ForObject.deleteObjectUrl(this.type, this.getId(), deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -189,8 +192,8 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-
     public static void deleteInBackground(String type, long objectId, boolean deleteConnections, final Callback<Void> callback) {
+        LOGGER.info("Deleting object of type " + type + " and id " + objectId);
         final String url = Urls.ForObject.deleteObjectUrl(type, objectId, deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -222,6 +225,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public static void bulkDeleteInBackground(String type, List<Long> objectIds, final Callback<Void> callback) {
+        LOGGER.info("Bulk deleting objects of type " + type + " and ids " + StringUtils.joinLong(objectIds, " , "));
         final String url = Urls.ForObject.bulkDeleteObjectUrl(type).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -265,6 +269,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public void updateInBackground(boolean withRevision, final Callback<AppacitiveObject> callback) {
+        LOGGER.info("Updating object of type " + getType() + " and id " + getId());
         final String url = Urls.ForObject.updateObjectUrl(this.type, this.getId(), withRevision, this.getRevision()).toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;
@@ -305,6 +310,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public void fetchLatestInBackground(final Callback<Void> callback) {
+        LOGGER.info("Fetching latest object of type " + getType() + " and id " + getId());
         final String url = Urls.ForObject.getObjectUrl(type, this.getId(), null).toString();
         final Map<String, String> headers = Headers.assemble();
         final AppacitiveObject object = this;
@@ -338,9 +344,9 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void multiGetInBackground(String type, List<Long> ids, List<String> fields, final Callback<List<AppacitiveObject>> callback) {
-
-        final String url = Urls.ForObject.multiGetObjectUrl(type, ids, fields).toString();
+    public static void multiGetInBackground(String type, List<Long> objectIds, List<String> fields, final Callback<List<AppacitiveObject>> callback) {
+        LOGGER.info("Bulk fetching objects of type " + type + " and ids " + StringUtils.joinLong(objectIds, " , "));
+        final String url = Urls.ForObject.multiGetObjectUrl(type, objectIds, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -376,6 +382,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public static void findInBackground(String type, AppacitiveQuery query, List<String> fields, final Callback<PagedList<AppacitiveObject>> callback) {
+        LOGGER.info("Searching objects of type " + type);
         final String url = Urls.ForObject.findObjectsUrl(type, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
@@ -415,6 +422,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public static void findInBetweenTwoObjectsInBackground(String type, long objectAId, String relationA, String labelA, long objectBId, String relationB, String labelB, List<String> fields, final Callback<PagedList<AppacitiveObject>> callback) {
+        LOGGER.info("Searching objects of type " + type + " between two objects " + objectAId + " and " + objectBId);
         final String url = Urls.ForObject.findBetweenTwoObjectsUrl(type, objectAId, relationA, labelA, objectBId, relationB, labelB, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveObject> returnObjects = new ArrayList<AppacitiveObject>();
@@ -455,6 +463,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     }
 
     public static void getConnectedObjectsInBackground(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields, final Callback<ConnectedObjectsResponse> callback) {
+        LOGGER.info("Searching for connected objects of type " + relationType + "from " + objectId + " of type " + objectType);
         final String url = Urls.ForConnection.getConnectedObjectsUrl(relationType, objectType, objectId, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);

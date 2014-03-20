@@ -25,7 +25,7 @@ public class AppacitiveQuery implements Serializable {
 
     public Query filter;
 
-    public Map<String, String> asQueryStringParameters() {
+    public synchronized Map<String, String> asQueryStringParameters() {
         Map<String, String> queryStringParameters = new HashMap<String, String>();
 
         if (this.pageNumber > 0)
@@ -44,7 +44,7 @@ public class AppacitiveQuery implements Serializable {
         }
 
         if (this.filter != null) {
-            queryStringParameters.put("filter", this.filter.asString());
+            queryStringParameters.put("query", this.filter.asString());
         }
 
         return queryStringParameters;

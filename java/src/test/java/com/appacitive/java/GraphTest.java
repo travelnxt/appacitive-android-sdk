@@ -28,7 +28,6 @@ public class GraphTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(60, TimeUnit.HOURS);
     }
 
     @AfterClass
@@ -40,8 +39,6 @@ public class GraphTest {
         return UUID.randomUUID().toString();
     }
 
-//    private static AtomicBoolean somethingHappened = new AtomicBoolean(false);
-
     @Before
     public void beforeTest() {
         Awaitility.reset();
@@ -49,6 +46,7 @@ public class GraphTest {
 
     @Test
     public void filterQueryTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final String unique = getRandomString();
@@ -82,6 +80,7 @@ public class GraphTest {
 
     @Test
     public void projectQueryTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final String val1 = getRandomString();
         final String val2 = getRandomString();

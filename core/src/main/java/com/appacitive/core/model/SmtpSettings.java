@@ -32,7 +32,7 @@ public class SmtpSettings implements Serializable, APSerializable {
 
     private boolean enableSSL;
 
-    public void setSelf(APJSONObject smtp) {
+    public synchronized void setSelf(APJSONObject smtp) {
         if (smtp != null) {
             if (smtp.isNull("username") == false)
                 this.username = smtp.optString("username");
@@ -71,7 +71,7 @@ public class SmtpSettings implements Serializable, APSerializable {
         return username;
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = new APJSONObject();
         jsonObject.put("username", this.username);
         jsonObject.put("password", this.password);

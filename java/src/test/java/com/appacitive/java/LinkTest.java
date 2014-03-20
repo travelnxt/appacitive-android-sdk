@@ -4,6 +4,7 @@ import com.appacitive.core.AppacitiveContextBase;
 import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.exceptions.UserAuthException;
 import com.appacitive.core.exceptions.ValidationException;
+import com.appacitive.core.interfaces.LogLevel;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.Link;
@@ -25,7 +26,7 @@ public class LinkTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-        Awaitility.setDefaultTimeout(10, TimeUnit.MINUTES);
+
     }
 
     @AfterClass
@@ -33,14 +34,12 @@ public class LinkTest {
         // one-time cleanup code
     }
 
-//    private static AtomicBoolean somethingHappened;
-
     @Before
     public void beforeTest() {
         Awaitility.reset();
     }
 
-    private final static String fbToken = "CAACEdEose0cBAEfbh5wZBPiaFAXYZBc9UJdojagq1ZBaBBm2jqdl6ZB3wR4nAyo4ZAMtQUK01Fn6qGarVkd1mh49OLTILcsZAXzr6ezSHMgmSZCasNZCcZAMh1pOgFRKVZAoZAFaK5NT4w49lMeWcH5QtB17jLVgsq9OYSBQXWzwrWrGzZBEempqq5VSX40IwZA1vwGmPJfKCnizAQgZDZD";
+    private final static String fbToken = "CAACEdEose0cBAHdG84rgY4w3zVAMdBpN2cJhMX76nl7vTu31y0zDni2cuPwaUfHUZBsjBttVMLZApSoiWuZCWPw7ZC4LJu2gcBSZAzj9XBvzpQWWFvBfxTHM0uRRuSNIkNaCViJcZCDlSeEjsLMmBDcfV7QbEVGMMimVHZCQi3qkZBlENlSkZA4CgFaE99J7EsaEIkkE8tF6ZCGwZDZD";
     private final static String password = "password";
     private final static String twitterOAuthToken = "431607023-yb8pICZ1WKdu3qFqCDo5gWbRHwHs9Rg7FoV1PZt9";
     private final static String twitterOAuthTokenSecret = "PIEx8WA5iQ4xicHzttMuq83ZZqOoEBUdQR4g1e4JAA";
@@ -62,6 +61,7 @@ public class LinkTest {
 
     @Test
     public void linkTwitterAccountTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
@@ -125,6 +125,7 @@ public class LinkTest {
 
     @Test
     public void linkFacebookAccountTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
@@ -187,6 +188,7 @@ public class LinkTest {
 
     @Test
     public void getAllLinkedAccountsTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = getRandomUser();
         user.signupInBackground(new Callback<AppacitiveUser>() {
@@ -247,6 +249,63 @@ public class LinkTest {
                                 @Override
                                 public void failure(Void result, Exception e) {
                                     Assert.fail(e.getMessage());
+                                }
+                            });
+                        } catch (UserAuthException e) {
+                            Assert.fail(e.getMessage());
+                        }
+                    }
+                });
+            }
+        });
+        await().untilTrue(somethingHappened);
+    }
+
+    @Test
+    public void deleteLinkedAccountTest() throws ValidationException {
+        Awaitility.setDefaultTimeout(20, TimeUnit.SECONDS);
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+        AppacitiveUser user = getRandomUser();
+        user.signupInBackground(new Callback<AppacitiveUser>() {
+            @Override
+            public void success(final AppacitiveUser result) {
+                result.loginInBackground(password, new Callback<String>() {
+                    @Override
+                    public void success(String token) {
+                        try {
+                            result.linkTwitterInBackground(twitterOAuthToken, twitterOAuthTokenSecret, twitterConsumerKey, twitterConsumerSecret, new Callback<Void>() {
+                                @Override
+                                public void success(Void voidResult) {
+                                    try {
+                                        result.delinkAccountInBackground("twitter", new Callback<Void>() {
+                                            @Override
+                                            public void success(Void voidResult) {
+                                                try {
+                                                    result.getLinkedAccountInBackground("twitter", new Callback<Link>() {
+                                                        @Override
+                                                        public void success(Link result) {
+                                                            assert result == null;
+                                                            somethingHappened.set(true);
+                                                        }
+
+                                                        @Override
+                                                        public void failure(Link result, Exception e) {
+                                                            Assert.fail(e.getMessage());
+                                                        }
+                                                    });
+                                                } catch (UserAuthException e) {
+                                                    Assert.fail(e.getMessage());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void failure(Void result, Exception e) {
+                                                Assert.fail(e.getMessage());
+                                            }
+                                        });
+                                    } catch (UserAuthException e) {
+                                        Assert.fail(e.getMessage());
+                                    }
                                 }
                             });
                         } catch (UserAuthException e) {

@@ -38,7 +38,7 @@ public class TemplatedEmailBody extends EmailBody implements Serializable {
 
     private Map<String, String> data;
 
-    public void setSelf(APJSONObject emailBody) {
+    public synchronized void setSelf(APJSONObject emailBody) {
         super.setSelf(emailBody);
         if (emailBody.isNull("templatename") == false)
             this.templateName = emailBody.optString("templatename");
@@ -55,7 +55,7 @@ public class TemplatedEmailBody extends EmailBody implements Serializable {
         }
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
 
         APJSONObject jsonObject = super.getMap();
         jsonObject.put("templatename", this.templateName);

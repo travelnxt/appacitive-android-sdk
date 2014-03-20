@@ -7,6 +7,7 @@ import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.AppacitiveEndpoint;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
@@ -18,14 +19,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+
 
 /**
  * Created by sathley.
  */
 public class AppacitiveConnection extends AppacitiveEntity implements Serializable, APSerializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveConnection.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public AppacitiveConnection(String relationType) {
 
@@ -153,6 +154,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public void createInBackground(final Callback<AppacitiveConnection> callback) throws ValidationException {
+        LOGGER.info("Creating connection of type " + this.getRelationType());
         if ((this.relationType == null || this.relationType.isEmpty()) && (this.relationId <= 0)) {
             throw new ValidationException("Relation Type and Relation Id both cannot be empty while creating an object.");
         }
@@ -204,7 +206,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void getInBackground(String relationType, long id, List<String> fields, final Callback<AppacitiveConnection> callback) {
-
+        LOGGER.info("Fetching connection of type " + relationType + "with id " + id);
         final String url = Urls.ForConnection.getConnectionUrl(relationType, id, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -243,6 +245,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public void deleteInBackground(final Callback<Void> callback) {
+        LOGGER.info("Deleting connection of type " + this.getRelationType() + "with id " + this.getId());
         final String url = Urls.ForConnection.deleteConnectionUrl(this.relationType, this.getId()).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -274,6 +277,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void deleteInBackground(String relationType, long connectionId, final Callback<Void> callback) {
+        LOGGER.info("Deleting connection of type " + relationType + "with id " + connectionId);
         final String url = Urls.ForConnection.deleteConnectionUrl(relationType, connectionId).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -305,6 +309,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void bulkDeleteInBackground(String relationType, List<Long> connectionIds, final Callback<Void> callback) {
+        LOGGER.info("Bulk deleting connections of type " + relationType + "with ids " + StringUtils.joinLong(connectionIds, " , "));
         final String url = Urls.ForConnection.bulkDeleteConnectionUrl(relationType).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -349,6 +354,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public void updateInBackground(boolean withRevision, final Callback<AppacitiveConnection> callback) {
+        LOGGER.info("Updating connection of type " + this.getRelationType() + "with id " + this.getId());
         final String url = Urls.ForConnection.updateConnectionUrl(this.relationType, this.getId(), withRevision, this.getRevision()).toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;
@@ -389,6 +395,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public void fetchLatestInBackground(final Callback<Void> callback) {
+        LOGGER.info("Fetching latest connection of type " + this.getRelationType() + "with id " + this.getId());
         final String url = Urls.ForConnection.getConnectionUrl(relationType, this.getId(), null).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -423,9 +430,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
-    public static void multiGetInBackground(String relationType, List<Long> ids, List<String> fields, final Callback<List<AppacitiveConnection>> callback) {
-
-        final String url = Urls.ForConnection.multiGetConnectionUrl(relationType, ids, fields).toString();
+    public static void multiGetInBackground(String relationType, List<Long> connectionIds, List<String> fields, final Callback<List<AppacitiveConnection>> callback) {
+        LOGGER.info("Bulk fetching connections of type " + relationType + "with ids " + StringUtils.joinLong(connectionIds, " , "));
+        final String url = Urls.ForConnection.multiGetConnectionUrl(relationType, connectionIds, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
         final List<AppacitiveConnection> appacitiveConnections = new ArrayList<AppacitiveConnection>();
@@ -462,6 +469,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void findInBackground(String relationType, AppacitiveQuery query, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
+        LOGGER.info("Searching connections of type " + relationType);
         final String url = Urls.ForConnection.findConnectionsUrl(relationType, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -502,6 +510,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void findByObjectsInBackground(long objectId1, long objectId2, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
+        LOGGER.info("Searching connections by objects, with object ids " + objectId1 + " and " + objectId2);
         final String url = Urls.ForConnection.findForObjectsUrl(objectId1, objectId2, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -544,6 +553,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void findByObjectsAndRelationInBackground(String relationType, long objectId1, long objectId2, List<String> fields, final Callback<AppacitiveConnection> callback) {
+        LOGGER.info("Searching connections by objects and relation, with object ids " + objectId1 + " and " + objectId2 + " and relation " + relationType);
         final String url = Urls.ForConnection.findForObjectsAndRelationUrl(relationType, objectId1, objectId2, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -582,6 +592,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void findInterconnectsInBackground(Long object1Id, List<Long> object2Ids, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
+        LOGGER.info("Searching interconnects from objectid " + object1Id + " to object ids " + StringUtils.joinLong(object2Ids, ", "));
         final String url = Urls.ForConnection.findInterconnectsUrl(fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final Map<String, Object> map = new HashMap<String, Object>();
@@ -630,6 +641,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
     }
 
     public static void findByObjectAndLabelInBackground(String relationType, long objectId, String label, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
+        LOGGER.info("Searching connections by object and label for relation type " + relationType + " with object id " + objectId + " and label " + label);
         final String url = Urls.ForConnection.findByObjectAndLabelUrl(relationType, objectId, label, fields).toString();
         final Map<String, String> headers = Headers.assemble();
 

@@ -6,6 +6,7 @@ import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.push.AndroidOptions;
@@ -14,20 +15,20 @@ import com.appacitive.core.push.PlatformOptions;
 import com.appacitive.core.push.WindowsPhoneOptions;
 import com.appacitive.core.query.BooleanOperator;
 import com.appacitive.core.query.Filter;
+import com.appacitive.core.query.Query;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitivePushNotification implements Serializable, APSerializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitivePushNotification.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public void setSelf(APJSONObject APEntity) {
 
@@ -42,7 +43,7 @@ public class AppacitivePushNotification implements Serializable, APSerializable 
         if (this.channels.size() > 0)
             nativeMap.put("channels", new APJSONArray(this.channels));
         if (this.query != null)
-            nativeMap.put("filter", this.query);
+            nativeMap.put("query", this.query);
         if (this.expiryInSeconds > 0)
             nativeMap.put("expireafter", this.expiryInSeconds);
 
@@ -78,9 +79,9 @@ public class AppacitivePushNotification implements Serializable, APSerializable 
         return new AppacitivePushNotification(message, false, null, null, null);
     }
 
-    public static AppacitivePushNotification ToQueryResult(String message, Filter filter) {
-        if (filter != null) {
-            return new AppacitivePushNotification(message, false, null, null, filter.asString());
+    public static AppacitivePushNotification ToQueryResult(String message, Query query) {
+        if (query != null) {
+            return new AppacitivePushNotification(message, false, null, null, query.asString());
         }
         return new AppacitivePushNotification(message, false, null, null, null);
     }
@@ -157,6 +158,7 @@ public class AppacitivePushNotification implements Serializable, APSerializable 
     }
 
     public void sendInBackground(final Callback<String> callback) {
+        LOGGER.info("Sending push notification(s).");
         final String url = Urls.Misc.sendPushUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;

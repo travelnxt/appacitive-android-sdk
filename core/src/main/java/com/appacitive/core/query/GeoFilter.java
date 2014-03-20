@@ -31,7 +31,7 @@ public class GeoFilter extends Filter {
     }
 
     @Override
-    public String asString() {
+    public synchronized String asString() {
         return String.format("*%s %s %s", this.key, this.operator, this.value);
     }
 }

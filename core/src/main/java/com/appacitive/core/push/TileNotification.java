@@ -71,7 +71,7 @@ public class TileNotification extends WindowsPhoneNotification implements Serial
     }
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
         if (getWp8Tile() != null)
             nativeMap.put("wp8", getWp8Tile().getMap());

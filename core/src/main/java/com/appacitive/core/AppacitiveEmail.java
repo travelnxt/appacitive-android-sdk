@@ -6,13 +6,13 @@ import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
@@ -27,7 +27,7 @@ public class AppacitiveEmail implements Serializable {
         id = 0;
     }
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveEmail.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public void setId(long id) {
         this.id = id;
@@ -136,6 +136,7 @@ public class AppacitiveEmail implements Serializable {
     }
 
     public synchronized void sendInBackground(final Callback<AppacitiveEmail> callback) {
+        LOGGER.info("Sending email with subject " + this.subject);
         final String url = Urls.Misc.sendEmailUrl().toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;

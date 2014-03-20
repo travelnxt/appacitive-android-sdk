@@ -1,6 +1,2 @@
 Manifest-Version: 1.0
-Class-Path: httpcore-nio-4.3.jar httpasyncclient-4.0.jar httpcore-4.3.
- 1.jar commons-codec-1.6.jar httpclient-4.3.2.jar commons-logging-1.1.
- 3.jar httpmime-4.3.2.jar json-20140107.jar unirest-java-1.3.7.jar
-Main-Class: 
 

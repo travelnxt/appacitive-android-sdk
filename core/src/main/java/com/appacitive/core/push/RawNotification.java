@@ -14,7 +14,7 @@ public class RawNotification extends WindowsPhoneNotification implements Seriali
     public String rawData;
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject map = super.getMap();
         map.put("notificationtype", "raw");
         map.put("data", rawData);

@@ -7,6 +7,7 @@ import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.PagedList;
@@ -16,14 +17,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveDevice extends AppacitiveEntity implements Serializable, APSerializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveDevice.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public AppacitiveDevice() {
 
@@ -140,6 +140,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void registerInBackground(final Callback<AppacitiveDevice> callback) throws ValidationException {
+        LOGGER.info("Registering device with token " + this.getDeviceToken() + " of type " + this.getDeviceType());
         final List<String> mandatoryFields = new ArrayList<String>() {{
             add("devicetype");
             add("devicetoken");
@@ -193,7 +194,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public static void getInBackground(long deviceId, final Callback<AppacitiveDevice> callback) {
-
+        LOGGER.info("Fetching device with id " + deviceId);
         final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(deviceId)).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -233,6 +234,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void fetchLatestInBackground(final Callback<Void> callback) {
+        LOGGER.info("Fetching latest device with id " + this.getId());
         final String url = Urls.ForDevice.getDeviceUrl(String.valueOf(this.getId())).toString();
         final Map<String, String> headers = Headers.assemble();
         final AppacitiveDevice device = this;
@@ -265,9 +267,9 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void multiGetInBackground(List<Long> ids, List<String> fields, final Callback<List<AppacitiveDevice>> callback) {
-
-        final String url = Urls.ForObject.multiGetObjectUrl("device", ids, fields).toString();
+    public static void multiGetInBackground(List<Long> deviceIds, List<String> fields, final Callback<List<AppacitiveDevice>> callback) {
+        LOGGER.info("Bulk fetching devices with ids " + StringUtils.joinLong(deviceIds, " , "));
+        final String url = Urls.ForObject.multiGetObjectUrl("device", deviceIds, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveDevice> returnDevices = new ArrayList<AppacitiveDevice>();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -304,7 +306,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void updateInBackground(boolean withRevision, final Callback<AppacitiveDevice> callback) {
-
+        LOGGER.info("Updating device with id " + this.getId());
         final String url = Urls.ForDevice.updateDeviceUrl(this.getId(), withRevision, this.getRevision()).toString();
         final Map<String, String> headers = Headers.assemble();
         final APJSONObject payload;
@@ -345,6 +347,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public void deleteInBackground(boolean deleteConnections, final Callback<Void> callback) {
+        LOGGER.info("Deleting device with id " + this.getId());
         final String url = Urls.ForDevice.deleteDeviceUrl(this.getId(), deleteConnections).toString();
         final Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
@@ -376,6 +379,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     }
 
     public static void findInBackground(AppacitiveQuery query, List<String> fields, final Callback<PagedList<AppacitiveDevice>> callback) {
+        LOGGER.info("Searching for devices.");
         final String url = Urls.ForObject.findObjectsUrl("device", query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<AppacitiveDevice> returnDevices = new ArrayList<AppacitiveDevice>();

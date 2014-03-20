@@ -7,12 +7,13 @@ import com.appacitive.core.model.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by sathley.
  */
 public class JavaPlatform implements Platform {
-    private static final Map<Class<?>, ObjectFactory<?>> registrations = new HashMap<Class<?>, ObjectFactory<?>>() {{
+    private static final Map<Class<?>, ObjectFactory<?>> registrations = new ConcurrentHashMap<Class<?>, ObjectFactory<?>>() {{
 
         put(AsyncHttp.class, new ObjectFactory<AsyncHttp>() {
             @Override
@@ -36,7 +37,7 @@ public class JavaPlatform implements Platform {
         });
     }};
 
-    public Map<Class<?>, ObjectFactory<?>> getRegistrations() {
+    public synchronized Map<Class<?>, ObjectFactory<?>> getRegistrations() {
         return registrations;
     }
 }

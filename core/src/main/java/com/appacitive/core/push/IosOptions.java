@@ -22,7 +22,7 @@ public class IosOptions implements Serializable, APSerializable {
 
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = new APJSONObject();
         APJSONObject sound = new APJSONObject();
         sound.put("sound", soundFile);

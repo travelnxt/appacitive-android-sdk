@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by sathley.
@@ -18,7 +19,7 @@ public class AppacitiveGraphNode implements Serializable {
 
     public AppacitiveConnection connection = null;
 
-    public Map<String, List<AppacitiveGraphNode>> children = new HashMap<String, List<AppacitiveGraphNode>>();
+    public Map<String, List<AppacitiveGraphNode>> children = new ConcurrentHashMap<String, List<AppacitiveGraphNode>>();
 
     public AppacitiveGraphNode parent = null;
 

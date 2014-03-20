@@ -6,6 +6,7 @@ import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
+import com.appacitive.core.interfaces.Logger;
 import com.appacitive.core.model.AppacitiveGraphNode;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
@@ -15,16 +16,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Created by sathley.
  */
 public class AppacitiveGraphSearch implements Serializable {
 
-    public final static Logger LOGGER = Logger.getLogger(AppacitiveGraphSearch.class.getName());
+    public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public static void filterQueryInBackground(String queryName, final Map<String, String> placeHolders, final Callback<List<Long>> callback) {
+        LOGGER.info("Executing filter query with name " + queryName);
         final String url = Urls.Misc.filterQueryUrl(queryName).toString();
         final Map<String, String> headers = Headers.assemble();
 
@@ -71,6 +72,7 @@ public class AppacitiveGraphSearch implements Serializable {
     }
 
     public static void projectQueryInBackground(String queryName, final List<Long> ids, final Map<String, String> placeHolders, final Callback<List<AppacitiveGraphNode>> callback) {
+        LOGGER.info("Executing project query with name " + queryName);
         final String url = Urls.Misc.projectQueryUrl(queryName).toString();
         final Map<String, String> headers = Headers.assemble();
         final List<String> strIds = new ArrayList<String>();

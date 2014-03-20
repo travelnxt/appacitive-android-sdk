@@ -57,7 +57,7 @@ public class AppacitiveStatus implements Serializable, APSerializable {
     }
 
     @Override
-    public void setSelf(APJSONObject status) {
+    public synchronized void setSelf(APJSONObject status) {
         if (status != null) {
             code = status.optString("code", null);
             message = status.optString("message", null);
@@ -74,7 +74,7 @@ public class AppacitiveStatus implements Serializable, APSerializable {
     }
 
     @Override
-    public APJSONObject getMap() {
+    public synchronized APJSONObject getMap() {
         return null;
     }
 }

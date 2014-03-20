@@ -17,11 +17,11 @@ public class AndroidOptions implements Serializable, APSerializable {
         return this.notificationTitle == null || this.notificationTitle.isEmpty() == true;
     }
 
-    public void setSelf(APJSONObject APEntity) {
+    public synchronized void setSelf(APJSONObject APEntity) {
 
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject jsonObject = new APJSONObject();
         APJSONObject title = new APJSONObject();
         title.put("title", notificationTitle);

@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by sathley.
  */
 public class APContainer implements Serializable {
 
-    private static final Map<Class<?>, ObjectFactory<?>> registrations = new HashMap<Class<?>, ObjectFactory<?>>();
+    private static final Map<Class<?>, ObjectFactory<?>> registrations = new ConcurrentHashMap<Class<?>, ObjectFactory<?>>();
 
     public APContainer() {
     }

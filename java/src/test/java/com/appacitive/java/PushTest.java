@@ -1,8 +1,8 @@
 package com.appacitive.java;
 
 import com.appacitive.core.AppacitiveContextBase;
-import com.appacitive.core.AppacitiveObject;
 import com.appacitive.core.AppacitivePushNotification;
+import com.appacitive.core.interfaces.LogLevel;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.push.*;
@@ -15,6 +15,7 @@ import org.junit.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -27,15 +28,12 @@ public class PushTest {
     @BeforeClass
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
-//        Awaitility.setDefaultTimeout(5, TimeUnit.MINUTES);
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
         // one-time cleanup code
     }
-
-//    private static AtomicBoolean somethingHappened;
 
     @Before
     public void beforeTest() {
@@ -137,7 +135,7 @@ public class PushTest {
                     }
                 }
         );
-        await().untilTrue(somethingHappened);
+        await().atMost(10, TimeUnit.SECONDS).untilTrue(somethingHappened);
     }
 
     @Test
@@ -151,6 +149,7 @@ public class PushTest {
                     public void success(String result) {
                         assert Long.valueOf(result) > 0;
                         somethingHappened.set(true);
+
                     }
 
                     @Override
@@ -331,5 +330,4 @@ public class PushTest {
         });
         await().untilTrue(somethingHappened);
     }
-
 }

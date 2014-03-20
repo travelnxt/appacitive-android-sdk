@@ -9,8 +9,6 @@ public interface Logger {
 
     public void setLogLevel(LogLevel logLevel);
 
-
-
     public void error(String message);
 
     public void info(String message);

@@ -10,10 +10,10 @@ import com.appacitive.core.interfaces.Logger;
 public class AndroidLogger implements com.appacitive.core.interfaces.Logger {
     private static final String TAG = Logger.TAG;
 
-    private static LogLevel logLevel = LogLevel.INFO;
+    private volatile static LogLevel logLevel = LogLevel.INFO;
 
     @Override
-    public void setLogLevel(LogLevel logLevel) {
+    public synchronized void setLogLevel(LogLevel logLevel) {
         AndroidLogger.logLevel = logLevel;
     }
 

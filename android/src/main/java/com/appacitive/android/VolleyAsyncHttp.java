@@ -24,7 +24,7 @@ public class VolleyAsyncHttp implements AsyncHttp {
         if (requestQueue == null) {
             Context context = AppacitiveContext.getApplicationContext();
             if (context == null)
-                throw new IllegalStateException("Application context is not yet initialized. Initialize it first before making any request to Appacitive.");
+                throw new IllegalStateException("AppacitiveContext is not yet initialized. Initialize it before making any requests to appacitive.");
             requestQueue = Volley.newRequestQueue(context);
         }
         return requestQueue;

@@ -7,10 +7,12 @@
         <groupId>com.appacitive.sdk</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.core</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <url>http://www.appacitive.com/</url>
+    <!--<packaging>pom</packaging>-->
+
 
 </project>

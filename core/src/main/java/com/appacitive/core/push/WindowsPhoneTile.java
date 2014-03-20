@@ -17,7 +17,7 @@ public class WindowsPhoneTile implements Serializable, APSerializable {
 
     }
 
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         return new APJSONObject();
     }
 }

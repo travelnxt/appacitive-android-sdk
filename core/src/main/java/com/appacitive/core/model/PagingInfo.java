@@ -20,7 +20,7 @@ public class PagingInfo implements Serializable, APSerializable {
     public long totalRecords = 0;
 
     @Override
-    public void setSelf(APJSONObject pagingInfo) {
+    public synchronized void setSelf(APJSONObject pagingInfo) {
         if (pagingInfo != null) {
 
             if (pagingInfo.isNull("pagenumber") == false)

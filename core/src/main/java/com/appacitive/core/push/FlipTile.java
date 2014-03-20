@@ -33,7 +33,7 @@ public class FlipTile extends WindowsPhoneTile implements Serializable {
     public String wideBackBackgroundImage;
 
     @Override
-    public APJSONObject getMap() throws APJSONException {
+    public synchronized APJSONObject getMap() throws APJSONException {
         APJSONObject nativeMap = super.getMap();
 
         nativeMap.put("tiletemplate", "flip");

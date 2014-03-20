@@ -41,7 +41,7 @@ public class BooleanOperator implements Query {
     }
 
     @Override
-    public String asString() {
+    public synchronized String asString() {
         StringBuilder sb = new StringBuilder();
         sb.append("( ");
         List<String> strFilters = new ArrayList<String>();
