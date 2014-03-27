@@ -1,5 +1,6 @@
 package com.appacitive.core;
 
+import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.infra.APCallback;
@@ -42,23 +43,24 @@ public class AppacitiveFile implements Serializable {
         asyncHttp.get(finalUrl, headers, new APCallback() {
             @Override
             public void success(String result) {
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        FileUploadUrlResponse resp = new FileUploadUrlResponse();
-                        resp.fileId = jsonObject.optString("id");
-                        resp.url = jsonObject.optString("url");
-                        if (callback != null)
-                            callback.success(resp);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    FileUploadUrlResponse resp = new FileUploadUrlResponse();
+                    resp.fileId = jsonObject.optString("id");
+                    resp.url = jsonObject.optString("url");
+                    if (callback != null)
+                        callback.success(resp);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -83,21 +85,22 @@ public class AppacitiveFile implements Serializable {
         asyncHttp.get(finalUrl, headers, new APCallback() {
             @Override
             public void success(String result) {
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        String uri = jsonObject.optString("uri");
-                        if (callback != null)
-                            callback.success(uri);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    String uri = jsonObject.optString("uri");
+                    if (callback != null)
+                        callback.success(uri);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -117,20 +120,21 @@ public class AppacitiveFile implements Serializable {
         asyncHttp.delete(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override

@@ -152,21 +152,25 @@ public class AppacitiveEmail implements Serializable {
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        email.setSelf(jsonObject.optJSONObject("email"));
-                        if (callback != null)
-                            callback.success(email);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    email.setSelf(jsonObject.optJSONObject("email"));
+                    if (callback != null)
+                        callback.success(email);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+//                } catch (Exception e) {
+//                    if (callback != null)
+//                        callback.failure(null, e);
+//                }
             }
 
             @Override

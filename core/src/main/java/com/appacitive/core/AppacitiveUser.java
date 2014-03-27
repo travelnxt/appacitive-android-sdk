@@ -199,22 +199,24 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.put(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        user.setSelf(jsonObject.optJSONObject("user"));
-                        if (callback != null) {
-                            callback.success(user);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    user.setSelf(jsonObject.optJSONObject("user"));
+                    if (callback != null) {
+                        callback.success(user);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -240,23 +242,25 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        AppacitiveUser user = new AppacitiveUser();
-                        user.setSelf(jsonObject.optJSONObject("user"));
-                        if (callback != null) {
-                            callback.success(user);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    AppacitiveUser user = new AppacitiveUser();
+                    user.setSelf(jsonObject.optJSONObject("user"));
+                    if (callback != null) {
+                        callback.success(user);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -304,26 +308,28 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        AppacitiveUser user = null;
-                        APJSONObject userJson = jsonObject.optJSONObject("user");
-                        if (userJson != null) {
-                            user = new AppacitiveUser();
-                            user.setSelf(userJson);
-                        }
-                        if (callback != null)
-                            callback.success(user);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    AppacitiveUser user = null;
+                    APJSONObject userJson = jsonObject.optJSONObject("user");
+                    if (userJson != null) {
+                        user = new AppacitiveUser();
+                        user.setSelf(userJson);
+                    }
+                    if (callback != null)
+                        callback.success(user);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -340,28 +346,30 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-
-                        String token = jsonObject.optString("token");
-                        AppacitiveContextBase.setLoggedInUserToken(token);
-
-                        AppacitiveUser user = new AppacitiveUser();
-                        user.setSelf(jsonObject.optJSONObject("user"));
-
-                        AppacitiveContextBase.setLoggedInUser(user);
-                        if (callback != null)
-                            callback.success(user);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+
+                    String token = jsonObject.optString("token");
+                    AppacitiveContextBase.setLoggedInUserToken(token);
+
+                    AppacitiveUser user = new AppacitiveUser();
+                    user.setSelf(jsonObject.optJSONObject("user"));
+
+                    AppacitiveContextBase.setLoggedInUser(user);
+                    if (callback != null)
+                        callback.success(user);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -446,24 +454,26 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-
-                        String token = jsonObject.optString("token");
-                        AppacitiveContextBase.setLoggedInUserToken(token);
-
-                        if (callback != null)
-                            callback.success(token);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+
+                    String token = jsonObject.optString("token");
+                    AppacitiveContextBase.setLoggedInUserToken(token);
+
+                    if (callback != null)
+                        callback.success(token);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -484,28 +494,30 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        List<AppacitiveUser> returnUsers = new ArrayList<AppacitiveUser>();
-                        APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        for (int i = 0; i < objectsArray.length(); i++) {
-                            APJSONObject userObject = objectsArray.optJSONObject(i);
-                            AppacitiveUser user = new AppacitiveUser();
-                            user.setSelf(userObject);
-                            returnUsers.add(user);
-                        }
-                        if (callback != null)
-                            callback.success(returnUsers);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    List<AppacitiveUser> returnUsers = new ArrayList<AppacitiveUser>();
+                    APJSONArray objectsArray = jsonObject.optJSONArray("objects");
+                    for (int i = 0; i < objectsArray.length(); i++) {
+                        APJSONObject userObject = objectsArray.optJSONObject(i);
+                        AppacitiveUser user = new AppacitiveUser();
+                        user.setSelf(userObject);
+                        returnUsers.add(user);
+                    }
+                    if (callback != null)
+                        callback.success(returnUsers);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -521,20 +533,22 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.delete(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -593,21 +607,23 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        user.setSelf(jsonObject.optJSONObject("user"));
-                        if (callback != null)
-                            callback.success(user);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    user.setSelf(jsonObject.optJSONObject("user"));
+                    if (callback != null)
+                        callback.success(user);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -688,23 +704,25 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-
-                        AppacitiveContextBase.setCurrentLocation(coordinates[0], coordinates[1]);
-
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+
+                    AppacitiveContextBase.setCurrentLocation(coordinates[0], coordinates[1]);
+
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -765,20 +783,22 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -798,26 +818,28 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    Link link = null;
-                    APJSONObject identityObject = jsonObject.optJSONObject("identity");
-                    if (status.isSuccessful()) {
-                        if (identityObject != null) {
-                            link = new Link();
-                            link.setSelf(identityObject);
-                        }
-                        if (callback != null)
-                            callback.success(link);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                Link link = null;
+                APJSONObject identityObject = jsonObject.optJSONObject("identity");
+                if (status.isSuccessful()) {
+                    if (identityObject != null) {
+                        link = new Link();
+                        link.setSelf(identityObject);
+                    }
+                    if (callback != null)
+                        callback.success(link);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -837,28 +859,30 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    List<Link> returnLinks = new ArrayList<Link>();
-                    if (status.isSuccessful()) {
-                        APJSONArray links = jsonObject.optJSONArray("identities");
-                        for (int i = 0; i < links.length(); i++) {
-                            APJSONObject linkObject = links.optJSONObject(i);
-                            Link link = new Link();
-                            link.setSelf(linkObject);
-                            returnLinks.add(link);
-                        }
-                        if (callback != null)
-                            callback.success(returnLinks);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                List<Link> returnLinks = new ArrayList<Link>();
+                if (status.isSuccessful()) {
+                    APJSONArray links = jsonObject.optJSONArray("identities");
+                    for (int i = 0; i < links.length(); i++) {
+                        APJSONObject linkObject = links.optJSONObject(i);
+                        Link link = new Link();
+                        link.setSelf(linkObject);
+                        returnLinks.add(link);
+                    }
+                    if (callback != null)
+                        callback.success(returnLinks);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -879,22 +903,24 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        user.setSelf(jsonObject.optJSONObject("user"));
-                        if (callback != null) {
-                            callback.success(null);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    user.setSelf(jsonObject.optJSONObject("user"));
+                    if (callback != null) {
+                        callback.success(null);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override

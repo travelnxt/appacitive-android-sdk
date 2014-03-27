@@ -96,22 +96,24 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.put(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonResult = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonResult.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        object.setSelf(jsonResult.optJSONObject("object"));
-                        if (callback != null) {
-                            callback.success(object);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    object.setSelf(jsonObject.optJSONObject("object"));
+                    if (callback != null) {
+                        callback.success(object);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -130,26 +132,28 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        AppacitiveObject object = null;
-                        APJSONObject objectJson = jsonObject.optJSONObject("object");
-                        if (objectJson != null) {
-                            object = new AppacitiveObject();
-                            object.setSelf(objectJson);
-                        }
-                        if (callback != null)
-                            callback.success(object);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    AppacitiveObject object = null;
+                    APJSONObject objectJson = jsonObject.optJSONObject("object");
+                    if (objectJson != null) {
+                        object = new AppacitiveObject();
+                        object.setSelf(objectJson);
+                    }
+                    if (callback != null)
+                        callback.success(object);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -168,20 +172,22 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.delete(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -200,20 +206,22 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.delete(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -244,20 +252,22 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        if (callback != null)
-                            callback.success(null);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    if (callback != null)
+                        callback.success(null);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -283,22 +293,24 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        object.setSelf(jsonObject.optJSONObject("object"));
-                        if (callback != null) {
-                            callback.success(object);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    object.setSelf(jsonObject.optJSONObject("object"));
+                    if (callback != null) {
+                        callback.success(object);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -318,22 +330,24 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        object.setSelf(jsonObject.optJSONObject("object"));
-                        if (callback != null) {
-                            callback.success(null);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    object.setSelf(jsonObject.optJSONObject("object"));
+                    if (callback != null) {
+                        callback.success(null);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -353,24 +367,26 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject();
-                            object.setSelf(objectsArray.optJSONObject(i));
-                            returnObjects.add(object);
-                        }
-                        if (callback != null)
-                            callback.success(returnObjects);
-                    } else if (callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    APJSONArray objectsArray = jsonObject.optJSONArray("objects");
+                    for (int i = 0; i < objectsArray.length(); i++) {
+                        AppacitiveObject object = new AppacitiveObject();
+                        object.setSelf(objectsArray.optJSONObject(i));
+                        returnObjects.add(object);
+                    }
+                    if (callback != null)
+                        callback.success(returnObjects);
+                } else if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+
             }
 
             @Override
@@ -391,26 +407,28 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        for (int i = 0; i < objectsArray.length(); i++) {
-                            AppacitiveObject object = new AppacitiveObject();
-                            object.setSelf(objectsArray.optJSONObject(i));
-                            returnObjects.add(object);
-                        }
-                        pagedResult.results = returnObjects;
-                        pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
-                        if (callback != null)
-                            callback.success(pagedResult);
-                    } else if (callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    APJSONArray objectsArray = jsonObject.optJSONArray("objects");
+                    for (int i = 0; i < objectsArray.length(); i++) {
+                        AppacitiveObject object = new AppacitiveObject();
+                        object.setSelf(objectsArray.optJSONObject(i));
+                        returnObjects.add(object);
+                    }
+                    pagedResult.results = returnObjects;
+                    pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
+                    if (callback != null)
+                        callback.success(pagedResult);
+                } else if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+
             }
 
             @Override
@@ -431,27 +449,29 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        APJSONArray objectsArray = jsonObject.optJSONArray("objects");
-                        if (objectsArray != null)
-                            for (int i = 0; i < objectsArray.length(); i++) {
-                                AppacitiveObject object = new AppacitiveObject();
-                                object.setSelf(objectsArray.optJSONObject(i));
-                                returnObjects.add(object);
-                            }
-                        pagedResult.results = returnObjects;
-                        pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
-                        if (callback != null)
-                            callback.success(pagedResult);
-                    } else if (callback != null)
-                        callback.failure(null, new AppacitiveException(status));
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    APJSONArray objectsArray = jsonObject.optJSONArray("objects");
+                    if (objectsArray != null)
+                        for (int i = 0; i < objectsArray.length(); i++) {
+                            AppacitiveObject object = new AppacitiveObject();
+                            object.setSelf(objectsArray.optJSONObject(i));
+                            returnObjects.add(object);
+                        }
+                    pagedResult.results = returnObjects;
+                    pagedResult.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
+                    if (callback != null)
+                        callback.success(pagedResult);
+                } else if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
+
             }
 
             @Override
@@ -470,38 +490,40 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         asyncHttp.get(url, headers, new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        ConnectedObjectsResponse connectedObjectsResponse = new ConnectedObjectsResponse(jsonObject.optString("parent"));
-                        connectedObjectsResponse.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
-                        connectedObjectsResponse.results = new ArrayList<ConnectedObject>();
-                        APJSONArray nodesArray = jsonObject.optJSONArray("nodes");
-                        if (nodesArray != null) {
-                            for (int i = 0; i < nodesArray.length(); i++) {
-                                ConnectedObject connectedObject = new ConnectedObject();
-                                APJSONObject nodeObject = nodesArray.optJSONObject(i);
-                                if (nodeObject.isNull("__edge") == false) {
-                                    connectedObject.connection = new AppacitiveConnection();
-                                    connectedObject.connection.setSelf(nodeObject.optJSONObject("__edge"));
-                                    nodeObject.remove("__edge");
-                                }
-                                connectedObject.object = new AppacitiveObject();
-                                connectedObject.object.setSelf(nodeObject);
-                                connectedObjectsResponse.results.add(connectedObject);
-                            }
-                        }
-                        if (callback != null)
-                            callback.success(connectedObjectsResponse);
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    ConnectedObjectsResponse connectedObjectsResponse = new ConnectedObjectsResponse(jsonObject.optString("parent"));
+                    connectedObjectsResponse.pagingInfo.setSelf(jsonObject.optJSONObject("paginginfo"));
+                    connectedObjectsResponse.results = new ArrayList<ConnectedObject>();
+                    APJSONArray nodesArray = jsonObject.optJSONArray("nodes");
+                    if (nodesArray != null) {
+                        for (int i = 0; i < nodesArray.length(); i++) {
+                            ConnectedObject connectedObject = new ConnectedObject();
+                            APJSONObject nodeObject = nodesArray.optJSONObject(i);
+                            if (nodeObject.isNull("__edge") == false) {
+                                connectedObject.connection = new AppacitiveConnection();
+                                connectedObject.connection.setSelf(nodeObject.optJSONObject("__edge"));
+                                nodeObject.remove("__edge");
+                            }
+                            connectedObject.object = new AppacitiveObject();
+                            connectedObject.object.setSelf(nodeObject);
+                            connectedObjectsResponse.results.add(connectedObject);
+                        }
+                    }
+                    if (callback != null)
+                        callback.success(connectedObjectsResponse);
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
 
             }
 

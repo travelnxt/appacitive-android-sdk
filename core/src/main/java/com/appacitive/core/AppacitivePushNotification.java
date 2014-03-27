@@ -14,7 +14,6 @@ import com.appacitive.core.push.IosOptions;
 import com.appacitive.core.push.PlatformOptions;
 import com.appacitive.core.push.WindowsPhoneOptions;
 import com.appacitive.core.query.BooleanOperator;
-import com.appacitive.core.query.Filter;
 import com.appacitive.core.query.Query;
 
 import java.io.Serializable;
@@ -171,22 +170,24 @@ public class AppacitivePushNotification implements Serializable, APSerializable 
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        String id = jsonObject.optString("id");
-                        if (callback != null) {
-                            callback.success(id);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    String id = jsonObject.optString("id");
+                    if (callback != null) {
+                        callback.success(id);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override

@@ -40,27 +40,29 @@ public class AppacitiveGraphSearch implements Serializable {
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        List<Long> ids = new ArrayList<Long>();
-                        APJSONArray idsArray = jsonObject.optJSONArray("ids");
-                        for (int i = 0; i < idsArray.length(); i++) {
-                            String id = idsArray.optString(i);
-                            ids.add(Long.valueOf(id));
-                        }
-                        if (callback != null) {
-                            callback.success(ids);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    List<Long> ids = new ArrayList<Long>();
+                    APJSONArray idsArray = jsonObject.optJSONArray("ids");
+                    for (int i = 0; i < idsArray.length(); i++) {
+                        String id = idsArray.optString(i);
+                        ids.add(Long.valueOf(id));
+                    }
+                    if (callback != null) {
+                        callback.success(ids);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
@@ -93,28 +95,30 @@ public class AppacitiveGraphSearch implements Serializable {
         asyncHttp.post(url, headers, payload.toString(), new APCallback() {
             @Override
             public void success(String result) {
+
+                APJSONObject jsonObject;
                 try {
-                    APJSONObject jsonObject = new APJSONObject(result);
-                    AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
-                    if (status.isSuccessful()) {
-                        List<AppacitiveGraphNode> nodes = new ArrayList<AppacitiveGraphNode>();
-                        Iterator<String> iterator = jsonObject.keys();
-                        while (iterator.hasNext()) {
-                            String key = iterator.next();
-                            if (key.equals("status") == false)
-                                nodes = AppacitiveGraphSearch.parseProjectionResult(jsonObject.optJSONObject(key).optJSONArray("values"));
-                        }
-                        if (callback != null) {
-                            callback.success(nodes);
-                        }
-                    } else {
-                        if (callback != null)
-                            callback.failure(null, new AppacitiveException(status));
-                    }
-                } catch (Exception e) {
-                    if (callback != null)
-                        callback.failure(null, e);
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
                 }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    List<AppacitiveGraphNode> nodes = new ArrayList<AppacitiveGraphNode>();
+                    Iterator<String> iterator = jsonObject.keys();
+                    while (iterator.hasNext()) {
+                        String key = iterator.next();
+                        if (key.equals("status") == false)
+                            nodes = AppacitiveGraphSearch.parseProjectionResult(jsonObject.optJSONObject(key).optJSONArray("values"));
+                    }
+                    if (callback != null) {
+                        callback.success(nodes);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+
             }
 
             @Override
