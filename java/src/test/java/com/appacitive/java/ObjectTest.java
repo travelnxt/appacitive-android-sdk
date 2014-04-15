@@ -10,6 +10,7 @@ import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.*;
+import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import org.junit.*;
 

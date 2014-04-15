@@ -5,12 +5,12 @@
     <parent>
         <artifactId>com.appacitive.parent</artifactId>
         <groupId>com.appacitive.sdk</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.java</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <!--<packaging>pom</packaging>-->
     <dependencies>
         <dependency>
@@ -33,6 +33,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>appacitive-java-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
