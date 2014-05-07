@@ -9,10 +9,7 @@ import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
 import com.appacitive.core.interfaces.Logger;
-import com.appacitive.core.model.AppacitiveStatus;
-import com.appacitive.core.model.Callback;
-import com.appacitive.core.model.Link;
-import com.appacitive.core.model.UserIdType;
+import com.appacitive.core.model.*;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -54,7 +51,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         APJSONObject jsonObject = super.getMap();
         jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
         jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
-
+        jsonObject.put("__acls", this.accessControl.getMap());
         return jsonObject;
     }
 
@@ -69,6 +66,8 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
     private String type = null;
 
     private long typeId = 0;
+
+    public Acl accessControl = new Acl();
 
     public String getType() {
         return type;
@@ -600,6 +599,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         APJSONObject payload;
         try {
             payload = super.getUpdateCommand();
+            payload.put("__acls", this.accessControl.getMap());
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }

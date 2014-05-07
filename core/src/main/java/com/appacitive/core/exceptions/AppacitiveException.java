@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by sathley.
  */
-public class AppacitiveException extends Exception implements Serializable {
+public class AppacitiveException extends RuntimeException implements Serializable {
 
     public AppacitiveException(AppacitiveStatus status) {
         super(status.getMessage());

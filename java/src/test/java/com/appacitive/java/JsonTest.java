@@ -1,7 +1,12 @@
 package com.appacitive.java;
 
 import com.appacitive.core.AppacitiveObject;
+import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
+import com.appacitive.core.model.Access;
+import com.appacitive.core.model.Acl;
+import com.appacitive.core.model.Permission;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -93,4 +98,6 @@ public class JsonTest {
 
 
     }
+
+
 }

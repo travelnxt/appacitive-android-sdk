@@ -53,7 +53,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         APJSONObject nativeMap = super.getMap();
         nativeMap.put(SystemDefinedPropertiesHelper.type, this.type);
         nativeMap.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
-
+        nativeMap.put("__acls", this.accessControl.getMap());
         return nativeMap;
     }
 
@@ -68,6 +68,8 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
     private String type = null;
 
     private long typeId = 0;
+
+    public Acl accessControl = new Acl();
 
     public String getType() {
         return type;
@@ -285,6 +287,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         final APJSONObject payload;
         try {
             payload = super.getUpdateCommand();
+            payload.put("__acls", this.accessControl.getMap());
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }

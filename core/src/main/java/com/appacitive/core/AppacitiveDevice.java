@@ -8,6 +8,7 @@ import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
 import com.appacitive.core.interfaces.Logger;
+import com.appacitive.core.model.Acl;
 import com.appacitive.core.model.AppacitiveStatus;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.PagedList;
@@ -34,7 +35,6 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         this.setId(deviceId);
     }
 
-
     public synchronized void setSelf(APJSONObject device) {
 
         super.setSelf(device);
@@ -53,6 +53,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         APJSONObject jsonObject = super.getMap();
         jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
         jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
+        jsonObject.put("__acls", this.accessControl.getMap());
         return jsonObject;
     }
 
@@ -75,6 +76,8 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
     private String type = null;
 
     private long typeId = 0;
+
+    public Acl accessControl = new Acl();
 
     public String getDeviceType() {
         return this.getPropertyAsString("devicetype");
@@ -317,6 +320,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
         final APJSONObject payload;
         try {
             payload = super.getUpdateCommand();
+            payload.put("__acls", this.accessControl.getMap());
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }
