@@ -7,7 +7,7 @@
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <name>Appacitive SDK</name>
     <url>http://www.appacitive.com/</url>
     <modules>
