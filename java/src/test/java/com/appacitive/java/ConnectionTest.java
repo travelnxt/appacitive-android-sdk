@@ -45,7 +45,7 @@ public class ConnectionTest {
     }
 
     @Test
-    public void createConnectionBetweenNewObjects() throws ValidationException {
+    public void createConnectionBetweenNewObjects()  {
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         final AppacitiveObject parent = new AppacitiveObject("object");
         final AppacitiveObject child = new AppacitiveObject("object");

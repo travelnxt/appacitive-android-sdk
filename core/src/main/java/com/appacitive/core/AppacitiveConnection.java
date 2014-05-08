@@ -153,7 +153,7 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         return this.toExistingObject(label, deviceId);
     }
 
-    public void createInBackground(final Callback<AppacitiveConnection> callback) throws ValidationException {
+    public void createInBackground(final Callback<AppacitiveConnection> callback) {
         LOGGER.info("Creating connection of type " + this.getRelationType());
         if ((this.relationType == null || this.relationType.isEmpty()) && (this.relationId <= 0)) {
             throw new ValidationException("Relation Type and Relation Id both cannot be empty while creating an object.");

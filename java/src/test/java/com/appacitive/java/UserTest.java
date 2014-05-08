@@ -12,7 +12,6 @@ import org.junit.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -189,7 +188,7 @@ public class UserTest {
     }
 
     @Test
-    public void deleteUserTest() throws ValidationException {
+    public void deleteUserTest() {
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
@@ -203,36 +202,32 @@ public class UserTest {
                 result.loginInBackground(pwd, new Callback<String>() {
                     @Override
                     public void success(String result1) {
-                        try {
-                            result.deleteInBackground(false, new Callback<Void>() {
-                                @Override
-                                public void success(Void result1) {
-                                    try {
-                                        AppacitiveUser.getByIdInBackground(result.getId(), null, new Callback<AppacitiveUser>() {
-                                            @Override
-                                            public void success(AppacitiveUser result) {
-                                                assert false;
-                                            }
+                        result.deleteInBackground(false, new Callback<Void>() {
+                            @Override
+                            public void success(Void result1) {
+                                try {
+                                    AppacitiveUser.getByIdInBackground(result.getId(), null, new Callback<AppacitiveUser>() {
+                                        @Override
+                                        public void success(AppacitiveUser result) {
+                                            assert false;
+                                        }
 
-                                            @Override
-                                            public void failure(AppacitiveUser result, Exception e) {
-                                                assert true;
-                                                somethingHappened.set(true);
-                                            }
-                                        });
-                                    } catch (Exception e) {
-                                        Assert.fail(e.getMessage());
-                                    }
-                                }
-
-                                @Override
-                                public void failure(Void result, Exception e) {
+                                        @Override
+                                        public void failure(AppacitiveUser result, Exception e) {
+                                            assert true;
+                                            somethingHappened.set(true);
+                                        }
+                                    });
+                                } catch (Exception e) {
                                     Assert.fail(e.getMessage());
                                 }
-                            });
-                        } catch (Exception e) {
-                            Assert.fail(e.getMessage());
-                        }
+                            }
+
+                            @Override
+                            public void failure(Void result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
                     }
                 });
             }
@@ -291,7 +286,7 @@ public class UserTest {
     }
 
     @Test
-    public void sendResetPasswordTest() throws ValidationException {
+    public void sendResetPasswordTest() {
         final AtomicBoolean somethingHappened = new AtomicBoolean(false);
         AppacitiveUser user = new AppacitiveUser();
         user.setFirstName(getRandomString());
@@ -335,18 +330,18 @@ public class UserTest {
                 result.loginInBackground(pwd, new Callback<String>() {
                     @Override
                     public void success(String result) {
-                            AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
-                                @Override
-                                public void success(Void result) {
-                                    assert true;
-                                    somethingHappened.set(true);
-                                }
+                        AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
+                            @Override
+                            public void success(Void result) {
+                                assert true;
+                                somethingHappened.set(true);
+                            }
 
-                                @Override
-                                public void failure(Void result, Exception e) {
-                                    Assert.fail(e.getMessage());
-                                }
-                            });
+                            @Override
+                            public void failure(Void result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
                     }
                 });
             }
@@ -370,28 +365,28 @@ public class UserTest {
                     @Override
                     public void success(String result) {
                         assert result != null && result.isEmpty() == false;
-                            AppacitiveUser.invalidateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
-                                @Override
-                                public void success(Void result) {
-                                        AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
-                                            @Override
-                                            public void success(Void result) {
-                                                Assert.fail();
-                                            }
+                        AppacitiveUser.invalidateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
+                            @Override
+                            public void success(Void result) {
+                                AppacitiveUser.validateCurrentlyLoggedInUserSessionInBackground(new Callback<Void>() {
+                                    @Override
+                                    public void success(Void result) {
+                                        Assert.fail();
+                                    }
 
-                                            @Override
-                                            public void failure(Void result, Exception e) {
-                                                assert true;
-                                                somethingHappened.set(true);
-                                            }
-                                        });
-                                }
+                                    @Override
+                                    public void failure(Void result, Exception e) {
+                                        assert true;
+                                        somethingHappened.set(true);
+                                    }
+                                });
+                            }
 
-                                @Override
-                                public void failure(Void result, Exception e) {
-                                    Assert.fail(e.getMessage());
-                                }
-                            });
+                            @Override
+                            public void failure(Void result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
                     }
                 });
             }
@@ -418,25 +413,23 @@ public class UserTest {
                         double[] geo = new double[2];
                         geo[0] = 10.11d;
                         geo[1] = 20.22d;
-                        try {
-                            result.checkinInBackground(geo, new Callback<Void>() {
-                                @Override
-                                public void success(Void result) {
-                                    double[] geo = AppacitiveContextBase.getCurrentLocation();
-                                    assert geo != null;
-                                    assert geo[0] == (10.11);
-                                    assert geo[1] == (20.22);
-                                    somethingHappened.set(true);
-                                }
 
-                                @Override
-                                public void failure(Void result, Exception e) {
-                                    Assert.fail(e.getMessage());
-                                }
-                            });
-                        } catch (UserAuthException e) {
-                            Assert.fail(e.getMessage());
-                        }
+                        result.checkinInBackground(geo, new Callback<Void>() {
+                            @Override
+                            public void success(Void result) {
+                                double[] geo = AppacitiveContextBase.getCurrentLocation();
+                                assert geo != null;
+                                assert geo[0] == (10.11);
+                                assert geo[1] == (20.22);
+                                somethingHappened.set(true);
+                            }
+
+                            @Override
+                            public void failure(Void result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
+
                     }
                 });
             }
@@ -459,7 +452,7 @@ public class UserTest {
                             result.deleteInBackground(false, new Callback<Void>() {
                                 @Override
                                 public void success(Void result) {
-                                   somethingHappened.set(true);
+                                    somethingHappened.set(true);
                                 }
                             });
                         } catch (UserAuthException e) {

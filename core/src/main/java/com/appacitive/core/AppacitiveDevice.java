@@ -142,7 +142,7 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
 
     }
 
-    public void registerInBackground(final Callback<AppacitiveDevice> callback) throws ValidationException {
+    public void registerInBackground(final Callback<AppacitiveDevice> callback) {
         LOGGER.info("Registering device with token " + this.getDeviceToken() + " of type " + this.getDeviceType());
         final List<String> mandatoryFields = new ArrayList<String>() {{
             add("devicetype");

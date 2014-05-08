@@ -79,7 +79,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         return typeId;
     }
 
-    public void createInBackground(final Callback<AppacitiveObject> callback) throws ValidationException {
+    public void createInBackground(final Callback<AppacitiveObject> callback) {
         LOGGER.info("Creating object of type " + this.getType());
         if ((type == null || this.type.isEmpty()) && (typeId <= 0)) {
             throw new ValidationException("Type and TypeId, both cannot be missing while creating an object.");

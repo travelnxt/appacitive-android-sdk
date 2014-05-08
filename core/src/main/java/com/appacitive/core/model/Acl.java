@@ -3,7 +3,6 @@ package com.appacitive.core.model;
 import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
-import com.appacitive.core.infra.StringUtils;
 
 import java.util.*;
 
@@ -61,7 +60,7 @@ public class Acl {
     }
 
 
-    synchronized void HandleUserPermissionChanges(String userKey, Permission permission, Access access)
+    synchronized void handleUserPermissionChanges(String userKey, Permission permission, Access access)
     {
         Map<Permission, EnumSet<Access>> permissionSet = userPermissions.get(userKey);
         if(permissionSet == null)
@@ -83,7 +82,7 @@ public class Acl {
         }
     }
 
-    synchronized void HandleUsergroupPermissionChanges(String userKey, Permission permission, Access access)
+    synchronized void handleUsergroupPermissionChanges(String userKey, Permission permission, Access access)
     {
         Map<Permission, EnumSet<Access>> permissionSet = usergroupPermissions.get(userKey);
         if(permissionSet == null)
@@ -107,221 +106,221 @@ public class Acl {
 
     public void allowReadByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.allow, Access.read);
+        handleUserPermissionChanges(userKey, Permission.allow, Access.read);
     }
 
     public void allowUpdateByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.allow, Access.update);
+        handleUserPermissionChanges(userKey, Permission.allow, Access.update);
     }
 
     public void allowDeleteByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.allow, Access.delete);
+        handleUserPermissionChanges(userKey, Permission.allow, Access.delete);
     }
 
     public void allowManagingAccessByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.allow, Access.manageaccess);
+        handleUserPermissionChanges(userKey, Permission.allow, Access.manageaccess);
     }
 
     public void allowReadByUser(String username){
-        HandleUserPermissionChanges(username, Permission.allow, Access.read);
+        handleUserPermissionChanges(username, Permission.allow, Access.read);
     }
 
     public void allowUpdateByUser(String username){
-        HandleUserPermissionChanges(username, Permission.allow, Access.update);
+        handleUserPermissionChanges(username, Permission.allow, Access.update);
     }
 
     public void allowDeleteByUser(String username){
-        HandleUserPermissionChanges(username, Permission.allow, Access.delete);
+        handleUserPermissionChanges(username, Permission.allow, Access.delete);
     }
 
     public void allowManagingAccessByUser(String username){
-        HandleUserPermissionChanges(username, Permission.allow, Access.manageaccess);
+        handleUserPermissionChanges(username, Permission.allow, Access.manageaccess);
     }
 
     public void allowReadByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.allow, Access.read);
+        handleUsergroupPermissionChanges(userKey, Permission.allow, Access.read);
     }
 
     public void allowUpdateByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.allow, Access.update);
+        handleUsergroupPermissionChanges(userKey, Permission.allow, Access.update);
     }
 
     public void allowDeleteByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.allow, Access.delete);
+        handleUsergroupPermissionChanges(userKey, Permission.allow, Access.delete);
     }
 
     public void allowManagingAccessByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.allow, Access.manageaccess);
+        handleUsergroupPermissionChanges(userKey, Permission.allow, Access.manageaccess);
     }
 
     public void allowReadByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.allow, Access.read);
+        handleUsergroupPermissionChanges(groupName, Permission.allow, Access.read);
     }
 
     public void allowUpdateByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.allow, Access.update);
+        handleUsergroupPermissionChanges(groupName, Permission.allow, Access.update);
     }
 
     public void allowDeleteByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.allow, Access.delete);
+        handleUsergroupPermissionChanges(groupName, Permission.allow, Access.delete);
     }
 
     public void allowManagingAccessByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.allow, Access.manageaccess);
+        handleUsergroupPermissionChanges(groupName, Permission.allow, Access.manageaccess);
     }
 
 
 
     public void denyReadByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.deny, Access.read);
+        handleUserPermissionChanges(userKey, Permission.deny, Access.read);
     }
 
     public void denyUpdateByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.deny, Access.update);
+        handleUserPermissionChanges(userKey, Permission.deny, Access.update);
     }
 
     public void denyDeleteByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.deny, Access.delete);
+        handleUserPermissionChanges(userKey, Permission.deny, Access.delete);
     }
 
     public void denyManagingAccessByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.deny, Access.manageaccess);
+        handleUserPermissionChanges(userKey, Permission.deny, Access.manageaccess);
     }
 
     public void denyReadByUser(String username){
-        HandleUserPermissionChanges(username, Permission.deny, Access.read);
+        handleUserPermissionChanges(username, Permission.deny, Access.read);
     }
 
     public void denyUpdateByUser(String username){
-        HandleUserPermissionChanges(username, Permission.deny, Access.update);
+        handleUserPermissionChanges(username, Permission.deny, Access.update);
     }
 
     public void denyDeleteByUser(String username){
-        HandleUserPermissionChanges(username, Permission.deny, Access.delete);
+        handleUserPermissionChanges(username, Permission.deny, Access.delete);
     }
 
     public void denyManagingAccessByUser(String username){
-        HandleUserPermissionChanges(username, Permission.deny, Access.manageaccess);
+        handleUserPermissionChanges(username, Permission.deny, Access.manageaccess);
     }
 
     public void denyReadByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.deny, Access.read);
+        handleUsergroupPermissionChanges(userKey, Permission.deny, Access.read);
     }
 
     public void denyUpdateByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.deny, Access.update);
+        handleUsergroupPermissionChanges(userKey, Permission.deny, Access.update);
     }
 
     public void denyDeleteByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.deny, Access.delete);
+        handleUsergroupPermissionChanges(userKey, Permission.deny, Access.delete);
     }
 
     public void denyManagingAccessByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.deny, Access.manageaccess);
+        handleUsergroupPermissionChanges(userKey, Permission.deny, Access.manageaccess);
     }
 
     public void denyReadByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.deny, Access.read);
+        handleUsergroupPermissionChanges(groupName, Permission.deny, Access.read);
     }
 
     public void denyUpdateByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.deny, Access.update);
+        handleUsergroupPermissionChanges(groupName, Permission.deny, Access.update);
     }
 
     public void denyDeleteByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.deny, Access.delete);
+        handleUsergroupPermissionChanges(groupName, Permission.deny, Access.delete);
     }
 
     public void denyManagingAccessByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.deny, Access.manageaccess);
+        handleUsergroupPermissionChanges(groupName, Permission.deny, Access.manageaccess);
     }
 
 
 
     public void resetReadByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.dontcare, Access.read);
+        handleUserPermissionChanges(userKey, Permission.dontcare, Access.read);
     }
 
     public void resetUpdateByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.dontcare, Access.update);
+        handleUserPermissionChanges(userKey, Permission.dontcare, Access.update);
     }
 
     public void resetDeleteByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.dontcare, Access.delete);
+        handleUserPermissionChanges(userKey, Permission.dontcare, Access.delete);
     }
 
     public void resetManagingAccessByUser(long userId){
         String userKey = String.valueOf(userId);
-        HandleUserPermissionChanges(userKey, Permission.dontcare, Access.manageaccess);
+        handleUserPermissionChanges(userKey, Permission.dontcare, Access.manageaccess);
     }
 
     public void resetReadByUser(String username){
-        HandleUserPermissionChanges(username, Permission.dontcare, Access.read);
+        handleUserPermissionChanges(username, Permission.dontcare, Access.read);
     }
 
     public void resetUpdateByUser(String username){
-        HandleUserPermissionChanges(username, Permission.dontcare, Access.update);
+        handleUserPermissionChanges(username, Permission.dontcare, Access.update);
     }
 
     public void resetDeleteByUser(String username){
-        HandleUserPermissionChanges(username, Permission.dontcare, Access.delete);
+        handleUserPermissionChanges(username, Permission.dontcare, Access.delete);
     }
 
     public void resetManagingAccessByUser(String username){
-        HandleUserPermissionChanges(username, Permission.dontcare, Access.manageaccess);
+        handleUserPermissionChanges(username, Permission.dontcare, Access.manageaccess);
     }
 
     public void resetReadByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.read);
+        handleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.read);
     }
 
     public void resetUpdateByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.update);
+        handleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.update);
     }
 
     public void resetDeleteByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.delete);
+        handleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.delete);
     }
 
     public void resetManagingAccessByUserGroup(long groupId){
         String userKey = String.valueOf(groupId);
-        HandleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.manageaccess);
+        handleUsergroupPermissionChanges(userKey, Permission.dontcare, Access.manageaccess);
     }
 
     public void resetReadByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.read);
+        handleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.read);
     }
 
     public void resetUpdateByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.update);
+        handleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.update);
     }
 
     public void resetDeleteByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.delete);
+        handleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.delete);
     }
 
     public void resetManagingAccessByUserGroup(String groupName){
-        HandleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.manageaccess);
+        handleUsergroupPermissionChanges(groupName, Permission.dontcare, Access.manageaccess);
     }
 }
