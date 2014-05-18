@@ -243,10 +243,10 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         this.setStringProperty(propertyName, dateFormat.format(propertyValue));
     }
 
-    public synchronized void setTimeProperty(String propertyName, Date propertyValue) {
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-        this.setStringProperty(propertyName, timeFormat.format(propertyValue));
-    }
+//    public synchronized void setTimeProperty(String propertyName, Date propertyValue) {
+//        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+//        this.setStringProperty(propertyName, timeFormat.format(propertyValue));
+//    }
 
     public synchronized void setDateTimeProperty(String propertyName, Date propertyValue) {
         DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
@@ -284,31 +284,43 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         return Boolean.parseBoolean(boolValue);
     }
 
-    public synchronized Date getPropertyAsDate(String propertyName) throws ParseException {
+    public synchronized Date getPropertyAsDate(String propertyName) {
         String dateValue = this.getPropertyAsString(propertyName);
         if (dateValue == null)
             return null;
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return dateFormat.parse(dateValue);
+        try {
+            return dateFormat.parse(dateValue);
+        } catch (ParseException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public synchronized Date getPropertyAsTime(String propertyName) throws ParseException {
-        String timeValue = this.getPropertyAsString(propertyName);
-        if (timeValue == null)
-            return null;
+//    public synchronized Date getPropertyAsTime(String propertyName) {
+//        String timeValue = this.getPropertyAsString(propertyName);
+//        if (timeValue == null)
+//            return null;
+//
+//        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
+//        try {
+//            return timeFormat.parse(timeValue);
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
-        return timeFormat.parse(timeValue);
-    }
-
-    public synchronized Date getPropertyAsDateTime(String propertyName) throws ParseException {
+    public synchronized Date getPropertyAsDateTime(String propertyName) {
         String datetimeValue = this.getPropertyAsString(propertyName);
         if (datetimeValue == null)
             return null;
 
         DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        return dateTimeFormat.parse(datetimeValue);
+        try {
+            return dateTimeFormat.parse(datetimeValue);
+        } catch (ParseException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public synchronized double[] getPropertyAsGeo(String propertyName) {

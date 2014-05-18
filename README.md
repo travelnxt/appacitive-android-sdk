@@ -1,8 +1,6 @@
 Appacitive Java/Android SDK
 ===========================
 
-[![Build Status](https://travis-ci.org/appacitive/appacitive-sdk-core.png?branch=master)](https://travis-ci.org/appacitive/appacitive-sdk-core)
-
 This is the official Android and Java SDK for [Appacitive](http://www.appacitive.com/).
 
 ### Usage

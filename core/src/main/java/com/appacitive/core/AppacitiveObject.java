@@ -584,4 +584,8 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
 //        }
     }
 
+    public void getConnectedObjectsInBackground(String relationType, AppacitiveQuery query, List<String> fields, final Callback<ConnectedObjectsResponse> callback)
+    {
+        AppacitiveObject.getConnectedObjectsInBackground(relationType, this.getType(), this.getId(), query, fields, callback);
+    }
 }

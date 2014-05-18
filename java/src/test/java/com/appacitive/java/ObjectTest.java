@@ -10,7 +10,6 @@ import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.*;
-import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import org.junit.*;
 
@@ -40,6 +39,38 @@ public class ObjectTest {
 
     @AfterClass
     public static void oneTimeTearDown() {
+
+//        //  Deleting a connection using its relation type and id
+//        AppacitiveConnection marriage = new AppacitiveConnection("marriage", 12345);
+//        marriage.deleteInBackground(new Callback<Void>() {
+//            @Override
+//            public void success(Void result) {
+//
+//            }
+//        });
+//
+//        //  Another way of deleting a connection
+//        AppacitiveConnection.deleteInBackground("marriage", 12345, new Callback<Void>() {
+//            @Override
+//            public void success(Void result) {
+//
+//            }
+//        });
+//
+//        // Deleting multiple connections of the same relation in a single call
+//        List<Long> playerIds = new ArrayList<Long>(){{
+//            add(1111L);
+//            add(2222L);
+//            add(3333L);
+//        }};
+//        AppacitiveConnection.bulkDeleteInBackground("plays_for", playerIds, new Callback<Void>() {
+//            @Override
+//            public void success(Void result) {
+//
+//            }
+//        });
+
+
         // one-time cleanup code
     }
 
@@ -95,13 +126,11 @@ public class ObjectTest {
                 assert (result.getPropertyAsInt("intfield") == 100);
                 assert (result.getPropertyAsDouble("decimalfield") == 20.2511d);
                 assert (result.getPropertyAsBoolean("boolfield"));
-                try {
-                    assert (convertDateToString(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
-                    assert (convertTimeToString(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
-                    assert (convertDateTimeToString(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
-                } catch (ParseException pe) {
-                    Assert.fail(pe.getMessage());
-                }
+
+                assert (convertDateToString(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
+//                    assert (convertTimeToString(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
+                assert (convertDateTimeToString(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
+
                 assert (result.getPropertyAsGeo("geofield")[0] == 10.11d);
                 assert (result.getPropertyAsGeo("geofield")[1] == 20.22d);
                 assert (result.getPropertyAsMultiValuedString("multifield").size() == 3);
@@ -124,7 +153,7 @@ public class ObjectTest {
         AppacitiveObject object = new AppacitiveObject("object");
         Date now = new Date();
         object.setDateProperty("datefield", now);
-        object.setTimeProperty("timefield", now);
+//        object.setTimeProperty("timefield", now);
         object.setDateTimeProperty("datetimefield", now);
 
         final String origDateStr = convertDateToString(now);
@@ -137,13 +166,11 @@ public class ObjectTest {
                 Date date = null;
                 Date time = null;
                 Date datetime = null;
-                try {
-                    date = result.getPropertyAsDate("datefield");
-                    time = result.getPropertyAsTime("timefield");
-                    datetime = result.getPropertyAsDateTime("datetimefield");
-                } catch (ParseException e) {
-                    Assert.fail(e.getMessage());
-                }
+
+                date = result.getPropertyAsDate("datefield");
+//                    time = result.getPropertyAsTime("timefield");
+                datetime = result.getPropertyAsDateTime("datetimefield");
+
 
                 final String dateStr = convertDateToString(date);
                 final String timeStr = convertTimeToString(time);

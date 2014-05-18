@@ -1,22 +1,26 @@
 package com.appacitive.java;
 
 import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveObject;
 import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.jayway.awaitility.Awaitility;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.jayway.awaitility.Duration;
+import org.junit.*;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.jayway.awaitility.Awaitility.await;
 
 /**
  * Created by sathley on 5/8/2014.
  */
 public class AccessControlTest {
+
+
+    private String clientAPIKey = "SfK9LNuLo0OhfF6R1f/WoQ==";
 
     @BeforeClass
     public static void oneTimeSetUp() {
@@ -38,29 +42,50 @@ public class AccessControlTest {
         return UUID.randomUUID().toString();
     }
 
-//    @Test
-//    public void userAclTest()
-//    {
-//        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
-//        AppacitiveUser adminUser = new AppacitiveUser();
-//        adminUser.setEmail(getRandomString() + "@gmail.com");
-//        adminUser.setFirstName(getRandomString());
-//        String username = getRandomString();
-//        final String password = getRandomString();
-//        adminUser.setUsername(username);
-//        adminUser.setPassword(password);
-//
-//        adminUser.signupInBackground(new Callback<AppacitiveUser>() {
-//            @Override
-//            public void success(AppacitiveUser result) {
-//                result.loginInBackground(password, new Callback<String>() {
-//                    @Override
-//                    public void success(String token) {
-//                        AppacitiveUser regularUser = new AppacitiveUser();
-//
-//                    }
-//                });
-//            }
-//        });
-//    }
+    @Test
+    public void userEntityAclTest()
+    {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+        final AppacitiveUser adminUser = new AppacitiveUser();
+        adminUser.setEmail(getRandomString() + "@gmail.com");
+        adminUser.setFirstName(getRandomString());
+        String username = getRandomString();
+        final String password = getRandomString();
+        adminUser.setUsername(username);
+        adminUser.setPassword(password);
+
+        adminUser.signupInBackground(new Callback<AppacitiveUser>() {
+            @Override
+            public void success(final AppacitiveUser user) {
+                AppacitiveObject entity = new AppacitiveObject("entity");
+                entity.accessControl.denyReadByUser(user.getId());
+                entity.createInBackground(new Callback<AppacitiveObject>() {
+                    @Override
+                    public void success(final AppacitiveObject entity) {
+                        user.loginInBackground(password, new Callback<String>() {
+                            @Override
+                            public void success(String result) {
+                                AppacitiveContext.initialize(clientAPIKey, Environment.sandbox, new JavaPlatform());
+                                AppacitiveObject.getInBackground("entity", entity.getId(), null, new Callback<AppacitiveObject>() {
+                                    @Override
+                                    public void success(AppacitiveObject result) {
+                                        Assert.fail();
+                                    }
+
+                                    @Override
+                                    public void failure(AppacitiveObject result, Exception e) {
+                                        somethingHappened.set(true);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+
+
+        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+    }
 }
