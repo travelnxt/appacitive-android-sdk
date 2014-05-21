@@ -16,4 +16,6 @@ public class PagedList<T> implements Serializable {
     public List<T> results = new ArrayList<T>();
 
     public PagingInfo pagingInfo = new PagingInfo();
+
+
 }

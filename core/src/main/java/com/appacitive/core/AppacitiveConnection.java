@@ -664,6 +664,10 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         });
     }
 
+    public void findInterconnectsInBackground(List<Long> objectIds, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
+        findInterconnectsInBackground(this.getId(), objectIds, fields, callback);
+    }
+
     public static void findByObjectAndLabelInBackground(String relationType, long objectId, String label, List<String> fields, final Callback<PagedList<AppacitiveConnection>> callback) {
         LOGGER.info("Searching connections by object and label for relation type " + relationType + " with object id " + objectId + " and label " + label);
         final String url = Urls.ForConnection.findByObjectAndLabelUrl(relationType, objectId, label, fields).toString();

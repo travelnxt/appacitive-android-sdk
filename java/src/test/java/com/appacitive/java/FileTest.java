@@ -21,7 +21,7 @@ public class FileTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize(Keys.masterKey, Environment.sandbox, new JavaPlatform());
     }
 
     @AfterClass

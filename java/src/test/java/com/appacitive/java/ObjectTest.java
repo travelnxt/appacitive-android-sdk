@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static com.jayway.awaitility.Awaitility.to;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -32,44 +33,13 @@ public class ObjectTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize(Keys.masterKey, Environment.sandbox, new JavaPlatform());
     }
 
     private AtomicBoolean somethingHappened = new AtomicBoolean(false);
 
     @AfterClass
     public static void oneTimeTearDown() {
-
-//        //  Deleting a connection using its relation type and id
-//        AppacitiveConnection marriage = new AppacitiveConnection("marriage", 12345);
-//        marriage.deleteInBackground(new Callback<Void>() {
-//            @Override
-//            public void success(Void result) {
-//
-//            }
-//        });
-//
-//        //  Another way of deleting a connection
-//        AppacitiveConnection.deleteInBackground("marriage", 12345, new Callback<Void>() {
-//            @Override
-//            public void success(Void result) {
-//
-//            }
-//        });
-//
-//        // Deleting multiple connections of the same relation in a single call
-//        List<Long> playerIds = new ArrayList<Long>(){{
-//            add(1111L);
-//            add(2222L);
-//            add(3333L);
-//        }};
-//        AppacitiveConnection.bulkDeleteInBackground("plays_for", playerIds, new Callback<Void>() {
-//            @Override
-//            public void success(Void result) {
-//
-//            }
-//        });
-
 
         // one-time cleanup code
     }

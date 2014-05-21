@@ -371,4 +371,14 @@ public class Urls {
         }
     }
 
+    public static class ForUserGroup
+    {
+        private final static String endpoint = "usergroup";
+
+        public static Url getUpdateMembersUrl()
+        {
+            return new Url(BASE_URL, endpoint, "members", null);
+        }
+    }
+
 }

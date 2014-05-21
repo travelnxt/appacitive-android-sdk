@@ -25,7 +25,7 @@ public class LinkTest {
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize(Keys.masterKey, Environment.sandbox, new JavaPlatform());
 
     }
 
@@ -39,12 +39,12 @@ public class LinkTest {
         Awaitility.reset();
     }
 
-    private final static String fbToken = "CAACEdEose0cBAHdG84rgY4w3zVAMdBpN2cJhMX76nl7vTu31y0zDni2cuPwaUfHUZBsjBttVMLZApSoiWuZCWPw7ZC4LJu2gcBSZAzj9XBvzpQWWFvBfxTHM0uRRuSNIkNaCViJcZCDlSeEjsLMmBDcfV7QbEVGMMimVHZCQi3qkZBlENlSkZA4CgFaE99J7EsaEIkkE8tF6ZCGwZDZD";
+    private final static String fbToken = Keys.fbToken;
     private final static String password = "password";
-    private final static String twitterOAuthToken = "431607023-yb8pICZ1WKdu3qFqCDo5gWbRHwHs9Rg7FoV1PZt9";
-    private final static String twitterOAuthTokenSecret = "PIEx8WA5iQ4xicHzttMuq83ZZqOoEBUdQR4g1e4JAA";
-    private final static String twitterConsumerKey = "MRlvKD2KZaSnJzecYNK2RA";
-    private final static String twitterConsumerSecret = "Pn0tKisq7EfIOkzUF568yGmHdc9bMTM9OPoT6a5wmRc";
+    private final static String twitterOAuthToken = Keys.twitterOAuthToken;
+    private final static String twitterOAuthTokenSecret = Keys.twitterOAuthTokenSecret;
+    private final static String twitterConsumerKey = Keys.twitterConsumerKey;
+    private final static String twitterConsumerSecret = Keys.twitterConsumerSecret;
 
     private String getRandomString() {
         return UUID.randomUUID().toString();

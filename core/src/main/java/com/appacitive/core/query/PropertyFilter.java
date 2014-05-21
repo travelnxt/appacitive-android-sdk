@@ -265,6 +265,13 @@ public class PropertyFilter extends Filter {
         return this;
     }
 
+    public PropertyFilter match(String value)
+    {
+        this.operator = "match";
+        this.value = value;
+        return this;
+    }
+
 
     @Override
     public synchronized String asString() {

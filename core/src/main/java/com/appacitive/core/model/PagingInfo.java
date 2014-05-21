@@ -38,4 +38,9 @@ public class PagingInfo implements Serializable, APSerializable {
     public APJSONObject getMap() {
         return null;
     }
+
+    public boolean isLastPage() {
+        long totalPages = (long)Math.ceil( ((double)totalRecords / (double)pageSize));
+        return totalPages == pageNumber;
+    }
 }

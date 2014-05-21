@@ -33,6 +33,13 @@ public class AttributeFilter extends Filter {
         return this;
     }
 
+    public AttributeFilter match(String value)
+    {
+        this.operator = "match";
+        this.value = value;
+        return this;
+    }
+
     @Override
     public synchronized String asString() {
         return String.format("@%s %s '%s'", this.key, this.operator, this.value);

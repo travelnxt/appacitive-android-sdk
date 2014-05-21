@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static com.jayway.awaitility.Awaitility.to;
 
 /**
  * Created by sathley on 5/8/2014.
@@ -20,11 +21,11 @@ import static com.jayway.awaitility.Awaitility.await;
 public class AccessControlTest {
 
 
-    private String clientAPIKey = "SfK9LNuLo0OhfF6R1f/WoQ==";
+    private String clientAPIKey = Keys.clientKey;
 
     @BeforeClass
     public static void oneTimeSetUp() {
-        AppacitiveContextBase.initialize("up8+oWrzVTVIxl9ZiKtyamVKgBnV5xvmV95u1mEVRrM=", Environment.sandbox, new JavaPlatform());
+        AppacitiveContextBase.initialize(Keys.masterKey, Environment.sandbox, new JavaPlatform());
     }
 
 
@@ -83,9 +84,6 @@ public class AccessControlTest {
                 });
             }
         });
-
-
-
         await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
     }
 }

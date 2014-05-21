@@ -485,7 +485,7 @@ public class AppacitiveObject extends AppacitiveEntity implements Serializable, 
         });
     }
 
-    public static void getConnectedObjectsInBackground(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields, final Callback<ConnectedObjectsResponse> callback) {
+    public static void  getConnectedObjectsInBackground(String relationType, String objectType, long objectId, AppacitiveQuery query, List<String> fields, final Callback<ConnectedObjectsResponse> callback) {
         LOGGER.info("Searching for connected objects of type " + relationType + "from " + objectId + " of type " + objectType);
         final String url = Urls.ForConnection.getConnectedObjectsUrl(relationType, objectType, objectId, query, fields).toString();
         final Map<String, String> headers = Headers.assemble();
