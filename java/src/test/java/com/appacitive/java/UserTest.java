@@ -469,4 +469,12 @@ public class UserTest {
         });
         await().untilTrue(somethingHappened);
     }
+
+    @Test
+    public void sample()
+    {
+        boolean a = Boolean.parseBoolean("False");
+
+        boolean b = Boolean.parseBoolean("false");
+    }
 }

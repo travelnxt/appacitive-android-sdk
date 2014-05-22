@@ -885,7 +885,7 @@ public class ObjectTest {
         final AttributeFilter a1 = new AttributeFilter("a1").isEqualTo("v1");
         final AttributeFilter a2 = new AttributeFilter("a2").endsWith("2");
         final AttributeFilter a3 = new AttributeFilter("a3").startsWith("v");
-        final AttributeFilter a4 = new AttributeFilter("a4").like("*acit*");
+        final AttributeFilter a4 = new AttributeFilter("a4").like("acit");
         query.filter = BooleanOperator.and(new ArrayList<Query>() {{
             add(a1);
             add(a2);

@@ -182,7 +182,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         }
 
         if (missingFields.size() > 0)
-            throw new ValidationException("Following mandatory fields are missing. - " + missingFields);
+            throw new ValidationException("Following mandatory fields are missing. - " + StringUtils.join(missingFields, ","));
 
         final String url = Urls.ForUser.createUserUrl().toString();
         final Map<String, String> headers = Headers.assemble();
