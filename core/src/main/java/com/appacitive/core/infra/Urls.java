@@ -375,9 +375,9 @@ public class Urls {
     {
         private final static String endpoint = "usergroup";
 
-        public static Url getUpdateMembersUrl()
+        public static Url getUpdateMembersUrl(String groupName)
         {
-            return new Url(BASE_URL, endpoint, "members", null);
+            return new Url(BASE_URL, endpoint, groupName + "/members", null);
         }
     }
 

@@ -23,32 +23,32 @@ public class AppacitiveUserGroup {
 
     public final static Logger LOGGER = APContainer.build(Logger.class);
 
-    public static void addUserInBackground(final String username, Callback<Void> callback) {
-        addUsersInBackground(new ArrayList<String>() {{
+    public static void addUserInBackground(String groupName, final String username, Callback<Void> callback) {
+        addUsersInBackground(groupName, new ArrayList<String>() {{
             add(username);
         }}, callback);
 
     }
 
-    public static void addUserInBackground(final long userId, Callback<Void> callback) {
-        addUsersInBackground(new ArrayList<String>() {{
+    public static void addUserInBackground(String groupName, final long userId, Callback<Void> callback) {
+        addUsersInBackground(groupName, new ArrayList<String>() {{
             add(String.valueOf(userId));
         }}, callback);
     }
 
-    public static void removeUserInBackground(final String username, Callback<Void> callback) {
-        removeUsersInBackground(new ArrayList<String>() {{
+    public static void removeUserInBackground(String groupName, final String username, Callback<Void> callback) {
+        removeUsersInBackground(groupName, new ArrayList<String>() {{
             add(username);
         }}, callback);
     }
 
-    public static void removeUserInBackground(final long userId, Callback<Void> callback) {
-        removeUsersInBackground(new ArrayList<String>() {{
+    public static void removeUserInBackground(String groupName, final long userId, Callback<Void> callback) {
+        removeUsersInBackground(groupName, new ArrayList<String>() {{
             add(String.valueOf(userId));
         }}, callback);
     }
 
-    public static void addUsersInBackground(ArrayList<String> userIds, Callback<Void> callback) {
+    public static void addUsersInBackground(String groupName, ArrayList<String> userIds, Callback<Void> callback) {
         APJSONArray array = new APJSONArray(userIds);
         APJSONObject payload = new APJSONObject();
 
@@ -57,10 +57,10 @@ public class AppacitiveUserGroup {
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }
-        fireCall(payload.toString(), callback);
+        fireCall(groupName, payload.toString(), callback);
     }
 
-    public static void removeUsersInBackground(ArrayList<String> userIds, Callback<Void> callback) {
+    public static void removeUsersInBackground(String groupName, ArrayList<String> userIds, Callback<Void> callback) {
         APJSONArray array = new APJSONArray(userIds);
         APJSONObject payload = new APJSONObject();
 
@@ -69,11 +69,11 @@ public class AppacitiveUserGroup {
         } catch (APJSONException e) {
             throw new RuntimeException(e);
         }
-        fireCall(payload.toString(), callback);
+        fireCall(groupName, payload.toString(), callback);
     }
 
-    private static void fireCall(String payload, final Callback<Void> callback) {
-        String url = Urls.ForUserGroup.getUpdateMembersUrl().toString();
+    private static void fireCall(String groupName, String payload, final Callback<Void> callback) {
+        String url = Urls.ForUserGroup.getUpdateMembersUrl(groupName).toString();
         Map<String, String> headers = Headers.assemble();
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
         asyncHttp.post(url, headers, payload, new APCallback() {

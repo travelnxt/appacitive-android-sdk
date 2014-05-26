@@ -270,6 +270,60 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
         });
     }
 
+    public static void signupWithTwitterInBackground(final String oauthToken, final String oauthTokenSecret, String consumerKey, String consumerSecret, final Callback<AppacitiveUser> callback) {
+        LOGGER.info("Signing up new user with twitter.");
+        final String url = Urls.ForUser.authenticateUserUrl().toString();
+        final Map<String, String> headers = Headers.assemble();
+        Map<String, Object> payloadMap = new HashMap<String, Object>() {{
+            put("type", "twitter");
+            put("oauthtoken", oauthToken);
+            put("oauthtokensecret", oauthTokenSecret);
+            put("createnew", true);
+        }};
+        if (consumerKey != null)
+            payloadMap.put("consumerkey", consumerKey);
+        if (consumerSecret != null)
+            payloadMap.put("consumersecret", consumerSecret);
+
+        final APJSONObject payload = new APJSONObject(payloadMap);
+
+        AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
+        asyncHttp.post(url, headers, payload.toString(), new APCallback() {
+            @Override
+            public void success(String result) {
+
+                APJSONObject jsonObject;
+                try {
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
+                }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    AppacitiveUser user = new AppacitiveUser();
+                    user.setSelf(jsonObject.optJSONObject("user"));
+                    if (callback != null) {
+                        callback.success(user);
+                    }
+                } else {
+                    if (callback != null)
+                        callback.failure(null, new AppacitiveException(status));
+                }
+            }
+
+            @Override
+            public void failure(Exception e) {
+                if (callback != null)
+                    callback.failure(null, e);
+            }
+        });
+    }
+
+    public static void signupWithTwitterInBackground(final String oauthToken, final String oauthTokenSecret, final Callback<AppacitiveUser> callback)
+    {
+        signupWithTwitterInBackground(oauthToken, oauthTokenSecret, null, null, callback);
+    }
+
     public static void getByIdInBackground(long userId, List<String> fields, final Callback<AppacitiveUser> callback) {
         LOGGER.info("Fetch user with id " + userId);
         final String url = Urls.ForUser.getUserUrl(String.valueOf(userId), UserIdType.id, fields).toString();
