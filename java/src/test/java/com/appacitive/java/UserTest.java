@@ -1,6 +1,7 @@
 package com.appacitive.java;
 
 import com.appacitive.core.AppacitiveContextBase;
+import com.appacitive.core.AppacitiveObject;
 import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.exceptions.UserAuthException;
 import com.appacitive.core.exceptions.ValidationException;
@@ -28,6 +29,7 @@ public class UserTest {
 
     @AfterClass
     public static void oneTimeTearDown() {
+
         // one-time cleanup code
     }
 
