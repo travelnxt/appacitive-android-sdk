@@ -479,4 +479,44 @@ public class UserTest {
 
         boolean b = Boolean.parseBoolean("false");
     }
+
+    @Test
+    public void getFBFriendsTest()
+    {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+        AppacitiveUser.signupWithFacebookInBackground("CAACEdEose0cBAGndut68y6mkrmxuWjX4vnR5JQ5AVuobgWgUs9RP8Usy1L0ZABDln4wYnUyehNZANdoGGZA9umThfQMV6ruISnCP3OuZBnl2qfHjD48ZCKO4gnwofiVz4Y81pIlnZABAZCBqVf6kJ6WqtduHLOUYzBVjwIYcYzHYOzlU3W9hm9ZA9hWeVB7AOtLf8isbidL9TskW6JzmI5fY", new Callback<AppacitiveUser>() {
+            @Override
+            public void success(final AppacitiveUser user1) {
+                AppacitiveUser.signupWithFacebookInBackground("CAADMd3sM5bsBAJ1ki1mzNDZCTKpZCD59vUYoYvLg6AeXpsPAX6ZBXczeIQ8oZCigXIVZB4KZB6X8jI1D296vV7ENMzTBbVsuS5G6bNmYXHdO3suEKsD5mvVNFvxyNmaZB4yrmEFgdhIeGZCjn5rZBsZCd2UuqtrgJeRZALPvTXOZButok01dRqhgc7ZBVnCrlTnX6UwHqlGtY77p83pST5ZCQacUKt", new Callback<AppacitiveUser>() {
+                    @Override
+                    public void success(final AppacitiveUser user2) {
+                        user2.getFriends(AppacitiveUser.SocialProvider.FACEBOOK, new Callback<List<AppacitiveUser>>() {
+                            @Override
+                            public void success(List<AppacitiveUser> result) {
+                                assert result.size() > 0;
+                                somethingHappened.set(true);
+                            }
+
+                            @Override
+                            public void failure(List<AppacitiveUser> result, Exception e) {
+                                Assert.fail(e.getMessage());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void failure(AppacitiveUser result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void failure(AppacitiveUser result, Exception e) {
+                Assert.fail(e.getMessage());
+            }
+        });
+
+        await().untilTrue(somethingHappened);
+    }
 }

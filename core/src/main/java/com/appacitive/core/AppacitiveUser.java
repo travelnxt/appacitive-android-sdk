@@ -20,6 +20,10 @@ import java.util.*;
  */
 public class AppacitiveUser extends AppacitiveEntity implements Serializable, APSerializable {
 
+    public enum SocialProvider {
+        FACEBOOK
+    }
+
     public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public AppacitiveUser() {
@@ -208,6 +212,7 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                 AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                 if (status.isSuccessful()) {
                     user.setSelf(jsonObject.optJSONObject("user"));
+                    AppacitiveContextBase.setLoggedInUser(user);
                     if (callback != null) {
                         callback.success(user);
                     }
@@ -250,8 +255,11 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                 }
                 AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                 if (status.isSuccessful()) {
+                    String token = jsonObject.optString("token");
+                    AppacitiveContextBase.setLoggedInUserToken(token);
                     AppacitiveUser user = new AppacitiveUser();
                     user.setSelf(jsonObject.optJSONObject("user"));
+                    AppacitiveContextBase.setLoggedInUser(user);
                     if (callback != null) {
                         callback.success(user);
                     }
@@ -300,8 +308,11 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                 }
                 AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                 if (status.isSuccessful()) {
+                    String token = jsonObject.optString("token");
+                    AppacitiveContextBase.setLoggedInUserToken(token);
                     AppacitiveUser user = new AppacitiveUser();
                     user.setSelf(jsonObject.optJSONObject("user"));
+                    AppacitiveContextBase.setLoggedInUser(user);
                     if (callback != null) {
                         callback.success(user);
                     }
@@ -975,6 +986,44 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
                         callback.failure(null, new AppacitiveException(status));
                 }
 
+            }
+
+            @Override
+            public void failure(Exception e) {
+                if (callback != null)
+                    callback.failure(null, e);
+            }
+        });
+    }
+
+    public void getFriends(SocialProvider provider, final Callback<List<AppacitiveUser>> callback)
+    {
+        LOGGER.info("Fetching friends for user with id " + this.getId());
+        final String url = Urls.ForUser.getFriendsUrl(this.getId(), provider.toString().toLowerCase()).toString();
+        final Map<String, String> headers = Headers.assemble();
+        AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
+        final List<AppacitiveUser> returnUsers = new ArrayList<AppacitiveUser>();
+        asyncHttp.get(url, headers, new APCallback() {
+            @Override
+            public void success(String result) {
+                APJSONObject jsonObject;
+                try {
+                    jsonObject = new APJSONObject(result);
+                } catch (APJSONException e) {
+                    throw new RuntimeException(e);
+                }
+                AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
+                if (status.isSuccessful()) {
+                    APJSONArray usersArray = jsonObject.optJSONArray("friends");
+                    for (int i = 0; i < usersArray.length(); i++) {
+                        AppacitiveUser user = new AppacitiveUser();
+                        user.setSelf(usersArray.optJSONObject(i));
+                        returnUsers.add(user);
+                    }
+                    if (callback != null)
+                        callback.success(returnUsers);
+                } else if (callback != null)
+                    callback.failure(null, new AppacitiveException(status));
             }
 
             @Override

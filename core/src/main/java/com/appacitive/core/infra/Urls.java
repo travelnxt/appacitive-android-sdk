@@ -306,6 +306,11 @@ public class Urls {
             String suffix = String.format("%s/%s", String.valueOf(userId), "linkedaccounts");
             return new Url(BASE_URL, endpoint, suffix, null);
         }
+
+        public static Url getFriendsUrl(long userId, String provider) {
+            String suffix = String.format("%s/friends/%s", String.valueOf(userId), provider);
+            return new Url(BASE_URL, endpoint, suffix, null);
+        }
     }
 
     public static class Misc {
