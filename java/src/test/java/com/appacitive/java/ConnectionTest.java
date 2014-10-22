@@ -4,12 +4,15 @@ import com.appacitive.core.*;
 import com.appacitive.core.exceptions.AppacitiveException;
 import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.ErrorCodes;
+import com.appacitive.core.infra.StringUtils;
 import com.appacitive.core.model.Callback;
 import com.appacitive.core.model.Environment;
 import com.jayway.awaitility.Awaitility;
+import com.jayway.awaitility.Duration;
 import org.junit.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +31,6 @@ public class ConnectionTest {
     public static void oneTimeSetUp() {
         AppacitiveContextBase.initialize(Keys.masterKey, Environment.sandbox, new JavaPlatform());
     }
-
 
     @AfterClass
     public static void oneTimeTearDown() {
@@ -125,7 +127,7 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TWO_MINUTES).untilTrue(somethingHappened);
     }
 
     @Test
@@ -403,5 +405,30 @@ public class ConnectionTest {
             }
         });
         await().untilAtomic(count, equalTo(0));
+    }
+
+    @Test
+    public void aggregateTest()
+    {
+        final AtomicBoolean somethingHappened = new AtomicBoolean(false);
+        final AppacitiveObject parent = new AppacitiveObject("object");
+        parent.setDoubleProperty("decimalfield", 10.10);
+        final AppacitiveObject child = new AppacitiveObject("object");
+        child.setDoubleProperty("decimalfield", 20.10);
+        new AppacitiveConnection("sibling").fromNewObject("object", parent).toNewObject("object", child).createInBackground(new Callback<AppacitiveConnection>() {
+            @Override
+            public void success(final AppacitiveConnection connection) {
+                AppacitiveObject.getInBackground("object", connection.endpointA.objectId, null, new Callback<AppacitiveObject>() {
+                    @Override
+                    public void success(AppacitiveObject object) {
+                        HashMap<String, String> aggregateValue = object.getAggregate("decimal_aggregate");
+                        assert aggregateValue.size() == 1;
+                        assert Double.valueOf(aggregateValue.get("all")).equals(20.10);
+                        somethingHappened.set(true);
+                    }
+                });
+            }
+        });
+        await().untilTrue(somethingHappened);
     }
 }

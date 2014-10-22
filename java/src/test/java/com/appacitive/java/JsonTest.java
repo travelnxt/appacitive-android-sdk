@@ -20,7 +20,7 @@ public class JsonTest {
     @Test
     public void multiValuedPropertiesTest() {
 
-        AppacitiveObject object = new AppacitiveObject();
+        AppacitiveObject object = new AppacitiveObject("");
         object.setPropertyAsMultiValued("str_multi", new ArrayList<String>() {{
             add("a");
             add("b");
@@ -61,7 +61,7 @@ public class JsonTest {
     @Test
     public void multiValuedPropertiesTest2() {
 
-        AppacitiveObject object = new AppacitiveObject();
+        AppacitiveObject object = new AppacitiveObject("");
         object.setPropertyAsMultiValued("str_multi", new ArrayList<String>() {{
             add("a");
             add("b");

@@ -44,6 +44,11 @@ public class Urls {
             return new Url(BASE_URL, endpoint, type, null);
         }
 
+        public static Url multiCallUrl()
+        {
+            return new Url(BASE_URL, endpoint, "multi", null);
+        }
+
         public static Url deleteObjectUrl(String type, long id, boolean deleteConnections) {
             Map<String, String> qsp = new HashMap<String, String>();
             qsp.put("deleteconnections", String.valueOf(deleteConnections));

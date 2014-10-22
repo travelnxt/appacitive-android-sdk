@@ -1,11 +1,14 @@
 package com.appacitive.core.infra;
 
 import com.appacitive.core.AppacitiveConnection;
+import com.appacitive.core.AppacitiveDevice;
 import com.appacitive.core.AppacitiveObject;
+import com.appacitive.core.AppacitiveUser;
 import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.model.AppacitiveGraphNode;
+import com.appacitive.core.model.AppacitiveObjectBase;
 
 import java.util.Iterator;
 
@@ -32,7 +35,16 @@ public class NodeHelper {
         if (nodeClone.has("__children"))
             nodeClone.remove("__children");
 
-        current.object = new AppacitiveObject();
+        // identify node type
+        String type = nodeClone.optString("__type");
+        if (type.equals("user")) {
+            current.object = new AppacitiveUser();
+        } else if (type.equals("device")) {
+            current.object = new AppacitiveDevice();
+        } else {
+            current.object = new AppacitiveObject(type);
+        }
+        // set node
         current.object.setSelf(nodeClone);
 
         if (parent != null && node.has("__edge")) {
@@ -74,15 +86,14 @@ public class NodeHelper {
         }
     }
 
-    private static AppacitiveConnection parseConnection(String parentLabel, AppacitiveObject parentObject, AppacitiveObject currentObject, APJSONObject edgeClone) {
+    private static AppacitiveConnection parseConnection(String parentLabel, AppacitiveObjectBase parentObject, AppacitiveObjectBase currentObject, APJSONObject edgeClone) {
 
         String label = edgeClone.optString("__label", null);
         String relationType = edgeClone.optString(SystemDefinedPropertiesHelper.relationType, null);
         long connectionId = Long.valueOf(edgeClone.optString(SystemDefinedPropertiesHelper.id, "0"));
 
-        AppacitiveConnection connection = new AppacitiveConnection();
+        AppacitiveConnection connection = new AppacitiveConnection(relationType);
         connection.setSelf(edgeClone);
-        connection.relationType = relationType;
         connection.setId(connectionId);
         connection.endpointA.object = parentObject;
         connection.endpointA.label = parentLabel;

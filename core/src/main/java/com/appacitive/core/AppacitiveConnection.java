@@ -33,12 +33,13 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         this.relationType = relationType;
     }
 
-    public AppacitiveConnection() {
-    }
-
     public AppacitiveConnection(String relationType, long connectionId) {
         this(relationType);
         this.setId(connectionId);
+    }
+
+    protected AppacitiveConnection() {
+
     }
 
     public synchronized void setSelf(APJSONObject connection) {
@@ -73,9 +74,9 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         this.relationId = relationId;
     }
 
-    public String relationType = null;
+    protected String relationType = null;
 
-    public long relationId = 0;
+    protected long relationId = 0;
 
     public AppacitiveEndpoint endpointA = new AppacitiveEndpoint();
 

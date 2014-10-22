@@ -378,7 +378,6 @@ public class UserTest {
 
                                     @Override
                                     public void failure(Void result, Exception e) {
-                                        assert true;
                                         somethingHappened.set(true);
                                     }
                                 });

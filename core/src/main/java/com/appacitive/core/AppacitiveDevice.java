@@ -8,10 +8,7 @@ import com.appacitive.core.exceptions.ValidationException;
 import com.appacitive.core.infra.*;
 import com.appacitive.core.interfaces.AsyncHttp;
 import com.appacitive.core.interfaces.Logger;
-import com.appacitive.core.model.Acl;
-import com.appacitive.core.model.AppacitiveStatus;
-import com.appacitive.core.model.Callback;
-import com.appacitive.core.model.PagedList;
+import com.appacitive.core.model.*;
 import com.appacitive.core.query.AppacitiveQuery;
 
 import java.io.Serializable;
@@ -22,62 +19,27 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class AppacitiveDevice extends AppacitiveEntity implements Serializable, APSerializable {
+public class AppacitiveDevice extends AppacitiveObjectBase implements Serializable {
 
     public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public AppacitiveDevice() {
-
+        super("device");
     }
 
     public AppacitiveDevice(long deviceId) {
-        this();
-        this.setId(deviceId);
+        super("device", deviceId);
     }
 
+    @Override
     public synchronized void setSelf(APJSONObject device) {
-
         super.setSelf(device);
-
-        if (device != null) {
-
-            if (device.isNull(SystemDefinedPropertiesHelper.typeId) == false)
-                this.typeId = device.optLong(SystemDefinedPropertiesHelper.typeId);
-            if (device.isNull(SystemDefinedPropertiesHelper.type) == false)
-                this.type = device.optString(SystemDefinedPropertiesHelper.type);
-
-        }
     }
 
+    @Override
     public synchronized APJSONObject getMap() throws APJSONException {
-        APJSONObject jsonObject = super.getMap();
-        jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
-        jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
-        jsonObject.put("__acls", this.accessControl.getMap());
-        return jsonObject;
+        return super.getMap();
     }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public long getTypeId() {
-        return typeId;
-    }
-
-    private String type = null;
-
-    private long typeId = 0;
-
-    public Acl accessControl = new Acl();
 
     public String getDeviceType() {
         return this.getPropertyAsString("devicetype");
@@ -112,7 +74,6 @@ public class AppacitiveDevice extends AppacitiveEntity implements Serializable, 
 
     public void setChannels(List<String> channels) {
         this.setPropertyAsMultiValued("channels", channels);
-
     }
 
     public int getBadge() {

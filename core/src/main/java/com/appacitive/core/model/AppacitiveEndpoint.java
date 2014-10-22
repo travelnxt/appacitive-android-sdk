@@ -28,7 +28,8 @@ public class AppacitiveEndpoint implements Serializable, APSerializable {
         nativeMap.put("objectid", String.valueOf(this.objectId));
         if (this.object != null)
             nativeMap.put("object", this.object.getMap());
-
+        if(this.name != null && this.name.isEmpty() == false)
+            nativeMap.put("name", name);
         return nativeMap;
     }
 
@@ -36,9 +37,16 @@ public class AppacitiveEndpoint implements Serializable, APSerializable {
 
     public String type = null;
 
-    public AppacitiveEntity object = null;
+    public AppacitiveObjectBase object = null;
 
     public long objectId = 0;
+
+    private String name = null;
+
+    protected void setName(String name)
+    {
+        this.name = name;
+    }
 
     public void setSelf(APJSONObject endpoint) {
         if (endpoint != null) {
@@ -57,7 +65,7 @@ public class AppacitiveEndpoint implements Serializable, APSerializable {
                         this.object = new AppacitiveDevice();
                         this.object.setSelf(object);
                     } else {
-                        this.object = new AppacitiveObject();
+                        this.object = new AppacitiveObject(type);
                         this.object.setSelf(object);
                     }
                 } else

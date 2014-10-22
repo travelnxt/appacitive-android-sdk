@@ -8,7 +8,7 @@ import com.appacitive.core.apjson.APJSONObject;
  */
 public interface APSerializable {
 
-    public void setSelf(APJSONObject APEntity);
+    void setSelf(APJSONObject APEntity);
 
-    public APJSONObject getMap() throws APJSONException;
+    APJSONObject getMap() throws APJSONException;
 }

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AppacitiveGraphNode implements Serializable {
 
-    public AppacitiveObject object = null;
+    public AppacitiveObjectBase object = null;
 
     public AppacitiveConnection connection = null;
 

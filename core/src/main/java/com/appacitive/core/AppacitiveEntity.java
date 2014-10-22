@@ -43,8 +43,8 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
     public synchronized void setSelf(APJSONObject entity) {
         if (entity != null) {
             //  Wipe out previous data
-            this.properties = new HashMap<String, Object>();
-            this.attributes = new HashMap<String, String>();
+            this.properties = new ConcurrentHashMap<String, Object>();
+            this.attributes = new ConcurrentHashMap<String, String>();
             this.tags = new ArrayList<String>();
 
             this.resetUpdateCommands();
@@ -160,23 +160,23 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         this.utcLastUpdated = utcLastUpdated;
     }
 
-    private Map<String, Object> properties;
+    protected Map<String, Object> properties;
 
-    private Map<String, String> attributes;
+    protected Map<String, String> attributes;
 
-    private List<String> tags;
+    protected List<String> tags;
 
-    private long id;
+    protected long id;
 
-    private long revision;
+    protected long revision;
 
-    private String createdBy = null;
+    protected String createdBy = null;
 
-    private String lastModifiedBy = null;
+    protected String lastModifiedBy = null;
 
-    private Date utcDateCreated = null;
+    protected Date utcDateCreated = null;
 
-    private Date utcLastUpdated = null;
+    protected Date utcLastUpdated = null;
 
     private Map<String, Object> propertiesChanged;
 
@@ -381,57 +381,57 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
     }
 
     public synchronized <T> void addItemsToMultiValuedProperty(String propertyName, List<?> items) {
-        if (this.properties.containsKey(propertyName)) {
-
-            ((Collection) (this.properties.get(propertyName))).addAll(items);
-        }
+//        if (this.properties.containsKey(propertyName)) {
+//
+//            ((Collection) (this.properties.get(propertyName))).addAll(items);
+//        }
         this.addedItemses.add(new ItemsCollection(propertyName, items));
     }
 
     public synchronized <T> void uniquelyAddItemsToMultiValuedProperty(String propertyName, List<T> items) {
-        if (this.properties.containsKey(propertyName)) {
-
-            ((Collection) (this.properties.get(propertyName))).removeAll(items);
-            ((Collection) (this.properties.get(propertyName))).addAll(items);
-        }
+//        if (this.properties.containsKey(propertyName)) {
+//
+//            ((Collection) (this.properties.get(propertyName))).removeAll(items);
+//            ((Collection) (this.properties.get(propertyName))).addAll(items);
+//        }
         this.uniquelyAddedItemses.add(new ItemsCollection(propertyName, items));
     }
 
     public synchronized <T> void removeItemsFromMultiValuedProperty(String propertyName, List<T> items) {
-        if (this.properties.containsKey(propertyName)) {
-
-            ((Collection) (this.properties.get(propertyName))).removeAll(items);
-        }
+//        if (this.properties.containsKey(propertyName)) {
+//
+//            ((Collection) (this.properties.get(propertyName))).removeAll(items);
+//        }
         this.removedItemses.add(new ItemsCollection(propertyName, items));
     }
 
     //  counters
 
     public synchronized void incrementIntegerProperty(String propertyName, int incrementBy) {
-        Integer value = this.getPropertyAsInt(propertyName);
-        if (value != null)
-            this.setIntProperty(propertyName, value + incrementBy);
+//        Integer value = this.getPropertyAsInt(propertyName);
+//        if (value != null)
+//            this.setIntProperty(propertyName, value + incrementBy);
         this.integerPropertyIncrements.add(new IntegerPropertyIncrement(propertyName, incrementBy));
     }
 
     public synchronized void decrementIntegerProperty(String propertyName, int decrementBy) {
-        Integer value = this.getPropertyAsInt(propertyName);
-        if (value != null)
-            this.setIntProperty(propertyName, value - decrementBy);
+//        Integer value = this.getPropertyAsInt(propertyName);
+//        if (value != null)
+//            this.setIntProperty(propertyName, value - decrementBy);
         this.integerPropertyDecrements.add(new IntegerPropertyDecrement(propertyName, decrementBy));
     }
 
     public synchronized void incrementDecimalProperty(String propertyName, double incrementBy) {
-        Double value = this.getPropertyAsDouble(propertyName);
-        if (value != null)
-            this.setDoubleProperty(propertyName, value + incrementBy);
+//        Double value = this.getPropertyAsDouble(propertyName);
+//        if (value != null)
+//            this.setDoubleProperty(propertyName, value + incrementBy);
         this.decimalPropertyIncrements.add(new DecimalPropertyIncrement(propertyName, incrementBy));
     }
 
     public synchronized void decrementDecimalProperty(String propertyName, double decrementBy) {
-        Double value = this.getPropertyAsDouble(propertyName);
-        if (value != null)
-            this.setDoubleProperty(propertyName, value - decrementBy);
+//        Double value = this.getPropertyAsDouble(propertyName);
+//        if (value != null)
+//            this.setDoubleProperty(propertyName, value - decrementBy);
         this.decimalPropertyDecrements.add(new DecimalPropertyDecrement(propertyName, decrementBy));
     }
 
@@ -492,7 +492,7 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         return this.tags.contains(tag);
     }
 
-    protected synchronized APJSONObject getUpdateCommand() throws APJSONException {
+    public synchronized APJSONObject getUpdateCommand() throws APJSONException {
 
         APJSONObject updateCommand = new APJSONObject();
 

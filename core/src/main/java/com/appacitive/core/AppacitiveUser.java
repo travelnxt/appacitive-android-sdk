@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by sathley.
  */
-public class AppacitiveUser extends AppacitiveEntity implements Serializable, APSerializable {
+public class AppacitiveUser extends AppacitiveObjectBase implements Serializable, APSerializable {
 
     public enum SocialProvider {
         FACEBOOK
@@ -27,58 +27,20 @@ public class AppacitiveUser extends AppacitiveEntity implements Serializable, AP
     public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public AppacitiveUser() {
-
-
+        super("user");
     }
 
     public AppacitiveUser(long userId) {
-        this();
-        this.setId(userId);
+        super("user", userId);
     }
 
     public synchronized void setSelf(APJSONObject user) {
-
         super.setSelf(user);
-
-        if (user != null) {
-
-            if (user.isNull(SystemDefinedPropertiesHelper.typeId) == false)
-                this.typeId = user.optLong(SystemDefinedPropertiesHelper.typeId);
-            if (user.isNull(SystemDefinedPropertiesHelper.type) == false)
-                this.type = user.optString(SystemDefinedPropertiesHelper.type);
-
-        }
     }
 
     @Override
     public synchronized APJSONObject getMap() throws APJSONException {
-        APJSONObject jsonObject = super.getMap();
-        jsonObject.put(SystemDefinedPropertiesHelper.type, this.type);
-        jsonObject.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
-        jsonObject.put("__acls", this.accessControl.getMap());
-        return jsonObject;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
-    }
-
-    private String type = null;
-
-    private long typeId = 0;
-
-    public Acl accessControl = new Acl();
-
-    public String getType() {
-        return type;
-    }
-
-    public long getTypeId() {
-        return typeId;
+        return super.getMap();
     }
 
     public String getPhone() {

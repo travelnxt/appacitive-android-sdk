@@ -19,64 +19,27 @@ import java.util.Map;
 /**
  * Created by sathley.
  */
-public class AppacitiveObject extends AppacitiveEntity implements Serializable, APSerializable {
+public class AppacitiveObject extends AppacitiveObjectBase implements Serializable, APSerializable {
 
     public final static Logger LOGGER = APContainer.build(Logger.class);
 
     public synchronized void setSelf(APJSONObject object) {
-
         super.setSelf(object);
-
-        if (object != null) {
-            if (object.isNull(SystemDefinedPropertiesHelper.typeId) == false)
-                this.typeId = object.optLong(SystemDefinedPropertiesHelper.typeId);
-            if (object.isNull(SystemDefinedPropertiesHelper.type) == false)
-                this.type = object.optString(SystemDefinedPropertiesHelper.type);
-        }
     }
 
     public AppacitiveObject(String type) {
-
-        this.type = type;
+        super(type);
     }
 
     public AppacitiveObject(String type, long objectId) {
-        this(type);
-        this.setId(objectId);
+        super(type, objectId);
     }
 
-    public AppacitiveObject() {
-
+    protected AppacitiveObject() {
     }
 
     public synchronized APJSONObject getMap() throws APJSONException {
-        APJSONObject nativeMap = super.getMap();
-        nativeMap.put(SystemDefinedPropertiesHelper.type, this.type);
-        nativeMap.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
-        nativeMap.put("__acls", this.accessControl.getMap());
-        return nativeMap;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
-    }
-
-    private String type = null;
-
-    private long typeId = 0;
-
-    public Acl accessControl = new Acl();
-
-    public String getType() {
-        return type;
-    }
-
-    public long getTypeId() {
-        return typeId;
+        return super.getMap();
     }
 
     public void createInBackground(final Callback<AppacitiveObject> callback) {
