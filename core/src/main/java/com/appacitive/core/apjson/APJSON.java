@@ -76,7 +76,8 @@ class APJSON {
             return ((Number) value).longValue();
         } else if (value instanceof String) {
             try {
-                return (long) Double.parseDouble((String) value);
+                return Long.parseLong((String) value);
+//                return (long) Double.parseDouble((String) value);
             } catch (NumberFormatException ignored) {
             }
         }

@@ -42,8 +42,9 @@ public class Url implements Serializable {
     @Override
     public String toString() {
         StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append(baseUrl).append("/").append(endpoint).append("/").append(suffix);
-
+        urlBuilder.append(baseUrl).append("/").append(endpoint);
+        if(suffix != null)
+            urlBuilder.append("/").append(suffix);
         if (queryStringParameters.size() > 0)
             urlBuilder.append("?");
 

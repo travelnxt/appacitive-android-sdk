@@ -66,6 +66,14 @@ public class AppacitiveConnection extends AppacitiveEntity implements Serializab
         return nativeMap;
     }
 
+    @Override
+    public synchronized APJSONObject getUpdateCommand() throws APJSONException {
+        APJSONObject updateCommand = super.getUpdateCommand();
+        updateCommand.put(SystemDefinedPropertiesHelper.relationType, this.relationType);
+        updateCommand.put(SystemDefinedPropertiesHelper.relationId, String.valueOf(this.relationId));
+        return updateCommand;
+    }
+
     public void setRelationType(String relationType) {
         this.relationType = relationType;
     }

@@ -495,7 +495,8 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
     public synchronized APJSONObject getUpdateCommand() throws APJSONException {
 
         APJSONObject updateCommand = new APJSONObject();
-
+        if(this.id > 0)
+            updateCommand.put(SystemDefinedPropertiesHelper.id, String.valueOf(this.id));
         if (this.tagsAdded != null && this.tagsAdded.size() > 0)
             updateCommand.put("__addtags", new APJSONArray(this.tagsAdded));
 

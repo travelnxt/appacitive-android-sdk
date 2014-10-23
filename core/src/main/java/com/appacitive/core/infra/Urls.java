@@ -334,6 +334,11 @@ public class Urls {
         public static Url projectQueryUrl(String queryName) {
             return new Url(BASE_URL, "search", queryName + "/project", null);
         }
+
+        public static Url batchCallUrl()
+        {
+            return new Url(BASE_URL, "multi", "", null);
+        }
     }
 
     public static class ForFile {

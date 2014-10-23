@@ -57,6 +57,14 @@ public class AppacitiveObjectBase extends AppacitiveEntity implements Serializab
         return nativeMap;
     }
 
+    @Override
+    public synchronized APJSONObject getUpdateCommand() throws APJSONException {
+        APJSONObject updateCommand = super.getUpdateCommand();
+        updateCommand.put(SystemDefinedPropertiesHelper.type, this.type);
+        updateCommand.put(SystemDefinedPropertiesHelper.typeId, String.valueOf(this.typeId));
+        return updateCommand;
+    }
+
     public void setType(String type) {
         this.type = type;
     }
