@@ -166,9 +166,8 @@ public class ObjectTest {
         newObject.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
                 Assert.assertTrue(result.getId() > 0);
-                assert (result.getPropertyAsString("stringfield").toString().equals(randomString1));
                 assert (result.getPropertyAsString("textfield").toString().equals(randomString2));
-
+                assert (result.getPropertyAsString("stringfield").toString().equals(randomString1));
                 somethingHappened.set(true);
             }
 
@@ -176,7 +175,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_MINUTES).untilTrue(somethingHappened);
     }
 
     private AppacitiveObject getRandomObject() {
