@@ -135,7 +135,7 @@ public class PushTest {
                     }
                 }
         );
-        await().atMost(10, TimeUnit.SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test

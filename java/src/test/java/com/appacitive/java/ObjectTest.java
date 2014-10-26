@@ -10,6 +10,7 @@ import com.appacitive.core.model.ConnectedObjectsResponse;
 import com.appacitive.core.model.Environment;
 import com.appacitive.core.model.PagedList;
 import com.appacitive.core.query.*;
+import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import org.junit.*;
 
@@ -45,6 +46,7 @@ public class ObjectTest {
 
     @Before
     public void beforeTest() {
+        Awaitility.reset();
         somethingHappened.set(false);
     }
 
@@ -114,7 +116,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.FOREVER).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -153,7 +155,7 @@ public class ObjectTest {
             }
         });
 
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -175,7 +177,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_MINUTES).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     private AppacitiveObject getRandomObject() {
@@ -264,7 +266,7 @@ public class ObjectTest {
             }
         });
 
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
 //    @Test
@@ -380,7 +382,7 @@ public class ObjectTest {
             }
         });
 
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -408,7 +410,7 @@ public class ObjectTest {
             }
         });
 
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -449,7 +451,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
 
     }
 
@@ -546,7 +548,7 @@ public class ObjectTest {
 
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -591,7 +593,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -622,7 +624,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test
@@ -664,7 +666,7 @@ public class ObjectTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 
     @Test

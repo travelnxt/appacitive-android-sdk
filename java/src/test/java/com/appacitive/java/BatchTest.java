@@ -249,6 +249,6 @@ public class BatchTest {
                 });
             }
         });
-        await().atMost(Duration.TEN_MINUTES).untilTrue(somethingHappened);
+        await().untilTrue(somethingHappened);
     }
 }
