@@ -5,18 +5,18 @@
     <parent>
         <artifactId>com.appacitive.parent</artifactId>
         <groupId>com.appacitive.sdk</groupId>
-        <version>0.9.0</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.android</artifactId>
-    <version>0.9.0</version>
+    <version>1.0.0</version>
     <!--<packaging>pom</packaging>-->
     <dependencies>
         <dependency>
             <groupId>com.appacitive.sdk</groupId>
             <artifactId>com.appacitive.core</artifactId>
-            <version>0.9.0</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.android</groupId>
