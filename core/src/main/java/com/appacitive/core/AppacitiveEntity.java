@@ -8,6 +8,9 @@ import com.appacitive.core.apjson.APJSONException;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.infra.APSerializable;
 import com.appacitive.core.infra.SystemDefinedPropertiesHelper;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -238,10 +241,10 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         this.propertiesChanged.put(propertyName, propertyValue);
     }
 
-    public synchronized void setDateProperty(String propertyName, Date propertyValue) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        this.setStringProperty(propertyName, dateFormat.format(propertyValue));
-    }
+//    public synchronized void setDateProperty(String propertyName, Date propertyValue) {
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        this.setStringProperty(propertyName, dateFormat.format(propertyValue));
+//    }
 
 //    public synchronized void setTimeProperty(String propertyName, Date propertyValue) {
 //        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss.SSSSSSS");
@@ -251,6 +254,11 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
     public synchronized void setDateTimeProperty(String propertyName, Date propertyValue) {
         DateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         this.setStringProperty(propertyName, dateTimeFormat.format(propertyValue));
+    }
+
+    public synchronized void setJodaDateTimeProperty(String propertyName, DateTime propertyValue) {
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        this.setStringProperty(propertyName, propertyValue.toString(fmt));
     }
 
     public synchronized void setGeoProperty(String propertyName, double[] coordinates) {
@@ -284,18 +292,18 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         return Boolean.parseBoolean(boolValue);
     }
 
-    public synchronized Date getPropertyAsDate(String propertyName) {
-        String dateValue = this.getPropertyAsString(propertyName);
-        if (dateValue == null)
-            return null;
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            return dateFormat.parse(dateValue);
-        } catch (ParseException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    public synchronized Date getPropertyAsDate(String propertyName) {
+//        String dateValue = this.getPropertyAsString(propertyName);
+//        if (dateValue == null)
+//            return null;
+//
+//        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        try {
+//            return dateFormat.parse(dateValue);
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
 //    public synchronized Date getPropertyAsTime(String propertyName) {
 //        String timeValue = this.getPropertyAsString(propertyName);
@@ -321,6 +329,15 @@ public abstract class AppacitiveEntity implements Serializable, APSerializable {
         } catch (ParseException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    public synchronized DateTime getPropertyAsJodaDateTime(String propertyName) {
+        String datetimeValue = this.getPropertyAsString(propertyName);
+        if (datetimeValue == null)
+            return null;
+
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+        return fmt.parseDateTime(datetimeValue);
     }
 
     public synchronized double[] getPropertyAsGeo(String propertyName) {

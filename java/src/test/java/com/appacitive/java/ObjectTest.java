@@ -98,7 +98,7 @@ public class ObjectTest {
                 assert (result.getPropertyAsDouble("decimalfield") == 20.2511d);
                 assert (result.getPropertyAsBoolean("boolfield"));
 
-                assert (convertDateToString(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
+//                assert (convertDateToString(result.getPropertyAsDate("datefield")).equals(nowAsISODate));
 //                    assert (convertTimeToString(result.getPropertyAsTime("timefield")).equals(nowAsISOTime));
                 assert (convertDateTimeToString(result.getPropertyAsDateTime("datetimefield")).equals(nowAsISODateTime));
 
@@ -123,7 +123,7 @@ public class ObjectTest {
     public void dateTimePropertiesTest() throws ValidationException {
         AppacitiveObject object = new AppacitiveObject("object");
         Date now = new Date();
-        object.setDateProperty("datefield", now);
+//        object.setDateProperty("datefield", now);
 //        object.setTimeProperty("timefield", now);
         object.setDateTimeProperty("datetimefield", now);
 
@@ -138,7 +138,7 @@ public class ObjectTest {
                 Date time = null;
                 Date datetime = null;
 
-                date = result.getPropertyAsDate("datefield");
+//                date = result.getPropertyAsDate("datefield");
 //                    time = result.getPropertyAsTime("timefield");
                 datetime = result.getPropertyAsDateTime("datetimefield");
 

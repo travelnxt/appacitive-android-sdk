@@ -116,11 +116,11 @@ public class AppacitiveUser extends AppacitiveObjectBase implements Serializable
     }
 
     public Date getBirthDate() throws ParseException {
-        return this.getPropertyAsDate("birthdate");
+        return this.getPropertyAsDateTime("birthdate");
     }
 
     public void setBirthDate(Date birthDate) {
-        this.setDateProperty("birthdate", birthDate);
+        this.setDateTimeProperty("birthdate", birthDate);
 
     }
 
