@@ -20,6 +20,12 @@ public class AppacitiveContextBase implements Serializable {
     private static boolean isInitialized = false;
     private static UserContextProvider userContextProvider = null;
     private static Logger logger;
+    public static String baseUrl = "https://apis.appacitive.com/v1.0";
+
+    public synchronized static void setBaseUrl(String url)
+    {
+        AppacitiveContextBase.baseUrl = url;
+    }
 
     public synchronized static void setLogger(Logger logger) {
         AppacitiveContextBase.logger = logger;
