@@ -44,7 +44,7 @@ public class AppacitiveBatchCall implements Serializable {
                 }
                 AppacitiveStatus status = new AppacitiveStatus(jsonObject.optJSONObject("status"));
                 if (status.isSuccessful()) {
-                    BatchCallResponse response = new BatchCallResponse(jsonObject.optJSONArray("nodes"), jsonObject.optJSONArray("edges"));
+                    BatchCallResponse response = new BatchCallResponse(jsonObject.optJSONArray("nodes"), jsonObject.optJSONArray("edges"), jsonObject.optJSONArray("nodedeletions"), jsonObject.optJSONArray("edgedeletions"));
                     if (callback != null) {
                         callback.success(response);
                     }

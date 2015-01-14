@@ -8,7 +8,9 @@ import com.appacitive.core.apjson.APJSONArray;
 import com.appacitive.core.apjson.APJSONObject;
 import com.appacitive.core.infra.SystemDefinedPropertiesHelper;
 import com.appacitive.core.model.containers.ConnectionContainer;
+import com.appacitive.core.model.containers.ConnectionDeleteContainer;
 import com.appacitive.core.model.containers.ObjectContainer;
+import com.appacitive.core.model.containers.ObjectDeleteContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,22 +20,64 @@ import java.util.List;
  */
 public class BatchCallResponse {
 
-    public BatchCallResponse(APJSONArray nodesArray, APJSONArray edgesArray) {
+    public BatchCallResponse(APJSONArray nodesArray, APJSONArray edgesArray, APJSONArray nodeDeletionArray, APJSONArray edgeDeletionArray) {
         this.nodes = new ArrayList<ObjectContainer>();
         this.edges = new ArrayList<ConnectionContainer>();
+        this.nodeDeletions = new ArrayList<ObjectDeleteContainer>();
+        this.edgeDeletions = new ArrayList<ConnectionDeleteContainer>();
 
-        for (int i = 0; i < nodesArray.length(); i++) {
-            this.nodes.add(processNode(nodesArray.optJSONObject(i)));
-        }
-
-        for (int i = 0; i < edgesArray.length(); i++) {
-            this.edges.add(processEdge(edgesArray.optJSONObject(i)));
-        }
+        if(nodesArray != null)
+            for (int i = 0; i < nodesArray.length(); i++) {
+                this.nodes.add(processNode(nodesArray.optJSONObject(i)));
+            }
+        if(edges != null)
+            for (int i = 0; i < edgesArray.length(); i++) {
+                this.edges.add(processEdge(edgesArray.optJSONObject(i)));
+            }
+        if(nodeDeletions != null)
+            for (int i = 0; i < nodeDeletionArray.length(); i++)
+            {
+                this.nodeDeletions.add(processNodeDeletion(nodeDeletionArray.optJSONObject(i)));
+            }
+        if(edgeDeletions != null)
+            for (int i = 0; i < edgeDeletionArray.length(); i++)
+            {
+                this.edgeDeletions.add(processEdgeDeletion(edgeDeletionArray.optJSONObject(i)));
+            }
     }
 
     public List<ObjectContainer> nodes;
 
     public List<ConnectionContainer> edges;
+
+    public List<ObjectDeleteContainer> nodeDeletions;
+
+    public List<ConnectionDeleteContainer> edgeDeletions;
+
+    private ObjectDeleteContainer processNodeDeletion(APJSONObject node)
+    {
+        ObjectDeleteContainer container = new ObjectDeleteContainer();
+        if(node != null)
+        {
+            container.type = node.optString("type", null);
+            container.id = Long.valueOf(node.optString("id", "0"));
+            container.deleteConnections = Boolean.valueOf(node.optString("deleteconnections", "false"));
+            container.revision = Long.valueOf(node.optString("revision", "0"));
+        }
+        return container;
+    }
+
+    private ConnectionDeleteContainer processEdgeDeletion(APJSONObject edge)
+    {
+        ConnectionDeleteContainer container = new ConnectionDeleteContainer();
+        if(edge != null)
+        {
+            container.relationType = edge.optString("relationtype", null);
+            container.id = Long.valueOf(edge.optString("id", "0"));
+            container.revision = Long.valueOf(edge.optString("revision", "0"));
+        }
+        return container;
+    }
 
     private ConnectionContainer processEdge(APJSONObject edge) {
         ConnectionContainer container = new ConnectionContainer();

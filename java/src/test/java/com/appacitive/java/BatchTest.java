@@ -251,4 +251,47 @@ public class BatchTest {
         });
         await().untilTrue(somethingHappened);
     }
+
+    @Test
+    public void deleteObjectsAndConnectionsBatchTest()
+    {
+        final AtomicBoolean somethingHappened= new AtomicBoolean(false);
+
+        final String nameA = "siblingA";
+        final String nameB = "siblingB";
+        AppacitiveObject siblingA = new AppacitiveObject("object");
+        siblingA.setStringProperty("stringfield", "siblingA");
+
+        AppacitiveObject siblingB = new AppacitiveObject("object");
+        siblingB.setStringProperty("stringfield", "siblingB");
+
+        AppacitiveConnection connection = new AppacitiveConnection("sibling")
+                .fromNewObject("object", siblingA)
+                .toNewObject("object", siblingB);
+        connection.setStringProperty("field1", "random value");
+
+        connection.createInBackground(new Callback<AppacitiveConnection>() {
+            @Override
+            public void success(AppacitiveConnection result) {
+                BatchCallRequest request = new BatchCallRequest();
+                request.deleteNode("object", result.endpointA.objectId, false);
+                request.deleteNode("object", result.endpointB.objectId, false);
+                request.deleteEdge("sibling", result.getId());
+                AppacitiveBatchCall.Fire(request, new Callback<BatchCallResponse>() {
+                    @Override
+                    public void success(BatchCallResponse result) {
+                        assert result.nodeDeletions.size() == 2;
+                        assert result.edgeDeletions.size() == 1;
+                        somethingHappened.set(true);
+                    }
+
+                    @Override
+                    public void failure(BatchCallResponse result, Exception e) {
+                        Assert.fail(e.getMessage());
+                    }
+                });
+            }
+        });
+        await().untilTrue(somethingHappened);
+    }
 }
