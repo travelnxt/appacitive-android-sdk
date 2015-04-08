@@ -11,7 +11,7 @@
     <groupId>com.appacitive.sdk</groupId>
     <artifactId>com.appacitive.android</artifactId>
     <version>1.0.0</version>
-    <!--<packaging>pom</packaging>-->
+
     <dependencies>
         <dependency>
             <groupId>com.appacitive.sdk</groupId>
@@ -19,11 +19,16 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android</artifactId>
-            <version>4.1.1.4</version>
-            <scope>provided</scope>
+            <groupId>com.mcxiaoke.volley</groupId>
+            <artifactId>library</artifactId>
+            <version>1.0.15</version>
         </dependency>
+        <dependency>
+        <groupId>com.google.android</groupId>
+        <artifactId>android</artifactId>
+        <version>4.1.1.4</version>
+        <scope>provided</scope>
+    </dependency>
 
     </dependencies>
     <build>

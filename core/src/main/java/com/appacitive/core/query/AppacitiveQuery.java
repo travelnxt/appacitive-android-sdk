@@ -35,7 +35,7 @@ public class AppacitiveQuery implements Serializable {
             queryStringParameters.put("pSize", String.valueOf(pageSize));
 
         if (this.orderBy != null) {
-            queryStringParameters.put("orderBy=", orderBy);
+            queryStringParameters.put("orderBy", orderBy);
             queryStringParameters.put("isAsc", String.valueOf(isAscending));
         }
 

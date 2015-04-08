@@ -277,7 +277,7 @@ public class ConnectionTest {
                 Assert.fail(e.getMessage());
             }
         });
-        await().untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_MINUTES).untilTrue(somethingHappened);
     }
 
     @Test

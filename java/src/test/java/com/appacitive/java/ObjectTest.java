@@ -162,9 +162,10 @@ public class ObjectTest {
     public void multiLingualObjectCreateTest() throws ValidationException {
         AppacitiveObject newObject = new AppacitiveObject("object");
         final String randomString1 = "以下便是有关此问题的所有信息";
+        final String randomString3 = "વિત ક્વિલપૅડ રોમિંગ યૂ વિલ બે ઍબલ તો રાઇટ ઇન ગુજરાતી ઓન ફસ્ેબૂક";
         final String randomString2 = "ä»¥ä¸ä¾¿æ¯æå³æ­¤é®é¢çææä¿¡æ¯";
-        newObject.setStringProperty("stringfield", randomString1);
-        newObject.setStringProperty("textfield", randomString2);
+//        newObject.setStringProperty("stringfield", randomString1);
+        newObject.setStringProperty("textfield", randomString3);
         newObject.createInBackground(new Callback<AppacitiveObject>() {
             public void success(AppacitiveObject result) {
                 Assert.assertTrue(result.getId() > 0);
@@ -1006,7 +1007,7 @@ public class ObjectTest {
                 });
             }
         });
-        await().atMost(Duration.TEN_SECONDS).untilTrue(somethingHappened);
+        await().atMost(Duration.TEN_MINUTES).untilTrue(somethingHappened);
 
     }
 
