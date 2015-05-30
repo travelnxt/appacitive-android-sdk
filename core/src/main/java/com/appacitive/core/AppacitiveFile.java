@@ -33,10 +33,10 @@ public class AppacitiveFile implements Serializable {
             url += fileName;
         }
 
-        if (expires >= 0) {
+
             url += "&expires=";
             url += String.valueOf(expires);
-        }
+        
 
         final String finalUrl = url;
         AsyncHttp asyncHttp = APContainer.build(AsyncHttp.class);
